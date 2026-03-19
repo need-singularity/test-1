@@ -7,3 +7,4 @@ data/wordnet/
 data/benchmarks/
 .superpowers/
 checkpoint.json
+results/archive_v1_v3/
