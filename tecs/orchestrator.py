@@ -416,7 +416,8 @@ class Orchestrator:
         # X axis
         print(f"    {'':>10} └{'─' * width}")
         start_gen = max(0, len(history) - width)
-        print(f"    {'':>10}  Gen {start_gen}{'':>{width - 8}}Gen {len(history) - 1}")
+        gap = max(0, width - 8)
+        print(f"    {'':>10}  Gen {start_gen}" + " " * gap + f"Gen {len(history) - 1}")
         print()
 
     def _on_emergence_spike(self, event: dict, candidate: Candidate):
