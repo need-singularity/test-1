@@ -1,0 +1,30 @@
+[
+  {
+    "cycle": 1,
+    "target": "3-SAT 해답 공간에서 변수 수 N이 커질 때 β₁이 0으로 전이하는 임계 절 밀도 α_c(β₁)의 스케일링 법칙을 찾아라. N=12,14,16,18,20에서 α_c(β₁)을 측정하고 N→∞ 외삽. 이론값 α_c(SAT)=4.27과의 관계를 수치로 검증",
+    "timestamp": "2026-03-19T19:20:19.576892",
+    "phases": {
+      "generate": {
+        "response_length": 563,
+        "code_extracted": false,
+        "code_length": 0,
+        "error": "no code extracted"
+      }
+    },
+    "status": "FAILED_GENERATION"
+  },
+  {
+    "cycle": 2,
+    "target": "3-SAT 해답 공간에서 변수 수 N이 커질 때 β₁이 0으로 전이하는 임계 절 밀도 α_c(β₁)의 스케일링 법칙을 찾아라. N=12,14,16,18,20에서 α_c(β₁)을 측정하고 N→∞ 외삽. 이론값 α_c(SAT)=4.27과의 관계를 수치로 검증",
+    "timestamp": "2026-03-19T19:22:19.598787",
+    "phases": {
+      "generate": {
+        "response_length": 592,
+        "code_extracted": false,
+        "code_length": 0,
+        "error": "no code extracted"
+      }
+    },
+    "status": "FAILED_GENERATION"
+  }
+]

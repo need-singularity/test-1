@@ -1,0 +1,16 @@
+[
+  {
+    "cycle": 1,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는 거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:21:54.497028",
+    "phases": {
+      "generate": {
+        "response_length": 586,
+        "code_extracted": false,
+        "code_length": 0,
+        "error": "no code extracted"
+      }
+    },
+    "status": "FAILED_GENERATION"
+  }
+]
