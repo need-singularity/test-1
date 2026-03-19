@@ -3,6 +3,12 @@ from __future__ import annotations
 import numpy as np
 from scipy.integrate import solve_ivp
 import networkx as nx
+
+try:
+    from tecs_rust import kuramoto_step as _rust_kuramoto, kuramoto_order_parameter as _rust_order_param
+    _RUST_AVAILABLE = True
+except ImportError:
+    _RUST_AVAILABLE = False
 from tecs.types import TopologyState
 from tecs.utils.mps_utils import to_tensor, to_numpy, is_gpu_available
 

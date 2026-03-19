@@ -398,11 +398,11 @@ class Orchestrator:
         rng = mx - mn if mx != mn else 0.1
 
         print()
-        print(f"    {'Fitness':>10} ┐")
+        print("    " + "Fitness".rjust(10) + " ┐")
         for row in range(height, -1, -1):
             threshold = mn + (row / height) * rng
             label = f"{threshold:.3f}" if row % 2 == 0 else ""
-            line = f"    {label:>10} ┤"
+            line = "    " + label.rjust(10) + " ┤"
             for val in data[-width:]:
                 normalized = (val - mn) / rng
                 level = normalized * height
@@ -414,10 +414,10 @@ class Orchestrator:
                     line += " "
             print(line)
         # X axis
-        print(f"    {'':>10} └{'─' * width}")
+        print("    " + " " * 10 + " └" + "─" * width)
         start_gen = max(0, len(history) - width)
         gap = max(0, width - 8)
-        print(f"    {'':>10}  Gen {start_gen}" + " " * gap + f"Gen {len(history) - 1}")
+        print("    " + " " * 10 + "  Gen " + str(start_gen) + " " * gap + "Gen " + str(len(history) - 1))
         print()
 
     def _on_emergence_spike(self, event: dict, candidate: Candidate):

@@ -1,0 +1,14 @@
+[package]
+name = "tecs_rust"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "tecs_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.24", features = ["extension-module"] }
+rayon = "1.10"
+rand = "0.9"
+rand_chacha = "0.9"

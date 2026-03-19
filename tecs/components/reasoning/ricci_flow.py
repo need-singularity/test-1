@@ -5,6 +5,12 @@ import networkx as nx
 from tecs.types import TopologyState
 from tecs.utils.mps_utils import to_tensor, to_numpy, is_gpu_available
 
+try:
+    from tecs_rust import ricci_flow_step as _rust_ricci_flow, node_curvatures as _rust_node_curvatures
+    _RUST_AVAILABLE = True
+except ImportError:
+    _RUST_AVAILABLE = False
+
 class RicciFlowComponent:
     name = "ricci_flow"
     layer = "reasoning"
@@ -20,34 +26,35 @@ class RicciFlowComponent:
         G = state.complex.copy()
         n_steps = self._params["n_steps"]
         dt = self._params["step_size"]
-        curvatures = {}
-        for _ in range(n_steps):
-            curvatures = self._compute_ollivier_ricci(G)
-            if is_gpu_available():
-                import torch
-                edges = list(G.edges)
-                weights = np.array([G[u][v].get("weight", 1.0) for u, v in edges])
-                curvs = np.array([curvatures.get((min(u, v), max(u, v)), 0.0) for u, v in edges])
+        n_nodes = len(G.nodes)
+        edges = list(G.edges)
+        node_list = list(G.nodes)
+        node_idx = {n: i for i, n in enumerate(node_list)}
 
-                w_tensor = to_tensor(weights)
-                c_tensor = to_tensor(curvs)
-
-                # Vectorized update on GPU
-                w_tensor = torch.clamp(w_tensor - dt * c_tensor * w_tensor, min=0.01)
-
-                new_weights = to_numpy(w_tensor)
-                for idx, (u, v) in enumerate(edges):
-                    G[u][v]["weight"] = float(new_weights[idx])
-            else:
-                # Original CPU path
+        if _RUST_AVAILABLE and n_nodes > 0:
+            # Rust fast path — all computation in Rust with rayon parallelism
+            indexed_edges = [(node_idx[u], node_idx[v]) for u, v in edges]
+            weights = [G[u][v].get("weight", 1.0) for u, v in edges]
+            new_weights = _rust_ricci_flow(n_nodes, indexed_edges, weights, n_steps, dt)
+            for idx, (u, v) in enumerate(edges):
+                G[u][v]["weight"] = new_weights[idx]
+            adj_list = [[] for _ in range(n_nodes)]
+            for ui, vi in indexed_edges:
+                adj_list[ui].append(vi)
+                adj_list[vi].append(ui)
+            node_curv = np.array(_rust_node_curvatures(n_nodes, indexed_edges, adj_list))
+        else:
+            # Python fallback
+            curvatures = {}
+            for _ in range(n_steps):
+                curvatures = self._compute_ollivier_ricci(G)
                 for (u, v), curv in curvatures.items():
                     w = G[u][v].get("weight", 1.0)
                     G[u][v]["weight"] = max(0.01, w - dt * curv * w)
-        node_curv = np.zeros(len(G.nodes))
-        nodes_list = list(G.nodes)
-        for i, n in enumerate(nodes_list):
-            neighbor_curvs = [curvatures.get((min(n, nb), max(n, nb)), 0.0) for nb in G.neighbors(n)]
-            node_curv[i] = np.mean(neighbor_curvs) if neighbor_curvs else 0.0
+            node_curv = np.zeros(n_nodes)
+            for i, n in enumerate(node_list):
+                neighbor_curvs = [curvatures.get((min(n, nb), max(n, nb)), 0.0) for nb in G.neighbors(n)]
+                node_curv[i] = np.mean(neighbor_curvs) if neighbor_curvs else 0.0
         return TopologyState(
             complex=G, complex_type="graph", curvature=node_curv,
             metrics=state.metrics.copy(),

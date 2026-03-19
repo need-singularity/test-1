@@ -4,6 +4,12 @@ import numpy as np
 import networkx as nx
 from tecs.types import TopologyState
 
+try:
+    from tecs_rust import ising_monte_carlo as _rust_ising, ising_observables as _rust_ising_obs, edges_to_adj_flat as _rust_adj
+    _RUST_AVAILABLE = True
+except ImportError:
+    _RUST_AVAILABLE = False
+
 
 def _extract_graph(state: TopologyState) -> nx.Graph:
     """Extract a NetworkX graph from a graph or simplicial state."""
