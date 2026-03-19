@@ -2,7 +2,7 @@
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
-**마지막 업데이트:** 2026-03-19 17:40:39
+**마지막 업데이트:** 2026-03-19 18:12:07
 
 ## 추론 엔진 사용법
 
@@ -27,7 +27,7 @@
 
 ## 현재 상황 요약
 
-> 총 3라운드 진행된 자율 탐색 엔진의 적합도(시스템이 얼마나 잘 작동하는지 나타내는 점수)는 0.725에서 0.737로 꾸준히 올라가고 있지만, 2라운드에서 3라운드 사이의 상승폭이 크게 줄어들어 현재 조합이 성능 천장에 가까워지고 있을 가능성이 있습니다. 3라운드 모두 동일한 아키텍처 조합, 즉 동적 하이퍼그래프(여러 요소를 한꺼번에 연결하는 유연한 네트워크) 기반 표현 + 측지선 분기(최적 경로에서 갈라지며 탐색하는 추론) + 이징 상전이(자석 모델처럼 갑자기 질적 변화가 일어나는 창발 방식)가 선택되었는데, 이는 이 조합이 현재까지 발견된 것 중 가장 안정적이고 유망하다는 뜻입니다. 창발 이벤트(시스템이 예상 밖의 새로운 행동을 보인 횟수)가 총 37회 발생했고, 특히 분기 안정성이 0.999로 거의 완벽에 가까우며 자화값(전체 시스템의 정렬 정도)도 0.91로 높아서, 시스템 내부 요소들이 강하게 한 방향으로 정렬되는 질서 상태에 진입한 것이 흥미롭습니다. 다음 단계에서는 현재 조합의 성능 정체를 깨기 위해 새로운 아키텍처 변이가 등장하거나, 혹은 이 안정된 조합을 기반으로 더 세밀한 파라미터 튜닝을 통해 0.74 이상의 적합도 돌파를 기대해볼 수 있습니다.
+> 총 3라운드에 걸쳐 적합도(시스템이 얼마나 잘 작동하는지를 나타내는 점수)가 0.725에서 0.738로 꾸준히 올라가고 있어 전반적으로 개선 추세이지만, 라운드 2에서 3으로 갈 때 상승폭이 줄어들어 현재 조합이 성능 한계에 가까워지고 있을 가능성이 있습니다. 세 라운드 모두 동일한 아키텍처 조합, 즉 동적 하이퍼그래프(여러 개념을 유연하게 묶는 그물망 구조) + 측지 분기 추론(최단 경로에서 갈림길을 찾는 사고 방식) + 이징 상전이 창발(자석처럼 갑자기 질서가 생기는 현상을 모방) + 그림자 다양체 검증 + 자유에너지 담금질 최적화가 가장 유망한 것으로 확인되었는데, 이는 이 조합이 반복적으로 높은 점수를 내며 안정적이기 때문입니다. 창발 패턴(시스템이 스스로 예상 밖의 행동을 보이는 현상)에서 흥미로운 점은 하이퍼엣지(개념들 사이의 연결 묶음) 크기가 최대 19개까지 급증하고 개념 점수가 0.94로 매우 높게 튀었다는 것인데, 이는 시스템이 많은 개념을 한꺼번에 큰 덩어리로 엮는 복잡한 연결을 자발적으로 만들어내고 있다는 뜻입니다. 다음 단계에서는 현재 조합의 성장 둔화를 돌파하기 위해 일부 모듈을 변형한 새로운 아키텍처 조합이 탐색될 것으로 기대되며, 창발 이벤트 수가 라운드 2의 17건에서 3의 15건으로 소폭 줄어든 만큼 다양성 확보가 다음 성능 도약의 열쇠가 될 수 있습니다.
 
 ## 최신 라운드 분석
 
@@ -42,7 +42,7 @@
 | 총 실행 시간 | 7142s (2.0h) |
 | 최고 fitness | 0.7379 (Round 3) |
 | 창발 이벤트 | 37개 |
-| Hall of Fame | 97개 |
+| Hall of Fame | 105개 |
 
 ## Fitness 추이
 
@@ -72,16 +72,16 @@ xychart-beta
 
 | 지표 | 횟수 | 최대 강도 | 비율 |
 |------|------|----------|------|
-| `n_hyperedges` | 18 | 753.83 | ███ 19% |
-| `magnetization` | 14 | inf | ██ 14% |
-| `mean_hyperedge_size` | 10 | 2.95 | ██ 10% |
+| `n_hyperedges` | 21 | 753.83 | ████ 20% |
+| `magnetization` | 15 | inf | ██ 14% |
+| `mean_hyperedge_size` | 11 | 2.95 | ██ 10% |
 | `branch_stability` | 9 | 4.22 | █ 9% |
 | `hallucination_score` | 7 | 34.56 | █ 7% |
+| `concept` | 7 | 4.66 | █ 7% |
 | `mean_ricci_curvature` | 7 | inf | █ 7% |
-| `concept` | 6 | 4.66 | █ 6% |
 | `std_curvature` | 6 | 7.44 | █ 6% |
+| `max_hyperedge_size` | 6 | 3.20 | █ 6% |
 | `mean_curvature` | 4 | 7.75 | █ 4% |
-| `max_hyperedge_size` | 4 | 2.77 | █ 4% |
 | `analogy` | 4 | 3.21 | █ 4% |
 | `acceptance_rate` | 3 | 18.25 | █ 3% |
 | `free_energy` | 2 | 8.75 | █ 2% |
@@ -92,7 +92,7 @@ xychart-beta
 
 | 표현 + 창발 조합 | 횟수 |
 |-----------------|------|
-| `dynamic_hypergraph + ising_phase_transition` | 75 |
+| `dynamic_hypergraph + ising_phase_transition` | 83 |
 | `riemannian_manifold + lyapunov_bifurcation` | 17 |
 | `dynamic_hypergraph + lyapunov_bifurcation` | 3 |
 | `riemannian_manifold + ising_phase_transition` | 2 |
@@ -101,30 +101,22 @@ xychart-beta
 
 | 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |
 |------|------|----|------|------|---------|
+| 31 | `n_hyperedges` | 995.0000 | sigma_spike | 2.82 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 30 | `n_hyperedges` | 997.0000 | sigma_spike | 423.13 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 29 | `concept` | 0.9400 | sigma_spike | 2.27 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 27 | `mean_hyperedge_size` | 11.8387 | sigma_spike | 2.15 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 25 | `max_hyperedge_size` | 19.0000 | sigma_spike | 3.20 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 21 | `magnetization` | 0.8526 | sigma_spike | 3.68 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 17 | `n_hyperedges` | 84.0000 | sigma_spike | 4.47 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 10 | `max_hyperedge_size` | 17.0000 | sigma_spike | 2.12 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 31 | `n_hyperedges` | 988.0000 | sigma_spike | 2.80 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 30 | `n_hyperedges` | 995.0000 | sigma_spike | 471.38 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 29 | `magnetization` | 0.9140 | sigma_spike | 7.28 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 28 | `branch_stability` | 0.9990 | sigma_spike | 2.18 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 27 | `mean_hyperedge_size` | 7.8261 | sigma_spike | 2.53 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 26 | `hallucination_score` | 0.6862 | sigma_spike | 2.73 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 25 | `mean_hyperedge_size` | 11.2340 | sigma_spike | 2.03 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 20 | `n_hyperedges` | 97.0000 | sigma_spike | 2.71 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 18 | `magnetization` | 1.0000 | sigma_spike | 2.29 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 16 | `branch_stability` | 0.9990 | sigma_spike | 2.11 | `dynamic_hypergraph, geodesic_bifurcation` |
 
 ### 창발 타임라인
 
 ```mermaid
 timeline
     title 창발 급등 이벤트 타임라인
-    Gen 3 : magnetization (sigma_spike)
-    Gen 5 : analogy (sigma_spike)
-    Gen 10 : acceptance_rate (sigma_spike)
-    Gen 11 : mean_hyperedge_size (sigma_spike)
-    Gen 14 : max_hyperedge_size (sigma_spike)
-    Gen 16 : branch_stability (sigma_spike)
-    Gen 18 : magnetization (sigma_spike)
-    Gen 20 : n_hyperedges (sigma_spike)
     Gen 25 : mean_hyperedge_size (sigma_spike)
     Gen 26 : hallucination_score (sigma_spike)
     Gen 27 : mean_hyperedge_size (sigma_spike)
@@ -132,6 +124,9 @@ timeline
     Gen 29 : magnetization (sigma_spike)
     Gen 30 : n_hyperedges (sigma_spike)
     Gen 31 : n_hyperedges (sigma_spike)
+    Gen 10 : max_hyperedge_size (sigma_spike)
+    Gen 17 : n_hyperedges (sigma_spike)
+    Gen 21 : magnetization (sigma_spike)
 ```
 
 ## 라운드 기록
