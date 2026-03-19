@@ -48,6 +48,17 @@ DOMAIN_KEYWORDS: dict[str, set[str]] = {
         "momentum", "quantum", "wave", "particle", "field", "relativity",
         "thermodynamics", "entropy", "light", "photon", "electron", "newton",
         "einstein", "planck", "speed",
+        # Quantum / wave mechanics
+        "schrodinger", "wave function", "brownian", "diffusion",
+        "partial differential", "probability amplitude", "hamiltonian",
+        "eigenvalue", "wavefunction", "heat equation",
+    },
+    "finance": {
+        "black-scholes", "option", "derivative", "portfolio", "hedging",
+        "volatility", "risk", "stochastic calculus", "ito", "martingale",
+        "arbitrage", "pricing", "financial engineering",
+        "quantitative finance", "black scholes", "option pricing",
+        "risk-neutral", "put", "call option",
     },
     "economics": {
         "price", "supply", "demand", "market", "trade", "gdp", "inflation",
@@ -69,6 +80,11 @@ DOMAIN_KEYWORDS: dict[str, set[str]] = {
         "group", "ring", "field", "topology", "algebra", "calculus",
         "integral", "derivative", "limit", "infinity", "conjecture",
         "hypothesis", "riemann",
+        # Stochastic / PDE territory
+        "partial differential equation", "stochastic process", "brownian motion",
+        "wiener process", "markov", "probability distribution", "eigenvalue",
+        "differential equation", "boundary condition", "heat equation",
+        "stochastic differential", "ito calculus",
     },
     "computer_science": {
         "algorithm", "data", "program", "computer", "software", "hardware",

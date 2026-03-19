@@ -50,3 +50,28 @@ def test_load_topic_with_mock():
         loader._fetch_article("Cat")
         assert "Cat" in loader.articles
         assert "mammal" in loader.articles["Cat"]
+
+
+def test_noise_filter():
+    loader = WikipediaLoader()
+    assert loader._is_noise("short description is different from wikidata")
+    assert loader._is_noise("CS1 maint: multiple names")
+    assert loader._is_noise("Articles with hCards")
+    assert not loader._is_noise("quantum mechanics")
+    assert not loader._is_noise("partial differential equation")
+
+
+def test_deep_extraction():
+    loader = WikipediaLoader()
+    triples = loader._extract_from_text(
+        "Black-Scholes model",
+        "The Black-Scholes model is a mathematical model used in financial engineering. "
+        "It is derived from the heat equation. "
+        "The model assumes a geometric Brownian motion process. "
+        "It is used to determine the price of European options. "
+        "The model is analogous to the diffusion equation in physics."
+    )
+    assert len(triples) >= 3
+    # Should find DerivedFrom, UsesProcess, AnalogousTo, etc.
+    relations = [r for _, r, _ in triples]
+    assert any(r in relations for r in ("DerivedFrom", "UsesProcess", "AnalogousTo", "IsA", "UsedIn"))
