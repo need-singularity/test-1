@@ -89,3 +89,15 @@ def test_eval_set_has_cross_domain_queries():
     from tecs.inference.eval_set import EVAL_QUERIES
     level4 = [q for q in EVAL_QUERIES if q[3] >= 4]
     assert len(level4) >= 3
+
+
+def test_engine_uses_adaptive_sigma():
+    engine = _make_engine()
+    assert hasattr(engine, '_sigma')
+    assert isinstance(engine._sigma, float)
+    assert 0.05 <= engine._sigma <= 0.30 or engine._sigma == 0.15
+
+
+def test_engine_has_fuchsian_group():
+    engine = _make_engine()
+    assert hasattr(engine, '_fuchsian_group')

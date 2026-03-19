@@ -48,6 +48,14 @@ class InferenceEngine:
             self._embeddings = generate_poincare_embeddings(self._G)
             knowledge.metadata["poincare_embeddings"] = self._embeddings
 
+        # Fuchsian group for quotient distance (dim auto-detected)
+        from tecs.inference.ouroboros_geometry import FuchsianGroup
+        from tecs.inference.poincare_utils import adaptive_sigma as _adaptive_sigma
+        sample_emb = next(iter(self._embeddings.values()), None)
+        dim = len(sample_emb) if sample_emb is not None else 2
+        self._fuchsian_group = FuchsianGroup(dim=dim)
+        self._sigma = _adaptive_sigma(self._embeddings)
+
     def query(self, subject: str, relation: str, obj: str = "?") -> InferenceResult:
         """Multi-level inference."""
         if subject not in self._entity_index:
@@ -188,6 +196,7 @@ class InferenceEngine:
                 is_analogy = relation in ("RelatedTo", "SimilarTo", "Analogy")
                 edge_dist, via_wormhole = ouroboros_distance(
                     emb_u, emb_v, analogy_mode=is_analogy,
+                    sigma=self._sigma,
                 )
 
                 # Wormhole pruning: single hop too large → hallucination
