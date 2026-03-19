@@ -381,23 +381,53 @@ class AnalogyEngine:
         betti_sim = 1.0 - float(np.sum(np.abs(b1 - b2))) / betti_max
         scores.append(betti_sim * 2.0)  # double weight
 
-        # 2. Persistence diagram comparison (bottleneck-like distance)
+        # 2. Persistence diagram Wasserstein distance
         pairs1 = sig1["persistence_pairs"]
         pairs2 = sig2["persistence_pairs"]
         if pairs1 and pairs2:
-            lifetimes1 = sorted([d - b for _, b, d in pairs1], reverse=True)
-            lifetimes2 = sorted([d - b for _, b, d in pairs2], reverse=True)
-            max_len = max(len(lifetimes1), len(lifetimes2))
-            l1 = lifetimes1 + [0.0] * (max_len - len(lifetimes1))
-            l2 = lifetimes2 + [0.0] * (max_len - len(lifetimes2))
-            a = np.array(l1, dtype=float)
-            b_arr = np.array(l2, dtype=float)
-            na, nb = float(np.linalg.norm(a)), float(np.linalg.norm(b_arr))
-            if na > 0 and nb > 0:
-                persistence_sim = float(np.dot(a, b_arr) / (na * nb))
-            else:
-                persistence_sim = 0.0
-            scores.append(persistence_sim * 1.5)  # 1.5x weight
+            # Convert to 2D arrays: each row = (birth, death)
+            diag1 = np.array([(b, d) for _, b, d in pairs1])
+            diag2 = np.array([(b, d) for _, b, d in pairs2])
+
+            # Compute Wasserstein-like distance using optimal transport
+            # For each point in diag1, find nearest in diag2 (greedy approximation)
+            from scipy.spatial.distance import cdist
+
+            # Pad to same size with diagonal points (birth=death)
+            max_len = max(len(diag1), len(diag2))
+            if len(diag1) < max_len:
+                pad = np.array([[d[0], d[0]] for d in diag1[:max_len - len(diag1)]])
+                if len(pad) > 0:
+                    diag1 = np.vstack([diag1, pad[:max_len - len(diag1)]])
+            if len(diag2) < max_len:
+                pad = np.array([[d[0], d[0]] for d in diag2[:max_len - len(diag2)]])
+                if len(pad) > 0:
+                    diag2 = np.vstack([diag2, pad[:max_len - len(diag2)]])
+
+            # Wasserstein distance (L-infinity bottleneck approximation)
+            if len(diag1) > 0 and len(diag2) > 0:
+                cost_matrix = cdist(diag1, diag2)
+                # Greedy matching
+                total_cost = 0
+                used = set()
+                for i in range(min(len(diag1), len(diag2))):
+                    min_j = -1
+                    min_cost = float('inf')
+                    for j in range(len(diag2)):
+                        if j not in used and cost_matrix[i][j] < min_cost:
+                            min_cost = cost_matrix[i][j]
+                            min_j = j
+                    if min_j >= 0:
+                        total_cost += min_cost
+                        used.add(min_j)
+
+                # Normalize: small distance = high similarity
+                max_possible = np.max(cost_matrix) * min(len(diag1), len(diag2)) if len(cost_matrix) > 0 else 1
+                if max_possible > 0:
+                    wasserstein_sim = max(0, 1.0 - total_cost / max_possible)
+                else:
+                    wasserstein_sim = 1.0
+                scores.append(wasserstein_sim * 1.5)  # 1.5x weight
 
         # 3. Degree similarity (minor)
         d1, d2 = sig1["degree"], sig2["degree"]
@@ -533,10 +563,44 @@ class AnalogyEngine:
             f"β₀β₁β₂: ({b1[0]},{b1[1]},{b1[2]}) vs ({b2[0]},{b2[1]},{b2[2]})"
         )
 
-        # Persistence pairs count
+        # Persistence pairs count + Wasserstein distance
         n_pairs1 = len(src_sig.get("persistence_pairs", []))
         n_pairs2 = len(tgt_sig.get("persistence_pairs", []))
         parts.append(f"persistence pairs: {n_pairs1} vs {n_pairs2}")
+
+        # Wasserstein distance between persistence diagrams
+        pairs1 = src_sig.get("persistence_pairs", [])
+        pairs2 = tgt_sig.get("persistence_pairs", [])
+        if pairs1 and pairs2:
+            try:
+                from scipy.spatial.distance import cdist as _cdist
+                _d1 = np.array([(b, d) for _, b, d in pairs1])
+                _d2 = np.array([(b, d) for _, b, d in pairs2])
+                _max_len = max(len(_d1), len(_d2))
+                if len(_d1) < _max_len:
+                    _pad = np.array([[r[0], r[0]] for r in _d1[:_max_len - len(_d1)]])
+                    if len(_pad) > 0:
+                        _d1 = np.vstack([_d1, _pad[:_max_len - len(_d1)]])
+                if len(_d2) < _max_len:
+                    _pad = np.array([[r[0], r[0]] for r in _d2[:_max_len - len(_d2)]])
+                    if len(_pad) > 0:
+                        _d2 = np.vstack([_d2, _pad[:_max_len - len(_d2)]])
+                if len(_d1) > 0 and len(_d2) > 0:
+                    _cm = _cdist(_d1, _d2)
+                    _used: set[int] = set()
+                    _total = 0.0
+                    for _i in range(min(len(_d1), len(_d2))):
+                        _mj, _mc = -1, float('inf')
+                        for _j in range(len(_d2)):
+                            if _j not in _used and _cm[_i][_j] < _mc:
+                                _mc = _cm[_i][_j]
+                                _mj = _j
+                        if _mj >= 0:
+                            _total += _mc
+                            _used.add(_mj)
+                    parts.append(f"Wasserstein dist: {_total:.3f}")
+            except Exception:
+                pass
 
         # Degree
         parts.append(f"degree: {src_sig['degree']} vs {tgt_sig['degree']}")
