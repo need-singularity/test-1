@@ -205,6 +205,26 @@ class Orchestrator:
             )
             candidate.fitness = fitness
             candidate.metrics = {**emergence_metrics, **benchmark_scores}
+
+            # Verification pipeline
+            try:
+                from tecs.engine.verification_pipeline import VerificationPipeline
+                verifier = VerificationPipeline(failure_threshold=0.5)
+                verification = verifier.verify(candidate, state)
+
+                # Use verified fitness instead
+                fitness = self._evaluator.compute_verified(
+                    emergence_metrics, benchmark_scores, total_cost / 5.0, verification
+                )
+
+                # Log verification results
+                candidate.metrics["verification_score"] = verification["verification_score"]
+                candidate.metrics["verification_failures"] = verification["failure_count"]
+                candidate.metrics["verification_eliminated"] = int(verification["eliminated"])
+                candidate.fitness = fitness
+            except Exception:
+                pass  # fallback to unverified fitness
+
             return fitness
         except Exception:
             candidate.fitness = 0.0

@@ -48,6 +48,51 @@ class FitnessEvaluator:
         fitness = self.w_e * emergence_score + self.w_b * benchmark_score + self.w_f * efficiency_score
         return float(np.clip(fitness, 0.0, 1.0))
 
+    def compute_verified(self, emergence: dict, benchmark: dict, cost: float,
+                         verification: dict) -> float:
+        """Compute fitness WITH verification. Replaces compute() when verification is available.
+
+        F = α·novelty + β·coherence + γ·predictive_success - δ·verification_failures
+        """
+        # If eliminated by verification, fitness = 0
+        if verification.get("eliminated", False):
+            return 0.0
+
+        # Base scores (same as before)
+        e_vals = [v for k, v in emergence.items()
+                  if isinstance(v, (int, float)) and k in self.MEANINGFUL_EMERGENCE_KEYS]
+        emergence_score = np.mean([min(1.0, max(0.0, abs(v))) for v in e_vals]) if e_vals else 0.0
+
+        b_vals = [v for k, v in benchmark.items()
+                  if isinstance(v, (int, float)) and k in self.BENCHMARK_KEYS]
+        benchmark_score = np.mean(b_vals) if b_vals else 0.0
+
+        efficiency_score = max(0.0, 1.0 - min(1.0, cost))
+
+        # Verification scores
+        v_scores = verification.get("scores", {})
+        verification_score = verification.get("verification_score", 0.5)
+        failure_penalty = verification.get("failure_count", 0) * 0.15
+
+        # New fitness formula
+        # novelty = emergence (new patterns)
+        # coherence = benchmark (task performance)
+        # predictive = verification predictive score
+        # failures = verification failures
+
+        predictive = v_scores.get("predictive", 0.5)
+
+        fitness = (
+            0.2 * emergence_score +      # novelty
+            0.2 * benchmark_score +       # coherence (task ability)
+            0.1 * efficiency_score +      # efficiency
+            0.3 * predictive +            # predictive success (HIGHEST WEIGHT)
+            0.2 * verification_score -    # overall verification
+            failure_penalty               # penalty for failures
+        )
+
+        return float(np.clip(fitness, 0.0, 1.0))
+
     def update_history(self, metrics: dict) -> None:
         self._history.append(metrics)
 

@@ -67,3 +67,52 @@ def test_update_history_accumulates():
     for i in range(5):
         ev.update_history({"z": float(i)})
     assert len(ev._history) == 5
+
+
+def test_compute_verified_eliminates():
+    ev = FitnessEvaluator()
+    verification = {"eliminated": True, "scores": {}, "verification_score": 0, "failure_count": 4}
+    fitness = ev.compute_verified({}, {}, 0.0, verification)
+    assert fitness == 0.0
+
+
+def test_compute_verified_rewards_prediction():
+    ev = FitnessEvaluator()
+    verification = {
+        "eliminated": False,
+        "scores": {"formal": 1.0, "counterexample": 1.0, "reproducibility": 1.0, "predictive": 0.8},
+        "verification_score": 0.95,
+        "failure_count": 0,
+    }
+    fitness = ev.compute_verified(
+        {"betti_0": 0.5}, {"concept": 0.7, "query_accuracy": 0.6}, 0.3, verification
+    )
+    assert fitness > 0.5  # should be decent
+
+
+def test_compute_verified_clips_to_unit_range():
+    ev = FitnessEvaluator()
+    verification = {
+        "eliminated": False,
+        "scores": {"formal": 1.0, "counterexample": 1.0, "reproducibility": 1.0, "predictive": 1.0},
+        "verification_score": 1.0,
+        "failure_count": 0,
+    }
+    fitness = ev.compute_verified(
+        {"betti_0": 1.0}, {"concept": 1.0, "query_accuracy": 1.0}, 0.0, verification
+    )
+    assert 0.0 <= fitness <= 1.0
+
+
+def test_compute_verified_penalises_failures():
+    ev = FitnessEvaluator()
+    no_failures = {
+        "eliminated": False,
+        "scores": {"formal": 0.8, "counterexample": 0.8, "reproducibility": 0.8, "predictive": 0.8},
+        "verification_score": 0.8,
+        "failure_count": 0,
+    }
+    with_failures = dict(no_failures, failure_count=3)
+    f_clean = ev.compute_verified({"betti_0": 0.5}, {"concept": 0.5}, 0.3, no_failures)
+    f_penalised = ev.compute_verified({"betti_0": 0.5}, {"concept": 0.5}, 0.3, with_failures)
+    assert f_clean > f_penalised
