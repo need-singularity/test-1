@@ -1,8 +1,11 @@
 # tests/test_orchestrator.py
+import json
 import tempfile
+from pathlib import Path
 from unittest.mock import patch
 from tecs.orchestrator import Orchestrator
 from tecs.config import load_config
+from tecs.types import Candidate
 
 
 def test_init_creates_run_dir():
@@ -142,3 +145,62 @@ def test_full_run_tiny():
         assert orch.generation >= 1
         assert (orch._run_dir / "evolution.jsonl").exists()
         assert (orch._run_dir / "phase_log.jsonl").exists()
+
+
+def test_checkpoint_saves_state():
+    cfg = load_config("config.yaml", overrides={"search.population_size": 3, "search.seed": 42})
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orch = Orchestrator(cfg, results_dir=tmpdir)
+        orch._init_population()
+        orch._save_checkpoint()
+        cp_path = orch._run_dir / "checkpoint.json"
+        assert cp_path.exists()
+        cp = json.loads(cp_path.read_text())
+        assert cp["phase"] == orch.current_phase
+        assert cp["generation"] == orch.generation
+        assert len(cp["population"]) == 3
+        assert "rng_state" in cp
+
+
+def test_resume_from_checkpoint():
+    cfg = load_config("config.yaml", overrides={"search.population_size": 3, "search.seed": 42})
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orch1 = Orchestrator(cfg, results_dir=tmpdir)
+        orch1._init_population()
+        orch1.generation = 5
+        orch1._best_fitness = 0.7
+        orch1._save_checkpoint()
+
+        orch2 = Orchestrator.from_checkpoint(str(orch1._run_dir), cfg)
+        assert orch2.generation == 5
+        assert orch2._best_fitness == 0.7
+        assert len(orch2.population) == 3
+
+
+def test_rng_state_restored():
+    cfg = load_config("config.yaml", overrides={"search.population_size": 3, "search.seed": 42})
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orch1 = Orchestrator(cfg, results_dir=tmpdir)
+        orch1._init_population()
+        orch1._save_checkpoint()
+
+        orch2 = Orchestrator.from_checkpoint(str(orch1._run_dir), cfg)
+        r1 = orch1._rng.random()
+        r2 = orch2._rng.random()
+        assert r1 == r2
+
+
+def test_emergence_spike_creates_hall_of_fame():
+    cfg = load_config("config.yaml", overrides={"reporting.claude_cli": False, "search.population_size": 3})
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orch = Orchestrator(cfg, results_dir=tmpdir)
+        candidate = Candidate(id="test", components={"representation": "a", "reasoning": "b",
+            "emergence": "c", "verification": "d", "optimization": "e"},
+            parent_ids=[], generation=0, phase=1, fitness=0.9)
+        event = {"generation": 12, "metric": "betti_1", "delta": 3.0}
+        orch._on_emergence_spike(event, candidate)
+
+        hof = Path(tmpdir) / "hall_of_fame" / "best_candidates.jsonl"
+        assert hof.exists()
+        data = json.loads(hof.read_text().strip())
+        assert data["id"] == "test"

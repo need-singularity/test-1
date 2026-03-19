@@ -2,6 +2,7 @@
 """Central Orchestrator controlling the full autonomous TECS loop."""
 from __future__ import annotations
 
+import json
 import random
 from datetime import datetime
 from pathlib import Path
@@ -169,11 +170,105 @@ class Orchestrator:
         self.population = self._evolution.next_generation(self.population, causal_info)
         self.generation += 1
 
+        # Checkpoint for crash recovery
+        self._save_checkpoint()
+
+    def _save_checkpoint(self):
+        """Save full state for crash recovery. Called every generation."""
+        import base64, pickle
+        self._logger.save_checkpoint({
+            "phase": self.current_phase,
+            "generation": self.generation,
+            "population": [
+                {"id": c.id, "components": c.components, "parent_ids": c.parent_ids,
+                 "generation": c.generation, "phase": c.phase, "fitness": c.fitness,
+                 "mutation_layer": c.mutation_layer, "metrics": c.metrics}
+                for c in self.population
+            ],
+            "best_fitness": self._best_fitness,
+            "fitness_history": self._fitness_history,
+            "causal_history": self._causal_history,
+            "loop_count": self._loop_count,
+            "prev_loop_best": self._prev_loop_best,
+            "rng_state": base64.b64encode(pickle.dumps(self._rng.getstate())).decode(),
+        })
+
+    @classmethod
+    def from_checkpoint(cls, run_dir: str, config: TECSConfig) -> Orchestrator:
+        """Restore Orchestrator from a checkpoint."""
+        import base64, pickle
+        cp_path = Path(run_dir) / "checkpoint.json"
+        with open(cp_path) as f:
+            cp = json.load(f)
+
+        orch = cls.__new__(cls)
+        orch._cfg = config
+        orch._rng = random.Random()
+        orch._rng.setstate(pickle.loads(base64.b64decode(cp["rng_state"])))
+        orch._run_dir = Path(run_dir)
+
+        # Rebuild modules
+        orch._registry = orch._build_registry()
+        orch._simulator = TopologySimulator(orch._registry)
+        orch._evaluator = FitnessEvaluator(
+            config.fitness.w_emergence, config.fitness.w_benchmark, config.fitness.w_efficiency
+        )
+        orch._evolution = EvolutionEngine(config.search, config.search.seed)
+        orch._emergence = EmergenceDetector(config.emergence)
+        orch._causal = CausalTracer(
+            config.causal.min_generations_for_significance, config.causal.p_value_threshold
+        )
+        orch._data_manager = DataManager(config.data.cache_dir, config.data.use_external)
+        orch._benchmark = BenchmarkRunner(orch._data_manager)
+        orch._scale = ScaleController(config.scaling)
+        orch._logger = ResultLogger(str(orch._run_dir))
+        orch._reporter = ClaudeReporter(config.reporting.claude_cli)
+
+        # Restore state
+        orch.current_phase = cp["phase"]
+        orch.generation = cp["generation"]
+        orch._best_fitness = cp["best_fitness"]
+        orch._fitness_history = cp.get("fitness_history", [])
+        orch._causal_history = cp.get("causal_history", [])
+        orch._loop_count = cp.get("loop_count", 0)
+        orch._prev_loop_best = cp.get("prev_loop_best", 0.0)
+        orch._start_time = datetime.now()
+        orch._current_metrics = {}
+
+        # Restore population
+        orch.population = []
+        for cd in cp["population"]:
+            orch.population.append(Candidate(
+                id=cd["id"], components=cd["components"], parent_ids=cd["parent_ids"],
+                generation=cd["generation"], phase=cd["phase"], fitness=cd["fitness"],
+                mutation_layer=cd.get("mutation_layer"), metrics=cd.get("metrics", {}),
+            ))
+
+        return orch
+
     def _on_emergence_spike(self, event: dict, candidate: Candidate):
         """Handle emergence spike event."""
         event["candidate_id"] = candidate.id
         event["candidate_components"] = candidate.components
         self._logger.log_emergence_event(event)
+
+        # Update hall of fame
+        hof_dir = self._run_dir.parent.parent / "hall_of_fame"
+        hof_dir.mkdir(parents=True, exist_ok=True)
+        hof_file = hof_dir / "best_candidates.jsonl"
+        with open(hof_file, "a") as f:
+            f.write(json.dumps({
+                "id": candidate.id, "components": candidate.components,
+                "fitness": candidate.fitness, "event": event,
+                "timestamp": datetime.now().isoformat(),
+            }, default=str) + "\n")
+
+        # Generate emergence report
+        if self._cfg.reporting.report_on_emergence:
+            report = self._reporter.generate_report(event,
+                prompt_prefix="이 창발 급등 이벤트를 분석해:")
+            if report:
+                (self._run_dir / f"emergence_event_{event['generation']}.md").write_text(report)
 
     def run_phase(self, phase: int):
         """Run all generations for a given phase."""
