@@ -39,3 +39,10 @@
 - 장시간 실행은 백그라운드 + 주기적 보고
 - Claude CLI 리포트(cfg.reporting)는 Phase 전환 블로킹 유발 — 반드시 비활성화
 - 오캄 페널티: λ_bloat=0.05 (EDGE_THRESHOLD=150), λ_halluc=0.4 적용 중
+
+### Ouroboros 검증
+- 빠른 검증: `python scripts/verify_ouroboros.py --eval-only`
+- 파라미터 기본값: theta=0.85, sigma=auto, max_depth=2, dim=2
+- dim=3 Mostow 경로: `FuchsianGroup(dim=3)` + docs/ouroboros/THEORY.md 참조
+- 롤백: `USE_FUCHSIAN = False` (poincare_utils.py) → legacy -v 동작
+- 검증 리포트: results/ouroboros_verification.json
