@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
 import random
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 
@@ -127,10 +129,14 @@ class Orchestrator:
             return 0.0
 
     def _run_generation(self):
-        """Run one generation: evaluate all candidates, evolve."""
-        # Evaluate
-        for candidate in self.population:
-            self._simulate_candidate(candidate)
+        """Run one generation: evaluate all candidates in parallel, evolve."""
+        # Parallel evaluation using threads (safe with unpicklable objects;
+        # NumPy/SciPy release the GIL for C-level computation)
+        n_workers = min(os.cpu_count() or 1, len(self.population))
+        with ThreadPoolExecutor(max_workers=n_workers) as executor:
+            futures = {executor.submit(self._simulate_candidate, c): c for c in self.population}
+            for future in futures:
+                future.result()  # wait; fitness is set in-place on each candidate
 
         # Track best
         best = max(self.population, key=lambda c: c.fitness)
