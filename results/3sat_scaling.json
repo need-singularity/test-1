@@ -240,6 +240,53 @@
         "mean_beta1": 0.0,
         "sat_rate": 0.0
       }
+    ],
+    "22": [
+      {
+        "alpha": 2.0,
+        "mean_beta1": 302526.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 2.5,
+        "mean_beta1": 22807.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.0,
+        "mean_beta1": 7885.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.5,
+        "mean_beta1": 714.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.0,
+        "mean_beta1": 93.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 0.6666666666666666,
+        "sat_rate": 0.6666666666666666
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 3.6666666666666665,
+        "sat_rate": 0.6666666666666666
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.3333333333333333
+      },
+      {
+        "alpha": 6.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      }
     ]
   },
   "transition_points": {
@@ -267,6 +314,11 @@
       "alpha_beta1_zero": 5.5,
       "alpha_sat": 4.25,
       "max_beta1": 125177.8
+    },
+    "22": {
+      "alpha_beta1_zero": 5.5,
+      "alpha_sat": 5.25,
+      "max_beta1": 302526.0
     }
   }
 }

@@ -1,0 +1,48 @@
+[
+  {
+    "cycle": 1,
+    "target": "LLM CoT 텍스트의 네트워크 그래프 구조(Small-world 계수, 클러스터링, rewiring 비율)를 조작했을 때, 논리적 정답률이나 정보 전달 효율에 비자명한 상전이가 발생하는가? β₁은 관측 변수로만 기록",
+    "timestamp": "2026-03-19T19:59:19.943392",
+    "phases": {
+      "generate": {
+        "response_length": 4367,
+        "code_extracted": true,
+        "code_length": 3461
+      },
+      "tautology_gate": {
+        "response": "NOVEL",
+        "is_tautology": false
+      },
+      "run": {
+        "success": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/tmp/tmpd7frwvb5.py\", line 2, in <module>\n    import networkx as nx\nModuleNotFoundError: No module named 'networkx'\n",
+        "retry": true
+      }
+    },
+    "status": "FAILED_EXECUTION"
+  },
+  {
+    "cycle": 2,
+    "target": "LLM CoT 텍스트의 네트워크 그래프 구조(Small-world 계수, 클러스터링, rewiring 비율)를 조작했을 때, 논리적 정답률이나 정보 전달 효율에 비자명한 상전이가 발생하는가? β₁은 관측 변수로만 기록",
+    "timestamp": "2026-03-19T20:00:57.035247",
+    "phases": {
+      "generate": {
+        "response_length": 3389,
+        "code_extracted": true,
+        "code_length": 2944
+      },
+      "tautology_gate": {
+        "response": "NOVEL",
+        "is_tautology": false
+      },
+      "run": {
+        "success": false,
+        "stdout": "",
+        "stderr": "Traceback (most recent call last):\n  File \"/tmp/tmpa7lxwwoa.py\", line 3, in <module>\n    import networkx as nx\nModuleNotFoundError: No module named 'networkx'\n",
+        "retry": true
+      }
+    },
+    "status": "FAILED_EXECUTION"
+  }
+]

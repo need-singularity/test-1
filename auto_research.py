@@ -109,21 +109,51 @@ def run_cycle(cycle_num: int, target: str, previous_results: list[dict]) -> dict
     # ── Phase 1: Generate hypothesis + code ──
     print(f"\n  [Phase 1] Generating hypothesis + verification code...")
 
+    # Build seed context from prior verified results + Cycle 2 Small-world insight
+    seed_context = ""
+    if previous_results:
+        verified = [r for r in previous_results if r.get("status") == "VERIFIED"]
+        failed = [r for r in previous_results if "FAILED" in r.get("status", "")]
+        if verified:
+            seed_context += "이전에 검증 통과했지만 동어반복으로 판명된 가설들 (반복 금지):\n"
+            for v in verified:
+                h = v.get("phases", {}).get("verify", {}).get("hypothesis", "")
+                seed_context += f"  - {h}\n"
+        if failed:
+            last_fail = failed[-1]
+            h = last_fail.get("phases", {}).get("verify", {}).get("hypothesis", "")
+            seed_context += f"마지막 실패 가설: {h}\n"
+
     gen_prompt = (
-        f"연구 목표: {target}\n"
+        f"연구 목표: {target}\n\n"
         f"{prev_summary}\n"
+        f"{seed_context}\n"
+        "━━━ 절대 준수 규칙 ━━━\n"
+        "1. 동어반복 금지: '그래프에 순환 구조를 넣으면 β₁이 올라간다'는 위상수학 정의의 재진술일 뿐이다.\n"
+        "   β₁을 직접 조작하는 가설은 즉시 폐기하라.\n"
+        "2. 독립변수(X)와 종속변수(Y)를 반드시 분리하라:\n"
+        "   - X: 그래프의 구조적 속성 (예: Small-world 계수, 클러스터링, rewiring 확률, 허브 분포)\n"
+        "   - Y: β₁과 무관한 독립적 성능 지표 (예: 정답률, 수렴 속도, 정보 전달 효율)\n"
+        "   - 관측: 해당 X 조건에서 β₁이 어떻게 변하는지는 '부산물'로만 기록\n"
+        "3. 유망한 방향: Watts-Strogatz Small-world 네트워크의 rewiring 확률 p가 특정 임계점을 넘을 때,\n"
+        "   정보 전달 효율이나 탐색 성능에 상전이(phase transition)가 일어나는가?\n"
+        "   이때 β₁은 예측 변수가 아니라 관측 변수다.\n"
+        "━━━━━━━━━━━━━━━━━━━\n\n"
         "다음을 생성해:\n"
-        "1. 구체적 가설 (한 문장)\n"
+        "1. 비자명한 인과 가설 (한 문장) — 'X를 바꿨더니 Y가 폭발했다' 형태\n"
         "2. 가설을 수치적으로 검증하는 Python 코드 (```python 블록)\n"
         "   - numpy, scipy, networkx만 사용 (외부 데이터 다운로드 없음)\n"
+        "   - X(구조)를 조작하고, Y(성능 지표)를 측정하며, β₁은 별도로 관측만 기록\n"
         "   - 코드 마지막에 반드시 결과를 JSON으로 print\n"
-        "   - 형식: print(json.dumps({'hypothesis': '...', 'result': 수치, 'expected': 수치, 'error': 오차율, 'verdict': 'PASS/FAIL'}))\n"
+        "   - 형식: print(json.dumps({'hypothesis': '...', 'X_var': '...', 'Y_var': '...', "
+        "'result': 수치, 'expected': 수치, 'error': 오차율, 'beta1_observed': 수치, "
+        "'verdict': 'PASS/FAIL'}))\n"
         "   - 30초 안에 실행 가능할 것\n"
         "3. 변수의 SI 차원 (예: 'L^2/T')\n"
         "마크다운 없이 평문 + 코드 블록만."
     )
 
-    response = claude_generate(gen_prompt)
+    response = claude_generate(gen_prompt, timeout=180)
     code = extract_python_code(response)
 
     cycle_result["phases"]["generate"] = {
@@ -141,6 +171,69 @@ def run_cycle(cycle_num: int, target: str, previous_results: list[dict]) -> dict
         return cycle_result
 
     print(f"    Hypothesis generated, code: {len(code)} chars")
+
+    # ── Phase 1.5: Pre-emptive tautology gate ──
+    print(f"\n  [Phase 1.5] Tautology pre-screen...")
+
+    # Extract hypothesis from the response text (before code block)
+    hyp_text = response.split("```")[0].strip() if "```" in response else response[:500]
+
+    tautology_prompt = (
+        f"아래 가설과 코드를 검토하라:\n"
+        f"가설 텍스트: {hyp_text[:500]}\n"
+        f"코드 요약: {code[:800]}\n\n"
+        "판정 기준 (하나라도 해당하면 TAUTOLOGY):\n"
+        "1. 그래프에 순환/루프/back-edge를 삽입하면 β₁이 올라간다 → 위상수학 정의의 재진술\n"
+        "2. 독립변수(X)와 종속변수(Y)가 실질적으로 같은 것을 측정한다\n"
+        "3. 코드가 β₁을 직접 fitness로 최적화한다\n"
+        "4. 결과가 그래프 이론의 자명한 정리이다 (예: 트리의 β₁=0)\n\n"
+        "TAUTOLOGY이면 정확히 'TAUTOLOGY'만 출력. 아니면 정확히 'NOVEL'만 출력.\n"
+        "한 단어만 답하라."
+    )
+
+    taut_check = claude_generate(tautology_prompt, timeout=30).strip().upper()
+    is_tautology = "TAUTOLOGY" in taut_check
+
+    cycle_result["phases"]["tautology_gate"] = {
+        "response": taut_check[:100],
+        "is_tautology": is_tautology,
+    }
+
+    if is_tautology:
+        print(f"    ⛔ TAUTOLOGY detected — regenerating with stricter constraints...")
+
+        regen_prompt = (
+            f"연구 목표: {target}\n\n"
+            "직전에 생성한 가설이 동어반복(tautology)으로 판정되었다.\n"
+            f"기각된 가설: {hyp_text[:300]}\n\n"
+            "━━━ 강화된 제약 ━━━\n"
+            "β₁을 종속변수나 최적화 대상으로 쓰는 것을 절대 금지한다.\n"
+            "반드시 β₁과 무관한 독립적 성능 지표(정답률, 수렴 시간, shortest path 효율, "
+            "정보 엔트로피 등)를 Y로 사용하라.\n"
+            "β₁은 오직 '관측 부산물'로만 기록하라.\n"
+            "그래프 구조(X)를 바꿨을 때 성능(Y)에 비자명한 상전이가 일어나는 가설을 제안하라.\n"
+            "━━━━━━━━━━━━━━━━━━━\n\n"
+            "다음을 생성해:\n"
+            "1. 비자명한 인과 가설 (한 문장)\n"
+            "2. Python 검증 코드 (```python 블록)\n"
+            "   - numpy, scipy, networkx만 사용\n"
+            "   - print(json.dumps({'hypothesis': '...', 'X_var': '...', 'Y_var': '...', "
+            "'result': 수치, 'expected': 수치, 'error': 오차율, 'beta1_observed': 수치, "
+            "'verdict': 'PASS/FAIL'}))\n"
+            "마크다운 없이 평문 + 코드 블록만."
+        )
+
+        response = claude_generate(regen_prompt, timeout=180)
+        code = extract_python_code(response)
+
+        if not code:
+            print(f"    Regeneration failed — no code extracted")
+            cycle_result["status"] = "FAILED_TAUTOLOGY_REGEN"
+            return cycle_result
+
+        print(f"    Regenerated: {len(code)} chars")
+        cycle_result["phases"]["generate"]["regenerated"] = True
+        cycle_result["phases"]["generate"]["code_length"] = len(code)
 
     # ── Phase 2: Run code ──
     print(f"\n  [Phase 2] Running verification code...")
@@ -211,6 +304,9 @@ def run_cycle(cycle_num: int, target: str, previous_results: list[dict]) -> dict
         "hypothesis": hypothesis,
         "result": parsed.get("result"),
         "expected": parsed.get("expected"),
+        "X_var": parsed.get("X_var", ""),
+        "Y_var": parsed.get("Y_var", ""),
+        "beta1_observed": parsed.get("beta1_observed"),
         "full_output": parsed,
     }
 
@@ -226,11 +322,19 @@ def run_cycle(cycle_num: int, target: str, previous_results: list[dict]) -> dict
     # ── Phase 4: Adversarial critique ──
     print(f"\n  [Phase 4] Adversarial critique...")
 
+    x_var = parsed.get("X_var", "불명")
+    y_var = parsed.get("Y_var", "불명")
     critique_prompt = (
         f"이 가설을 공격해: '{hypothesis}'\n"
-        f"검증 결과: {json.dumps(parsed, default=str)}\n"
-        "1) 동어반복 아닌지 2) 반증 가능한지 3) trivial하지 않은지 검토. "
-        "문제 없으면 'PASS'. 문제 있으면 이유를 써."
+        f"독립변수(X): {x_var}, 종속변수(Y): {y_var}\n"
+        f"검증 결과: {json.dumps(parsed, default=str)}\n\n"
+        "다음 5가지를 순서대로 검토:\n"
+        "1) X→Y 인과관계가 동어반복(정의의 재진술)인가?\n"
+        "2) X와 Y가 실질적으로 같은 것을 측정하고 있지 않은가?\n"
+        "3) β₁이 직접 최적화 대상으로 쓰였는가? (관측만 허용)\n"
+        "4) 결과가 그래프 이론의 자명한 정리인가?\n"
+        "5) 반증 가능하고 비자명한 예측을 하고 있는가?\n\n"
+        "5개 모두 통과하면 'PASS'. 하나라도 걸리면 문제를 구체적으로 써라."
     )
     critique = claude_generate(critique_prompt, timeout=60)
 
