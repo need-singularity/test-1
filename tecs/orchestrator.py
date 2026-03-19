@@ -170,6 +170,10 @@ class Orchestrator:
         )
         sys.stdout.flush()
 
+        # Print fitness chart every 5 generations or at end
+        if self.generation > 0 and (self.generation % 5 == 0 or self.generation >= self._scale.max_generations(self.current_phase) - 1):
+            self._print_fitness_chart()
+
         # Log
         self._logger.log_generation({
             "generation": self.generation,
@@ -279,13 +283,55 @@ class Orchestrator:
 
         return orch
 
+    def _print_fitness_chart(self):
+        """Print ASCII fitness chart to terminal."""
+        history = self._fitness_history
+        if len(history) < 2:
+            return
+
+        # Take last 30 data points
+        data = history[-30:]
+        height = 8
+        width = min(len(data), 40)
+
+        mn = min(data)
+        mx = max(data)
+        rng = mx - mn if mx != mn else 0.1
+
+        print()
+        print(f"    {'Fitness':>10} ┐")
+        for row in range(height, -1, -1):
+            threshold = mn + (row / height) * rng
+            label = f"{threshold:.3f}" if row % 2 == 0 else ""
+            line = f"    {label:>10} ┤"
+            for val in data[-width:]:
+                normalized = (val - mn) / rng
+                level = normalized * height
+                if abs(level - row) < 0.5:
+                    line += "●"
+                elif level > row:
+                    line += "│"
+                else:
+                    line += " "
+            print(line)
+        # X axis
+        print(f"    {'':>10} └{'─' * width}")
+        start_gen = max(0, len(history) - width)
+        print(f"    {'':>10}  Gen {start_gen}{'':>{width - 8}}Gen {len(history) - 1}")
+        print()
+
     def _on_emergence_spike(self, event: dict, candidate: Candidate):
         """Handle emergence spike event."""
         metric = event.get("metric", "?")
         value = event.get("value", 0)
         etype = event.get("type", "?")
         sigma = event.get("sigma", event.get("delta", ""))
-        sigma_str = f" ({sigma:.1f}σ)" if isinstance(sigma, (int, float)) else ""
+        if isinstance(sigma, (int, float)) and sigma != float('inf'):
+            sigma_str = f" ({sigma:.1f}σ)"
+        elif isinstance(sigma, (int, float)):
+            sigma_str = " (첫 변동)"
+        else:
+            sigma_str = ""
         print(f"    🔥 창발 감지! {metric}={value:.4f} [{etype}]{sigma_str}")
 
         event["candidate_id"] = candidate.id
