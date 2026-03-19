@@ -2,7 +2,7 @@
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
-**마지막 업데이트:** 2026-03-19 15:41:46
+**마지막 업데이트:** 2026-03-19 15:49:20
 
 ## 추론 엔진 사용법
 
@@ -27,7 +27,7 @@
 
 ## 현재 상황 요약
 
-> 아직 첫 번째 라운드만 완료된 초기 단계이므로 추세를 말하기는 이르지만, 적합도(모델이 얼마나 잘 작동하는지 나타내는 점수)가 0.725로 출발점치고는 준수한 편이다. 현재 가장 유망한 조합은 동적 하이퍼그래프(여러 요소를 동시에 연결하는 유연한 네트워크) 표현 + 측지 분기(최적 경로가 갈라지는 지점을 찾는 추론) + 이징 상전이(물리학의 자석 모델을 빌려온 창발 감지) 구성인데, 이 조합이 유일하게 테스트되었음에도 5건의 창발 이벤트(예상 범위를 크게 벗어나는 이상 신호)를 한꺼번에 발생시켰기 때문이다. 특히 흥미로운 점은 자화율(구성 요소들이 같은 방향으로 정렬되는 정도)이 0.89에서 0.93으로 높게 나타나고 분기 안정성(추론 경로가 흔들리지 않는 정도)이 0.999로 거의 완벽한데, 이는 시스템이 스스로 질서를 만들어내는 상전이 임계점 근처에 있을 수 있음을 시사한다. 다음 라운드들에서는 이 조합의 구성 요소를 하나씩 바꿔가며 비교군이 생기므로, 어떤 모듈이 실제로 성능을 끌어올리는 핵심인지 분리해서 확인할 수 있을 것으로 기대된다.
+> Execution error
 
 ## 최신 라운드 분석
 
@@ -42,7 +42,7 @@
 | 총 실행 시간 | 814s (0.2h) |
 | 최고 fitness | 0.7251 (Round 1) |
 | 창발 이벤트 | 5개 |
-| Hall of Fame | 59개 |
+| Hall of Fame | 63개 |
 
 ## Fitness 추이
 
@@ -64,25 +64,26 @@
 
 | 지표 | 횟수 | 최대 강도 | 비율 |
 |------|------|----------|------|
-| `n_hyperedges` | 11 | 358.33 | ███ 19% |
-| `magnetization` | 9 | inf | ███ 15% |
-| `mean_hyperedge_size` | 6 | 2.95 | ██ 10% |
-| `hallucination_score` | 5 | 34.56 | █ 8% |
+| `n_hyperedges` | 11 | 358.33 | ███ 17% |
+| `magnetization` | 9 | inf | ██ 14% |
+| `hallucination_score` | 6 | 34.56 | █ 10% |
+| `mean_ricci_curvature` | 6 | inf | █ 10% |
+| `mean_hyperedge_size` | 6 | 2.95 | █ 10% |
 | `std_curvature` | 5 | 7.44 | █ 8% |
-| `mean_ricci_curvature` | 5 | inf | █ 8% |
-| `mean_curvature` | 4 | 7.75 | █ 7% |
-| `branch_stability` | 4 | 3.79 | █ 7% |
-| `concept` | 3 | 3.46 | █ 5% |
+| `concept` | 4 | 4.66 | █ 6% |
+| `mean_curvature` | 4 | 7.75 | █ 6% |
+| `branch_stability` | 4 | 3.79 | █ 6% |
 | `max_hyperedge_size` | 3 | 2.77 | █ 5% |
 | `free_energy` | 2 | 8.75 | █ 3% |
 | `n_bifurcation_points` | 1 | 2.10 | █ 2% |
 | `acceptance_rate` | 1 | 18.25 | █ 2% |
+| `analogy_score` | 1 | inf | █ 2% |
 
 ### 창발이 잘 일어나는 조합
 
 | 표현 + 창발 조합 | 횟수 |
 |-----------------|------|
-| `dynamic_hypergraph + ising_phase_transition` | 39 |
+| `dynamic_hypergraph + ising_phase_transition` | 43 |
 | `riemannian_manifold + lyapunov_bifurcation` | 17 |
 | `dynamic_hypergraph + lyapunov_bifurcation` | 3 |
 
@@ -90,26 +91,22 @@
 
 | 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |
 |------|------|----|------|------|---------|
+| 12 | `concept` | 0.5100 | sigma_spike | 4.66 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 11 | `analogy_score` | 0.8000 | sigma_spike | inf | `dynamic_hypergraph, geodesic_bifurcation` |
+| 10 | `hallucination_score` | 0.6862 | sigma_spike | 2.21 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 3 | `mean_ricci_curvature` | 0.4229 | sigma_spike | inf | `dynamic_hypergraph, ricci_flow` |
 | 14 | `n_hyperedges` | 97.0000 | sigma_spike | 2.41 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 13 | `mean_hyperedge_size` | 12.8261 | sigma_spike | 2.95 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 12 | `branch_stability` | 0.9990 | sigma_spike | 3.79 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 5 | `magnetization` | 0.9355 | sigma_spike | 2.11 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 4 | `magnetization` | 0.8947 | sigma_spike | inf | `dynamic_hypergraph, geodesic_bifurcation` |
 | 31 | `n_hyperedges` | 996.0000 | sigma_spike | 2.84 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 30 | `n_hyperedges` | 994.0000 | sigma_spike | 358.33 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 29 | `mean_hyperedge_size` | 13.2151 | sigma_spike | 2.41 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 27 | `magnetization` | 0.9167 | sigma_spike | 2.11 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 25 | `mean_ricci_curvature` | 0.3979 | sigma_spike | 2.34 | `dynamic_hypergraph, ricci_flow` |
 
 ### 창발 타임라인
 
 ```mermaid
 timeline
     title 창발 급등 이벤트 타임라인
-    Gen 17 : n_hyperedges (sigma_spike)
-    Gen 18 : max_hyperedge_size (sigma_spike)
-    Gen 19 : acceptance_rate (sigma_spike)
-    Gen 20 : mean_hyperedge_size (sigma_spike)
     Gen 22 : n_hyperedges (sigma_spike)
     Gen 25 : mean_ricci_curvature (sigma_spike)
     Gen 27 : magnetization (sigma_spike)
@@ -121,6 +118,9 @@ timeline
     Gen 12 : branch_stability (sigma_spike)
     Gen 13 : mean_hyperedge_size (sigma_spike)
     Gen 14 : n_hyperedges (sigma_spike)
+    Gen 3 : mean_ricci_curvature (sigma_spike)
+    Gen 10 : hallucination_score (sigma_spike)
+    Gen 11 : analogy_score (sigma_spike)
 ```
 
 ## 라운드 기록
