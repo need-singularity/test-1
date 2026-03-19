@@ -1,0 +1,225 @@
+{
+  "n_vars": 16,
+  "n_seeds": 5,
+  "results": [
+    {
+      "alpha": 1.0,
+      "n_clauses": 16,
+      "mean_solutions": 8037.2,
+      "mean_beta0": 1.0,
+      "mean_beta1": 245014.6,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 1.25,
+      "n_clauses": 20,
+      "mean_solutions": 4560.2,
+      "mean_beta0": 1.0,
+      "mean_beta1": 117549.0,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 1.5,
+      "n_clauses": 24,
+      "mean_solutions": 2768.0,
+      "mean_beta0": 1.0,
+      "mean_beta1": 56241.2,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 1.75,
+      "n_clauses": 28,
+      "mean_solutions": 1725.0,
+      "mean_beta0": 1.0,
+      "mean_beta1": 30341.4,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 2.0,
+      "n_clauses": 32,
+      "mean_solutions": 804.8,
+      "mean_beta0": 1.0,
+      "mean_beta1": 10886.8,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 2.25,
+      "n_clauses": 36,
+      "mean_solutions": 735.6,
+      "mean_beta0": 1.0,
+      "mean_beta1": 10340.6,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 2.5,
+      "n_clauses": 40,
+      "mean_solutions": 410.6,
+      "mean_beta0": 2.2,
+      "mean_beta1": 4273.6,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 2.75,
+      "n_clauses": 44,
+      "mean_solutions": 225.8,
+      "mean_beta0": 1.6,
+      "mean_beta1": 2067.2,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 3.0,
+      "n_clauses": 48,
+      "mean_solutions": 115.4,
+      "mean_beta0": 1.4,
+      "mean_beta1": 767.2,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 3.25,
+      "n_clauses": 52,
+      "mean_solutions": 92.0,
+      "mean_beta0": 1.6,
+      "mean_beta1": 530.8,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 3.5,
+      "n_clauses": 56,
+      "mean_solutions": 65.8,
+      "mean_beta0": 1.8,
+      "mean_beta1": 447.4,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 3.75,
+      "n_clauses": 60,
+      "mean_solutions": 11.6,
+      "mean_beta0": 2.6,
+      "mean_beta1": 18.0,
+      "sat_rate": 0.8,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 4.0,
+      "n_clauses": 64,
+      "mean_solutions": 4.8,
+      "mean_beta0": 0.8,
+      "mean_beta1": 11.2,
+      "sat_rate": 0.6,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 4.25,
+      "n_clauses": 68,
+      "mean_solutions": 11.4,
+      "mean_beta0": 1.4,
+      "mean_beta1": 32.0,
+      "sat_rate": 1.0,
+      "phase": "SAT"
+    },
+    {
+      "alpha": 4.5,
+      "n_clauses": 72,
+      "mean_solutions": 4.4,
+      "mean_beta0": 0.6,
+      "mean_beta1": 3.0,
+      "sat_rate": 0.6,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 4.75,
+      "n_clauses": 76,
+      "mean_solutions": 0.2,
+      "mean_beta0": 0.2,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 5.0,
+      "n_clauses": 80,
+      "mean_solutions": 4.4,
+      "mean_beta0": 1.2,
+      "mean_beta1": 4.6,
+      "sat_rate": 0.8,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 5.25,
+      "n_clauses": 84,
+      "mean_solutions": 0.4,
+      "mean_beta0": 0.2,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 5.5,
+      "n_clauses": 88,
+      "mean_solutions": 0.0,
+      "mean_beta0": 0.0,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.0,
+      "phase": "UNSAT"
+    },
+    {
+      "alpha": 5.75,
+      "n_clauses": 92,
+      "mean_solutions": 0.4,
+      "mean_beta0": 0.2,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 6.0,
+      "n_clauses": 96,
+      "mean_solutions": 0.2,
+      "mean_beta0": 0.2,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 6.25,
+      "n_clauses": 100,
+      "mean_solutions": 0.0,
+      "mean_beta0": 0.0,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.0,
+      "phase": "UNSAT"
+    },
+    {
+      "alpha": 6.5,
+      "n_clauses": 104,
+      "mean_solutions": 0.2,
+      "mean_beta0": 0.2,
+      "mean_beta1": 0.0,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    },
+    {
+      "alpha": 6.75,
+      "n_clauses": 108,
+      "mean_solutions": 1.6,
+      "mean_beta0": 0.4,
+      "mean_beta1": 1.2,
+      "sat_rate": 0.2,
+      "phase": "CRITICAL"
+    }
+  ],
+  "max_beta1_alpha": 1.0,
+  "zero_alpha": 4.75,
+  "transition_alpha": 4.625
+}
