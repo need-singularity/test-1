@@ -54,7 +54,35 @@ def load_run_results(run_dir: Path) -> dict:
     else:
         result["emergence_events"] = 0
 
+    # emergence_events.jsonl에서 상세 이벤트 로드
+    ee_path = run_dir / "emergence_events.jsonl"
+    result["emergence_details"] = []
+    if ee_path.exists():
+        for line in ee_path.read_text().strip().split("\n"):
+            if line.strip():
+                try:
+                    result["emergence_details"].append(json.loads(line))
+                except json.JSONDecodeError:
+                    pass
+
     return result
+
+
+def load_all_emergence_events(results_dir: str) -> list[dict]:
+    """모든 실행에서 창발 이벤트 수집."""
+    events = []
+    for run_dir in sorted(Path(results_dir).glob("runs/run_*")):
+        ee_path = run_dir / "emergence_events.jsonl"
+        if ee_path.exists():
+            for line in ee_path.read_text().strip().split("\n"):
+                if line.strip():
+                    try:
+                        ev = json.loads(line)
+                        ev["_run"] = run_dir.name
+                        events.append(ev)
+                    except json.JSONDecodeError:
+                        pass
+    return events
 
 
 def make_sparkline(values: list[float], width: int = 20) -> str:
@@ -151,6 +179,89 @@ def update_readme(all_results: list[dict], results_dir: str):
         for layer, comp in best_components.items():
             kr_name = layer_names.get(layer, layer)
             lines.append(f"| {kr_name} | `{comp}` |")
+        lines.append("")
+
+    # 창발 분석 섹션
+    all_emergence = load_all_emergence_events(results_dir)
+    if all_emergence:
+        lines.append("## 창발 급등 이벤트")
+        lines.append("")
+
+        # 지표별 집계
+        metric_counts: dict[str, int] = {}
+        metric_max_sigma: dict[str, float] = {}
+        for ev in all_emergence:
+            m = ev.get("metric", "unknown")
+            metric_counts[m] = metric_counts.get(m, 0) + 1
+            sigma = ev.get("sigma", ev.get("delta", ev.get("value", 0)))
+            if m not in metric_max_sigma or sigma > metric_max_sigma[m]:
+                metric_max_sigma[m] = sigma
+
+        lines.append("### 지표별 급등 빈도")
+        lines.append("")
+        lines.append("| 지표 | 횟수 | 최대 강도 | 비율 |")
+        lines.append("|------|------|----------|------|")
+        for m in sorted(metric_counts, key=metric_counts.get, reverse=True):
+            pct = metric_counts[m] / len(all_emergence) * 100
+            bar = "█" * max(1, int(pct / 5))
+            lines.append(f"| `{m}` | {metric_counts[m]} | {metric_max_sigma[m]:.2f} | {bar} {pct:.0f}% |")
+        lines.append("")
+
+        # 조합별 창발 빈도
+        combo_counts: dict[str, int] = {}
+        for ev in all_emergence:
+            comps = ev.get("candidate_components", {})
+            if comps:
+                key = " + ".join(f"{comps.get(l, '?')}" for l in ["representation", "emergence"])
+                combo_counts[key] = combo_counts.get(key, 0) + 1
+
+        if combo_counts:
+            lines.append("### 창발이 잘 일어나는 조합")
+            lines.append("")
+            lines.append("| 표현 + 창발 조합 | 횟수 |")
+            lines.append("|-----------------|------|")
+            for combo in sorted(combo_counts, key=combo_counts.get, reverse=True)[:5]:
+                lines.append(f"| `{combo}` | {combo_counts[combo]} |")
+            lines.append("")
+
+        # 최근 창발 이벤트 (최신 10개)
+        lines.append("### 최근 창발 이벤트")
+        lines.append("")
+        lines.append("| 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |")
+        lines.append("|------|------|----|------|------|---------|")
+        for ev in reversed(all_emergence[-10:]):
+            gen = ev.get("generation", "?")
+            metric = ev.get("metric", "?")
+            value = ev.get("value", 0)
+            etype = ev.get("type", "?")
+            sigma = ev.get("sigma", ev.get("delta", "-"))
+            comps = ev.get("candidate_components", {})
+            arch_short = ", ".join(f"{v}" for v in list(comps.values())[:2]) if comps else "-"
+            sigma_str = f"{sigma:.2f}" if isinstance(sigma, (int, float)) else str(sigma)
+            lines.append(f"| {gen} | `{metric}` | {value:.4f} | {etype} | {sigma_str} | `{arch_short}` |")
+        lines.append("")
+
+        # 창발 타임라인 (mermaid)
+        if len(all_emergence) >= 2:
+            lines.append("### 창발 타임라인")
+            lines.append("")
+            lines.append("```mermaid")
+            lines.append("timeline")
+            lines.append("    title 창발 급등 이벤트 타임라인")
+            seen_gens = set()
+            for ev in all_emergence[-15:]:
+                gen = ev.get("generation", 0)
+                if gen not in seen_gens:
+                    metric = ev.get("metric", "?")
+                    etype = ev.get("type", "")
+                    lines.append(f"    Gen {gen} : {metric} ({etype})")
+                    seen_gens.add(gen)
+            lines.append("```")
+            lines.append("")
+    else:
+        lines.append("## 창발 급등 이벤트")
+        lines.append("")
+        lines.append("아직 창발 급등이 감지되지 않았습니다.")
         lines.append("")
 
     # 라운드별 기록 (최신이 위)
