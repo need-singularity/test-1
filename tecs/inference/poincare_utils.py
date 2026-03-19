@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 import networkx as nx
+from scipy.optimize import linear_sum_assignment
 
 
 def poincare_distance(u: np.ndarray, v: np.ndarray, eps: float = 1e-7) -> float:
@@ -166,3 +167,93 @@ def generate_poincare_embeddings(
         embeddings[node] = direction[:dim] * radius
 
     return embeddings
+
+
+def ollivier_ricci_curvature(
+    G: nx.Graph, a: int, b: int, embeddings: dict[int, np.ndarray] | None = None,
+) -> float:
+    """Ollivier-Ricci curvature κ(a,b) = 1 - W₁(μₐ, μᵦ) / d(a,b).
+
+    Uses scipy linear_sum_assignment for Wasserstein-1.
+    When |N(a)| ≠ |N(b)|, pad smaller set with dummy nodes at max cost.
+    """
+    neighbors_a = list(G.neighbors(a))
+    neighbors_b = list(G.neighbors(b))
+    if not neighbors_a or not neighbors_b:
+        return 0.0
+
+    if embeddings and a in embeddings and b in embeddings:
+        d_ab = poincare_distance(embeddings[a], embeddings[b])
+    else:
+        try:
+            d_ab = float(nx.shortest_path_length(G, a, b))
+        except nx.NetworkXNoPath:
+            return 0.0
+    if d_ab < 1e-8:
+        return 0.0
+
+    na, nb = len(neighbors_a), len(neighbors_b)
+    max_size = max(na, nb)
+    cost = np.zeros((max_size, max_size))
+
+    for i in range(na):
+        for j in range(nb):
+            ni, nj = neighbors_a[i], neighbors_b[j]
+            if embeddings and ni in embeddings and nj in embeddings:
+                cost[i, j] = poincare_distance(embeddings[ni], embeddings[nj])
+            else:
+                try:
+                    cost[i, j] = float(nx.shortest_path_length(G, ni, nj))
+                except nx.NetworkXNoPath:
+                    cost[i, j] = 100.0
+
+    max_cost = cost[:na, :nb].max() if na > 0 and nb > 0 else 100.0
+    if na < max_size:
+        cost[na:, :] = max_cost
+    if nb < max_size:
+        cost[:, nb:] = max_cost
+
+    row_ind, col_ind = linear_sum_assignment(cost)
+    w1 = cost[row_ind, col_ind].sum() / max_size
+    return float(1.0 - w1 / d_ab)
+
+
+def compute_ricci_flow(
+    G: nx.Graph, embeddings: dict[int, np.ndarray],
+    iterations: int = 10, step: float = 0.1,
+) -> dict[tuple[int, int], list[float]]:
+    """Discrete Ricci flow: compute curvature, adjust weights, repeat."""
+    G_flow = G.copy()
+    for u, v in G_flow.edges():
+        if "weight" not in G_flow[u][v]:
+            G_flow[u][v]["weight"] = 1.0
+
+    history: dict[tuple[int, int], list[float]] = {(u, v): [] for u, v in G_flow.edges()}
+    for _ in range(iterations):
+        curvatures = {}
+        for u, v in G_flow.edges():
+            k = ollivier_ricci_curvature(G_flow, u, v, embeddings)
+            curvatures[(u, v)] = k
+            history[(u, v)].append(k)
+        for (u, v), k in curvatures.items():
+            w = G_flow[u][v].get("weight", 1.0)
+            G_flow[u][v]["weight"] = w * (1.0 - step * k)
+    return history
+
+
+def detect_neck_pinch(
+    curvature_map: dict[tuple[int, int], float],
+    threshold: float | None = None,
+) -> list[tuple[int, int, float]]:
+    """Detect candidate neck pinch singularities.
+
+    Default threshold: mean + 2*std (data-driven, not hardcoded).
+    """
+    if not curvature_map:
+        return []
+    values = list(curvature_map.values())
+    if threshold is None:
+        mean_k = np.mean(values)
+        std_k = np.std(values)
+        threshold = mean_k + 2.0 * std_k
+    return [(u, v, k) for (u, v), k in curvature_map.items() if k > threshold]
