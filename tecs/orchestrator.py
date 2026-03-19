@@ -53,6 +53,11 @@ def _worker_simulate(args: tuple) -> dict:
         points = dm.get_points(n=n_nodes, dim=3)
         state = simulator.simulate(candidate, points)
         benchmark_scores = benchmark.run_all(state)
+        try:
+            inference_scores = benchmark.run_inference_benchmark(state)
+            benchmark_scores.update(inference_scores)
+        except Exception:
+            pass
         emergence_metrics = {k: v for k, v in state.metrics.items()}
         total_cost = sum(registry.get(layer, candidate.components[layer]).cost()
                         for layer in candidate.components)

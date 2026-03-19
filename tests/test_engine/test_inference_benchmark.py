@@ -6,35 +6,45 @@ from tecs.data.data_manager import DataManager
 from tecs.engine.benchmark_runner import BenchmarkRunner
 
 
-def test_inference_benchmark_returns_scores():
+def test_inference_benchmark_returns_all_scores():
     dm = DataManager(use_external=False)
     runner = BenchmarkRunner(dm)
     G = nx.karate_club_graph()
     state = TopologyState(complex=G, complex_type="graph", curvature=np.zeros(len(G.nodes)))
     scores = runner.run_inference_benchmark(state)
-    assert "query_accuracy" in scores
-    assert "multihop_accuracy" in scores
-    assert "analogy_score" in scores
-    assert "inference_combined" in scores
-    assert 0.0 <= scores["inference_combined"] <= 1.0
+    expected_keys = ["query_accuracy", "multihop_accuracy", "analogy_score",
+                     "verification_working", "inference_combined"]
+    for key in expected_keys:
+        assert key in scores, f"Missing key: {key}"
+        assert 0.0 <= scores[key] <= 1.0, f"{key}={scores[key]} out of range"
 
 
-def test_inference_benchmark_query_accuracy():
+def test_eval_knowledge_cached():
     dm = DataManager(use_external=False)
     runner = BenchmarkRunner(dm)
+    # Clear cache
+    BenchmarkRunner._cached_inference_knowledge = None
+
+    G = nx.karate_club_graph()
+    state = TopologyState(complex=G, complex_type="graph", curvature=np.zeros(len(G.nodes)))
+
+    # First call builds cache
+    scores1 = runner.run_inference_benchmark(state)
+    assert BenchmarkRunner._cached_inference_knowledge is not None
+
+    # Second call uses cache (should be same object)
+    cached = BenchmarkRunner._cached_inference_knowledge
+    scores2 = runner.run_inference_benchmark(state)
+    assert BenchmarkRunner._cached_inference_knowledge is cached  # same object
+
+
+def test_query_accuracy_with_known_answers():
+    dm = DataManager(use_external=False)
+    runner = BenchmarkRunner(dm)
+    BenchmarkRunner._cached_inference_knowledge = None
+
     G = nx.Graph()
     state = TopologyState(complex=G, complex_type="graph", curvature=np.array([]))
     scores = runner.run_inference_benchmark(state)
-    # With test knowledge injected, should get some queries right
-    assert scores["query_accuracy"] >= 0.0
-
-
-def test_build_test_knowledge():
-    dm = DataManager(use_external=False)
-    runner = BenchmarkRunner(dm)
-    G = nx.karate_club_graph()
-    state = TopologyState(complex=G, complex_type="graph", curvature=np.zeros(len(G.nodes)))
-    knowledge = runner._build_test_knowledge(state)
-    assert "entity_index" in knowledge.metadata
-    assert "cat" in knowledge.metadata["entity_index"]
-    assert len(knowledge.metadata["triples"]) > 0
+    # With injected test knowledge, direct queries should get high accuracy
+    assert scores["query_accuracy"] > 0.5, f"Query accuracy too low: {scores['query_accuracy']}"
