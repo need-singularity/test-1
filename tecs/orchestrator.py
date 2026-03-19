@@ -28,9 +28,13 @@ from tecs.reporting.claude_reporter import ClaudeReporter
 
 
 def _worker_simulate(args: tuple) -> dict:
-    """Process pool worker: simulate one candidate. Runs in separate process."""
+    """Process pool worker: simulate one candidate. Runs in separate process (CPU only)."""
     candidate_dict, n_nodes, cache_dir = args
     try:
+        # Disable GPU in worker processes to avoid MPS memory conflicts
+        import os
+        os.environ["PYTORCH_MPS_DISABLE"] = "1"
+
         # Each worker builds its own registry/simulator (no pickling needed)
         from tecs.components.registry import ComponentRegistry as CR
         from tecs.engine.topology_simulator import TopologySimulator as TS
@@ -213,9 +217,8 @@ class Orchestrator:
         candidate_map = {c.id: c for c in self.population}
 
         try:
-            ctx = mp.get_context("fork")
-            import warnings
-            warnings.filterwarnings("ignore", ".*fork.*", DeprecationWarning)
+            # Use spawn (not fork) to avoid MPS GPU memory corruption in child processes
+            ctx = mp.get_context("spawn")
             with ProcessPoolExecutor(max_workers=n_workers, mp_context=ctx) as executor:
                 futures = {executor.submit(_worker_simulate, args): args[0]["id"] for args in args_list}
                 for future in as_completed(futures):
