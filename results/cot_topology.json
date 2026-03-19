@@ -1,0 +1,241 @@
+{
+  "DIRECT (facts)": [
+    {
+      "T": 30,
+      "vocab_size": 25,
+      "beta0": 1,
+      "beta1": "90",
+      "beta2": 0
+    },
+    {
+      "T": 40,
+      "vocab_size": 35,
+      "beta0": 1,
+      "beta1": "125",
+      "beta2": 0
+    },
+    {
+      "T": 50,
+      "vocab_size": 42,
+      "beta0": 1,
+      "beta1": "157",
+      "beta2": 0
+    }
+  ],
+  "HALLUCINATION (false)": [
+    {
+      "T": 30,
+      "vocab_size": 29,
+      "beta0": 1,
+      "beta1": "96",
+      "beta2": 0
+    },
+    {
+      "T": 40,
+      "vocab_size": 37,
+      "beta0": 1,
+      "beta1": "131",
+      "beta2": 0
+    },
+    {
+      "T": 50,
+      "vocab_size": 43,
+      "beta0": 1,
+      "beta1": "167",
+      "beta2": 0
+    },
+    {
+      "T": 60,
+      "vocab_size": 50,
+      "beta0": 1,
+      "beta1": "201",
+      "beta2": 0
+    },
+    {
+      "T": 70,
+      "vocab_size": 57,
+      "beta0": 1,
+      "beta1": "234",
+      "beta2": 0
+    },
+    {
+      "T": 80,
+      "vocab_size": 64,
+      "beta0": 1,
+      "beta1": "269",
+      "beta2": 0
+    },
+    {
+      "T": 90,
+      "vocab_size": 70,
+      "beta0": 1,
+      "beta1": "302",
+      "beta2": 0
+    }
+  ],
+  "REASONING (proof)": [
+    {
+      "T": 30,
+      "vocab_size": 28,
+      "beta0": 1,
+      "beta1": "89",
+      "beta2": 0
+    },
+    {
+      "T": 40,
+      "vocab_size": 33,
+      "beta0": 1,
+      "beta1": "120",
+      "beta2": 0
+    },
+    {
+      "T": 50,
+      "vocab_size": 36,
+      "beta0": 1,
+      "beta1": "141",
+      "beta2": 0
+    },
+    {
+      "T": 60,
+      "vocab_size": 41,
+      "beta0": 1,
+      "beta1": "167",
+      "beta2": 0
+    },
+    {
+      "T": 70,
+      "vocab_size": 45,
+      "beta0": 1,
+      "beta1": "197",
+      "beta2": 0
+    },
+    {
+      "T": 80,
+      "vocab_size": 49,
+      "beta0": 1,
+      "beta1": "224",
+      "beta2": 0
+    },
+    {
+      "T": 90,
+      "vocab_size": 53,
+      "beta0": 1,
+      "beta1": "249",
+      "beta2": 0
+    },
+    {
+      "T": 100,
+      "vocab_size": 60,
+      "beta0": 1,
+      "beta1": "283",
+      "beta2": 0
+    },
+    {
+      "T": 110,
+      "vocab_size": 60,
+      "beta0": 1,
+      "beta1": "298",
+      "beta2": 0
+    },
+    {
+      "T": 120,
+      "vocab_size": 61,
+      "beta0": 1,
+      "beta1": "315",
+      "beta2": 0
+    },
+    {
+      "T": 130,
+      "vocab_size": 65,
+      "beta0": 1,
+      "beta1": "347",
+      "beta2": 0
+    },
+    {
+      "T": 140,
+      "vocab_size": 70,
+      "beta0": 1,
+      "beta1": "383",
+      "beta2": 0
+    },
+    {
+      "T": 150,
+      "vocab_size": 75,
+      "beta0": 1,
+      "beta1": "416",
+      "beta2": 0
+    },
+    {
+      "T": 160,
+      "vocab_size": 78,
+      "beta0": 1,
+      "beta1": "446",
+      "beta2": 0
+    },
+    {
+      "T": 170,
+      "vocab_size": 85,
+      "beta0": 1,
+      "beta1": "481",
+      "beta2": 0
+    }
+  ],
+  "SELF-CORRECT (verify)": [
+    {
+      "T": 30,
+      "vocab_size": 21,
+      "beta0": 1,
+      "beta1": "75",
+      "beta2": 0
+    },
+    {
+      "T": 40,
+      "vocab_size": 26,
+      "beta0": 1,
+      "beta1": "105",
+      "beta2": 0
+    },
+    {
+      "T": 50,
+      "vocab_size": 31,
+      "beta0": 1,
+      "beta1": "127",
+      "beta2": 0
+    },
+    {
+      "T": 60,
+      "vocab_size": 37,
+      "beta0": 1,
+      "beta1": "153",
+      "beta2": 0
+    },
+    {
+      "T": 70,
+      "vocab_size": 43,
+      "beta0": 1,
+      "beta1": "184",
+      "beta2": 0
+    },
+    {
+      "T": 80,
+      "vocab_size": 44,
+      "beta0": 1,
+      "beta1": "205",
+      "beta2": 0
+    },
+    {
+      "T": 90,
+      "vocab_size": 47,
+      "beta0": 1,
+      "beta1": "219",
+      "beta2": 0
+    },
+    {
+      "T": 100,
+      "vocab_size": 52,
+      "beta0": 1,
+      "beta1": "248",
+      "beta2": 0
+    }
+  ]
+}
