@@ -34,6 +34,20 @@ class ResultLogger:
         with open(self._dir / "causal_graph.json", "w") as f:
             json.dump(data, f, indent=2, default=str)
 
+    def generate_markdown_report(self, data: dict) -> str:
+        """Generate REPORT.md from data using Jinja2 template."""
+        from jinja2 import Environment, FileSystemLoader, select_autoescape
+        import os
+        template_dir = os.path.join(os.path.dirname(__file__))
+        env = Environment(loader=FileSystemLoader(template_dir), autoescape=select_autoescape([]))
+        template = env.get_template("report_template.md.j2")
+        return template.render(**data)
+
+    def save_report(self, data: dict) -> None:
+        """Generate and save REPORT.md."""
+        content = self.generate_markdown_report(data)
+        (self._dir / "REPORT.md").write_text(content)
+
     @property
     def run_dir(self) -> Path:
         return self._dir

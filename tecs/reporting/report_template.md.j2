@@ -1,0 +1,54 @@
+{# tecs/reporting/report_template.md.j2 #}
+# TECS Run Report
+
+**Run:** {{ run_id }}
+**Date:** {{ timestamp }}
+**Status:** {{ termination_reason }}
+
+## Summary
+- Total generations: {{ total_generations }}
+- Final phase: {{ final_phase }}
+- Best fitness: {{ best_fitness | round(4) }}
+- Population size: {{ population_size }}
+
+## Best Architecture
+| Layer | Component |
+|-------|-----------|
+{% for layer, comp in best_components.items() %}
+| {{ layer }} | {{ comp }} |
+{% endfor %}
+
+## Emergence Events
+{% if emergence_events %}
+| Generation | Metric | Value | Type |
+|------------|--------|-------|------|
+{% for e in emergence_events %}
+| {{ e.generation }} | {{ e.metric }} | {{ e.value | round(4) }} | {{ e.type }} |
+{% endfor %}
+{% else %}
+No emergence spikes detected.
+{% endif %}
+
+## Benchmark Scores
+{% if benchmark_scores %}
+| Task | Score |
+|------|-------|
+{% for task, score in benchmark_scores.items() %}
+| {{ task }} | {{ score | round(4) }} |
+{% endfor %}
+{% else %}
+No benchmarks run.
+{% endif %}
+
+## Phase History
+{% for phase in phase_history %}
+- Phase {{ phase.phase }}: gen={{ phase.generation }}, best={{ phase.best_fitness | round(4) }}
+{% endfor %}
+
+## Fitness Progression
+{% for f in fitness_history[-20:] %}
+- Gen {{ loop.index }}: {{ f | round(4) }}
+{% endfor %}
+{% if fitness_history | length > 20 %}
+(showing last 20 of {{ fitness_history | length }})
+{% endif %}
