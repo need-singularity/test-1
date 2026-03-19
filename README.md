@@ -2,22 +2,30 @@
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
-**마지막 업데이트:** 2026-03-19 12:20:08
+**마지막 업데이트:** 2026-03-19 12:27:03
 
 ## 전체 요약
 
 | 항목 | 값 |
 |------|------|
-| 총 라운드 | 1 |
-| 총 세대 수 | 5 |
-| 총 실행 시간 | 258s (0.1h) |
+| 총 라운드 | 2 |
+| 총 세대 수 | 10 |
+| 총 실행 시간 | 666s (0.2h) |
 | 최고 fitness | 1.0000 (Round 1) |
-| 창발 이벤트 | 1개 |
-| Hall of Fame | 3개 |
+| 창발 이벤트 | 3개 |
+| Hall of Fame | 5개 |
 
 ## Fitness 추이
 
-스파크라인: ` `
+스파크라인: `  `
+
+```mermaid
+xychart-beta
+    title "Fitness Progression"
+    x-axis "Round" [1, 2]
+    y-axis "Best Fitness" 0 --> 1
+    line [1.0000, 1.0000]
+```
 
 ## 현재 최고 아키텍처
 
@@ -35,20 +43,23 @@
 
 | 지표 | 횟수 | 최대 강도 | 비율 |
 |------|------|----------|------|
-| `hallucination_score` | 1 | 3.55 | ██████ 33% |
-| `concept` | 1 | 3.06 | ██████ 33% |
-| `std_curvature` | 1 | 4.22 | ██████ 33% |
+| `std_curvature` | 2 | 4.22 | ████████ 40% |
+| `hallucination_score` | 1 | 3.55 | ████ 20% |
+| `concept` | 1 | 3.06 | ████ 20% |
+| `mean_curvature` | 1 | 2.29 | ████ 20% |
 
 ### 창발이 잘 일어나는 조합
 
 | 표현 + 창발 조합 | 횟수 |
 |-----------------|------|
-| `riemannian_manifold + lyapunov_bifurcation` | 3 |
+| `riemannian_manifold + lyapunov_bifurcation` | 5 |
 
 ### 최근 창발 이벤트
 
 | 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |
 |------|------|----|------|------|---------|
+| 4 | `mean_curvature` | 0.3240 | sigma_spike | 2.29 | `riemannian_manifold, geodesic_bifurcation` |
+| 3 | `std_curvature` | 0.1437 | sigma_spike | 2.27 | `riemannian_manifold, geodesic_bifurcation` |
 | 3 | `std_curvature` | 0.1514 | sigma_spike | 4.22 | `riemannian_manifold, geodesic_bifurcation` |
 | 3 | `concept` | 0.1600 | sigma_spike | 3.06 | `riemannian_manifold, geodesic_bifurcation` |
 | 3 | `hallucination_score` | 0.7641 | sigma_spike | 3.55 | `riemannian_manifold, geodesic_bifurcation` |
@@ -59,12 +70,14 @@
 timeline
     title 창발 급등 이벤트 타임라인
     Gen 3 : hallucination_score (sigma_spike)
+    Gen 4 : mean_curvature (sigma_spike)
 ```
 
 ## 라운드 기록
 
 | Round | Fitness | 세대 | Phase | 시간 | 창발 | 날짜 |
 |-------|---------|------|-------|------|------|------|
+| 2 | 1.0000 | 5 | 1 | 408s | 🔥 2 | 2026-03-19 12:27 |
 | 1 | 1.0000 | 5 | 1 | 258s | 🔥 1 | 2026-03-19 12:20 |
 
 ## 사용법
