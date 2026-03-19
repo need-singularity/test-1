@@ -122,8 +122,6 @@ class FuchsianGroup:
     ----------
     dim : int
         Ambient dimension (must be >= 2).
-    num_generators : int | None
-        Ignored (kept for API compat); generator count is determined by dim.
     use_fuchsian : bool
         If False, fall back to legacy mode (orbit = [v, -v]).
 
@@ -149,7 +147,6 @@ class FuchsianGroup:
     def __init__(
         self,
         dim: int,
-        num_generators: int | None = None,
         use_fuchsian: bool = True,
     ) -> None:
         if dim < 2:
