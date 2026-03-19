@@ -1,0 +1,333 @@
+{
+  "tasks": [
+    {
+      "id": "cond_2026",
+      "type": "conditional",
+      "question": "Variables start as: x0=1, x1=5, x2=8, x3=8, x4=1, x5=3\nStep 1: Swap x4 and x5\nStep 2: If x4 == 8, set x5 = 7; else x5 unchanged\nStep 3: Swap x3 and x1\nStep 4: Set x4 = 1\nStep 5: Set x2 = 1\nStep 6: If x0 == 7, set x5 = 5; else x5 unchanged\nStep 7: x3 = x3 -1\nStep 8: If x2 > x3, set x5 = 8; else set x5 = 1\nStep 9: If x0 > x4, set x4 = 4; else set x4 = 4\nStep 10: If x1 == 9, set x2 = 0; else x2 unchanged\nStep 11: If x2 > x3, set x3 = 1; else set x3 = 6\nStep 12: Swap x4 and x3\nStep 13: Set x3 = 8\nStep 14: Swap x3 and x5\nStep 15: Swap x2 and x3\nStep 16: Swap x3 and x4\nStep 17: Swap x0 and x4\nStep 18: x1 = x1 -5\nWhat is the value of x5? Answer with just the number.",
+      "answer": "8",
+      "accept": [
+        "8"
+      ],
+      "cot": "Initial: {'x0': 1, 'x1': 5, 'x2': 8, 'x3': 8, 'x4': 1, 'x5': 3}\nSwap x4 and x5 -> {'x0': 1, 'x1': 5, 'x2': 8, 'x3': 8, 'x4': 3, 'x5': 1}\nx4==8? NO -> no change -> {'x0': 1, 'x1': 5, 'x2': 8, 'x3': 8, 'x4': 3, 'x5': 1}\nSwap x3 and x1 -> {'x0': 1, 'x1': 8, 'x2': 8, 'x3': 5, 'x4': 3, 'x5': 1}\nSet x4 = 1 -> {'x0': 1, 'x1': 8, 'x2': 8, 'x3': 5, 'x4': 1, 'x5': 1}\nSet x2 = 1 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 5, 'x4': 1, 'x5': 1}\nx0==7? NO -> no change -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 5, 'x4': 1, 'x5': 1}\nx3 = x3 -1 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 4, 'x4': 1, 'x5': 1}\nIf x2 > x3, set x5 = 8; else set x5 = 1 | x2(1) > x3(4)? NO -> x5=1 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 4, 'x4': 1, 'x5': 1}\nIf x0 > x4, set x4 = 4; else set x4 = 4 | x0(1) > x4(4)? NO -> x4=4 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 4, 'x4': 4, 'x5': 1}\nx1==9? NO -> no change -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 4, 'x4': 4, 'x5': 1}\nIf x2 > x3, set x3 = 1; else set x3 = 6 | x2(1) > x3(6)? NO -> x3=6 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 6, 'x4': 4, 'x5': 1}\nSwap x4 and x3 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 4, 'x4': 6, 'x5': 1}\nSet x3 = 8 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 8, 'x4': 6, 'x5': 1}\nSwap x3 and x5 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 1, 'x4': 6, 'x5': 8}\nSwap x2 and x3 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 1, 'x4': 6, 'x5': 8}\nSwap x3 and x4 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 6, 'x4': 1, 'x5': 8}\nSwap x0 and x4 -> {'x0': 1, 'x1': 8, 'x2': 1, 'x3': 6, 'x4': 1, 'x5': 8}\nx1 = x1 -5 -> {'x0': 1, 'x1': 3, 'x2': 1, 'x3': 6, 'x4': 1, 'x5': 8}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2033",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Push 3 onto stack\nStep 2: Enqueue 7 into queue\nStep 3: Dequeue from queue (discard)\nStep 4: Pop from stack and enqueue into queue\nStep 5: Enqueue 7 into queue\nStep 6: Dequeue from queue (discard)\nStep 7: Push 9 onto stack\nStep 8: Enqueue 3 into queue\nStep 9: Dequeue from queue and push onto stack\nStep 10: Dequeue from queue (discard)\nStep 11: Enqueue 6 into queue\nStep 12: Enqueue 1 into queue\nStep 13: Dequeue from queue (discard)\nStep 14: Dequeue from queue and push onto stack\nStep 15: Pop from stack and enqueue into queue\nStep 16: Pop from stack and enqueue into queue\nStep 17: Enqueue 1 into queue\nStep 18: Pop from stack (discard)\nHow many elements are in the queue? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nPush 3 onto stack -> stack=[3], queue=[]\nEnqueue 7 into queue -> stack=[3], queue=[7]\nDequeue from queue (discard) -> stack=[3], queue=[]\nPop from stack and enqueue into queue -> stack=[], queue=[3]\nEnqueue 7 into queue -> stack=[], queue=[3, 7]\nDequeue from queue (discard) -> stack=[], queue=[7]\nPush 9 onto stack -> stack=[9], queue=[7]\nEnqueue 3 into queue -> stack=[9], queue=[7, 3]\nDequeue from queue and push onto stack -> stack=[9, 7], queue=[3]\nDequeue from queue (discard) -> stack=[9, 7], queue=[]\nEnqueue 6 into queue -> stack=[9, 7], queue=[6]\nEnqueue 1 into queue -> stack=[9, 7], queue=[6, 1]\nDequeue from queue (discard) -> stack=[9, 7], queue=[1]\nDequeue from queue and push onto stack -> stack=[9, 7, 1], queue=[]\nPop from stack and enqueue into queue -> stack=[9, 7], queue=[1]\nPop from stack and enqueue into queue -> stack=[9], queue=[1, 7]\nEnqueue 1 into queue -> stack=[9], queue=[1, 7, 1]\nPop from stack (discard) -> stack=[], queue=[1, 7, 1]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2040",
+      "type": "conditional",
+      "question": "Variables start as: x0=6, x1=8, x2=5, x3=9, x4=7, x5=7\nStep 1: If x4 == 5, set x1 = 2; else x1 unchanged\nStep 2: Set x0 = 3\nStep 3: If x0 == 9, set x2 = 5; else x2 unchanged\nStep 4: If x0 > x2, set x1 = 0; else set x1 = 0\nStep 5: If x5 > x2, set x3 = 2; else set x3 = 0\nStep 6: Set x5 = 1\nStep 7: x1 = x1 +4\nStep 8: If x4 > x0, set x0 = 6; else set x0 = 2\nStep 9: Swap x2 and x5\nStep 10: x2 = x2 +2\nStep 11: If x4 > x0, set x3 = 0; else set x3 = 8\nStep 12: Set x3 = 4\nStep 13: Swap x4 and x3\nStep 14: Set x0 = 9\nStep 15: If x4 == 3, set x0 = 0; else x0 unchanged\nStep 16: x2 = x2 -2\nStep 17: If x1 == 1, set x2 = 0; else x2 unchanged\nStep 18: If x1 > x2, set x1 = 4; else set x1 = 6\nWhat is the value of x4? Answer with just the number.",
+      "answer": "4",
+      "accept": [
+        "4"
+      ],
+      "cot": "Initial: {'x0': 6, 'x1': 8, 'x2': 5, 'x3': 9, 'x4': 7, 'x5': 7}\nx4==5? NO -> no change -> {'x0': 6, 'x1': 8, 'x2': 5, 'x3': 9, 'x4': 7, 'x5': 7}\nSet x0 = 3 -> {'x0': 3, 'x1': 8, 'x2': 5, 'x3': 9, 'x4': 7, 'x5': 7}\nx0==9? NO -> no change -> {'x0': 3, 'x1': 8, 'x2': 5, 'x3': 9, 'x4': 7, 'x5': 7}\nIf x0 > x2, set x1 = 0; else set x1 = 0 | x0(3) > x2(5)? NO -> x1=0 -> {'x0': 3, 'x1': 0, 'x2': 5, 'x3': 9, 'x4': 7, 'x5': 7}\nIf x5 > x2, set x3 = 2; else set x3 = 0 | x5(7) > x2(5)? YES -> x3=2 -> {'x0': 3, 'x1': 0, 'x2': 5, 'x3': 2, 'x4': 7, 'x5': 7}\nSet x5 = 1 -> {'x0': 3, 'x1': 0, 'x2': 5, 'x3': 2, 'x4': 7, 'x5': 1}\nx1 = x1 +4 -> {'x0': 3, 'x1': 4, 'x2': 5, 'x3': 2, 'x4': 7, 'x5': 1}\nIf x4 > x0, set x0 = 6; else set x0 = 2 | x4(7) > x0(6)? YES -> x0=6 -> {'x0': 6, 'x1': 4, 'x2': 5, 'x3': 2, 'x4': 7, 'x5': 1}\nSwap x2 and x5 -> {'x0': 6, 'x1': 4, 'x2': 1, 'x3': 2, 'x4': 7, 'x5': 5}\nx2 = x2 +2 -> {'x0': 6, 'x1': 4, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 5}\nIf x4 > x0, set x3 = 0; else set x3 = 8 | x4(7) > x0(6)? YES -> x3=0 -> {'x0': 6, 'x1': 4, 'x2': 3, 'x3': 0, 'x4': 7, 'x5': 5}\nSet x3 = 4 -> {'x0': 6, 'x1': 4, 'x2': 3, 'x3': 4, 'x4': 7, 'x5': 5}\nSwap x4 and x3 -> {'x0': 6, 'x1': 4, 'x2': 3, 'x3': 7, 'x4': 4, 'x5': 5}\nSet x0 = 9 -> {'x0': 9, 'x1': 4, 'x2': 3, 'x3': 7, 'x4': 4, 'x5': 5}\nx4==3? NO -> no change -> {'x0': 9, 'x1': 4, 'x2': 3, 'x3': 7, 'x4': 4, 'x5': 5}\nx2 = x2 -2 -> {'x0': 9, 'x1': 4, 'x2': 1, 'x3': 7, 'x4': 4, 'x5': 5}\nx1==1? NO -> no change -> {'x0': 9, 'x1': 4, 'x2': 1, 'x3': 7, 'x4': 4, 'x5': 5}\nIf x1 > x2, set x1 = 4; else set x1 = 6 | x1(4) > x2(1)? YES -> x1=4 -> {'x0': 9, 'x1': 4, 'x2': 1, 'x3': 7, 'x4': 4, 'x5': 5}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2047",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 8 into queue\nStep 2: Push 7 onto stack\nStep 3: Push 7 onto stack\nStep 4: Dequeue from queue and push onto stack\nStep 5: Push 2 onto stack\nStep 6: Push 3 onto stack\nStep 7: Enqueue 7 into queue\nStep 8: Enqueue 9 into queue\nStep 9: Push 8 onto stack\nStep 10: Enqueue 6 into queue\nStep 11: Dequeue from queue and push onto stack\nStep 12: Pop from stack and enqueue into queue\nStep 13: Pop from stack (discard)\nStep 14: Dequeue from queue and push onto stack\nStep 15: Pop from stack and enqueue into queue\nStep 16: Dequeue from queue and push onto stack\nStep 17: Pop from stack (discard)\nStep 18: Enqueue 7 into queue\nHow many elements are in the stack? Answer with just the number.",
+      "answer": "5",
+      "accept": [
+        "5"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 8 into queue -> stack=[], queue=[8]\nPush 7 onto stack -> stack=[7], queue=[8]\nPush 7 onto stack -> stack=[7, 7], queue=[8]\nDequeue from queue and push onto stack -> stack=[7, 7, 8], queue=[]\nPush 2 onto stack -> stack=[7, 7, 8, 2], queue=[]\nPush 3 onto stack -> stack=[7, 7, 8, 2, 3], queue=[]\nEnqueue 7 into queue -> stack=[7, 7, 8, 2, 3], queue=[7]\nEnqueue 9 into queue -> stack=[7, 7, 8, 2, 3], queue=[7, 9]\nPush 8 onto stack -> stack=[7, 7, 8, 2, 3, 8], queue=[7, 9]\nEnqueue 6 into queue -> stack=[7, 7, 8, 2, 3, 8], queue=[7, 9, 6]\nDequeue from queue and push onto stack -> stack=[7, 7, 8, 2, 3, 8, 7], queue=[9, 6]\nPop from stack and enqueue into queue -> stack=[7, 7, 8, 2, 3, 8], queue=[9, 6, 7]\nPop from stack (discard) -> stack=[7, 7, 8, 2, 3], queue=[9, 6, 7]\nDequeue from queue and push onto stack -> stack=[7, 7, 8, 2, 3, 9], queue=[6, 7]\nPop from stack and enqueue into queue -> stack=[7, 7, 8, 2, 3], queue=[6, 7, 9]\nDequeue from queue and push onto stack -> stack=[7, 7, 8, 2, 3, 6], queue=[7, 9]\nPop from stack (discard) -> stack=[7, 7, 8, 2, 3], queue=[7, 9]\nEnqueue 7 into queue -> stack=[7, 7, 8, 2, 3], queue=[7, 9, 7]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2054",
+      "type": "conditional",
+      "question": "Variables start as: x0=3, x1=8, x2=1, x3=5, x4=4, x5=8\nStep 1: x1 = x1 +0\nStep 2: x4 = x4 -2\nStep 3: If x0 > x4, set x1 = 0; else set x1 = 9\nStep 4: If x2 == 8, set x1 = 2; else x1 unchanged\nStep 5: If x5 == 0, set x3 = 0; else x3 unchanged\nStep 6: Swap x1 and x3\nStep 7: x0 = x0 -3\nStep 8: Swap x0 and x3\nStep 9: Set x5 = 6\nStep 10: If x4 > x2, set x2 = 4; else set x2 = 2\nStep 11: If x2 == 1, set x4 = 2; else x4 unchanged\nStep 12: If x4 > x0, set x3 = 8; else set x3 = 1\nStep 13: Set x1 = 7\nStep 14: If x0 == 3, set x3 = 1; else x3 unchanged\nStep 15: Set x2 = 7\nStep 16: If x3 == 3, set x4 = 3; else x4 unchanged\nStep 17: Set x3 = 0\nStep 18: Set x1 = 8\nWhat is the value of x2? Answer with just the number.",
+      "answer": "7",
+      "accept": [
+        "7"
+      ],
+      "cot": "Initial: {'x0': 3, 'x1': 8, 'x2': 1, 'x3': 5, 'x4': 4, 'x5': 8}\nx1 = x1 +0 -> {'x0': 3, 'x1': 8, 'x2': 1, 'x3': 5, 'x4': 4, 'x5': 8}\nx4 = x4 -2 -> {'x0': 3, 'x1': 8, 'x2': 1, 'x3': 5, 'x4': 2, 'x5': 8}\nIf x0 > x4, set x1 = 0; else set x1 = 9 | x0(3) > x4(2)? YES -> x1=0 -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 5, 'x4': 2, 'x5': 8}\nx2==8? NO -> no change -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 5, 'x4': 2, 'x5': 8}\nx5==0? NO -> no change -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 5, 'x4': 2, 'x5': 8}\nSwap x1 and x3 -> {'x0': 3, 'x1': 5, 'x2': 1, 'x3': 0, 'x4': 2, 'x5': 8}\nx0 = x0 -3 -> {'x0': 0, 'x1': 5, 'x2': 1, 'x3': 0, 'x4': 2, 'x5': 8}\nSwap x0 and x3 -> {'x0': 0, 'x1': 5, 'x2': 1, 'x3': 0, 'x4': 2, 'x5': 8}\nSet x5 = 6 -> {'x0': 0, 'x1': 5, 'x2': 1, 'x3': 0, 'x4': 2, 'x5': 6}\nIf x4 > x2, set x2 = 4; else set x2 = 2 | x4(2) > x2(4)? YES -> x2=4 -> {'x0': 0, 'x1': 5, 'x2': 4, 'x3': 0, 'x4': 2, 'x5': 6}\nx2==1? NO -> no change -> {'x0': 0, 'x1': 5, 'x2': 4, 'x3': 0, 'x4': 2, 'x5': 6}\nIf x4 > x0, set x3 = 8; else set x3 = 1 | x4(2) > x0(0)? YES -> x3=8 -> {'x0': 0, 'x1': 5, 'x2': 4, 'x3': 8, 'x4': 2, 'x5': 6}\nSet x1 = 7 -> {'x0': 0, 'x1': 7, 'x2': 4, 'x3': 8, 'x4': 2, 'x5': 6}\nx0==3? NO -> no change -> {'x0': 0, 'x1': 7, 'x2': 4, 'x3': 8, 'x4': 2, 'x5': 6}\nSet x2 = 7 -> {'x0': 0, 'x1': 7, 'x2': 7, 'x3': 8, 'x4': 2, 'x5': 6}\nx3==3? NO -> no change -> {'x0': 0, 'x1': 7, 'x2': 7, 'x3': 8, 'x4': 2, 'x5': 6}\nSet x3 = 0 -> {'x0': 0, 'x1': 7, 'x2': 7, 'x3': 0, 'x4': 2, 'x5': 6}\nSet x1 = 8 -> {'x0': 0, 'x1': 8, 'x2': 7, 'x3': 0, 'x4': 2, 'x5': 6}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2061",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 5 into queue\nStep 2: Dequeue from queue and push onto stack\nStep 3: Enqueue 6 into queue\nStep 4: Enqueue 7 into queue\nStep 5: Enqueue 8 into queue\nStep 6: Dequeue from queue (discard)\nStep 7: Enqueue 7 into queue\nStep 8: Dequeue from queue (discard)\nStep 9: Dequeue from queue (discard)\nStep 10: Push 1 onto stack\nStep 11: Push 7 onto stack\nStep 12: Enqueue 4 into queue\nStep 13: Push 4 onto stack\nStep 14: Enqueue 4 into queue\nStep 15: Push 9 onto stack\nStep 16: Enqueue 1 into queue\nStep 17: Pop from stack and enqueue into queue\nStep 18: Push 2 onto stack\nHow many elements are in the stack? Answer with just the number.",
+      "answer": "5",
+      "accept": [
+        "5"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 5 into queue -> stack=[], queue=[5]\nDequeue from queue and push onto stack -> stack=[5], queue=[]\nEnqueue 6 into queue -> stack=[5], queue=[6]\nEnqueue 7 into queue -> stack=[5], queue=[6, 7]\nEnqueue 8 into queue -> stack=[5], queue=[6, 7, 8]\nDequeue from queue (discard) -> stack=[5], queue=[7, 8]\nEnqueue 7 into queue -> stack=[5], queue=[7, 8, 7]\nDequeue from queue (discard) -> stack=[5], queue=[8, 7]\nDequeue from queue (discard) -> stack=[5], queue=[7]\nPush 1 onto stack -> stack=[5, 1], queue=[7]\nPush 7 onto stack -> stack=[5, 1, 7], queue=[7]\nEnqueue 4 into queue -> stack=[5, 1, 7], queue=[7, 4]\nPush 4 onto stack -> stack=[5, 1, 7, 4], queue=[7, 4]\nEnqueue 4 into queue -> stack=[5, 1, 7, 4], queue=[7, 4, 4]\nPush 9 onto stack -> stack=[5, 1, 7, 4, 9], queue=[7, 4, 4]\nEnqueue 1 into queue -> stack=[5, 1, 7, 4, 9], queue=[7, 4, 4, 1]\nPop from stack and enqueue into queue -> stack=[5, 1, 7, 4], queue=[7, 4, 4, 1, 9]\nPush 2 onto stack -> stack=[5, 1, 7, 4, 2], queue=[7, 4, 4, 1, 9]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2068",
+      "type": "conditional",
+      "question": "Variables start as: x0=1, x1=7, x2=7, x3=1, x4=9, x5=7\nStep 1: If x0 == 1, set x5 = 9; else x5 unchanged\nStep 2: x4 = x4 -2\nStep 3: x0 = x0 +1\nStep 4: Swap x3 and x0\nStep 5: Set x2 = 3\nStep 6: If x5 > x1, set x1 = 4; else set x1 = 8\nStep 7: Set x2 = 6\nStep 8: If x3 > x2, set x5 = 5; else set x5 = 4\nStep 9: If x2 > x1, set x2 = 4; else set x2 = 9\nStep 10: Set x2 = 3\nStep 11: x5 = x5 +4\nStep 12: Set x5 = 3\nStep 13: Set x1 = 7\nStep 14: x0 = x0 +4\nStep 15: If x3 > x2, set x1 = 3; else set x1 = 8\nStep 16: Set x2 = 2\nStep 17: Swap x2 and x5\nStep 18: Swap x2 and x0\nWhat is the value of x2? Answer with just the number.",
+      "answer": "5",
+      "accept": [
+        "5"
+      ],
+      "cot": "Initial: {'x0': 1, 'x1': 7, 'x2': 7, 'x3': 1, 'x4': 9, 'x5': 7}\nx0==1? YES -> x5=9 -> {'x0': 1, 'x1': 7, 'x2': 7, 'x3': 1, 'x4': 9, 'x5': 9}\nx4 = x4 -2 -> {'x0': 1, 'x1': 7, 'x2': 7, 'x3': 1, 'x4': 7, 'x5': 9}\nx0 = x0 +1 -> {'x0': 2, 'x1': 7, 'x2': 7, 'x3': 1, 'x4': 7, 'x5': 9}\nSwap x3 and x0 -> {'x0': 1, 'x1': 7, 'x2': 7, 'x3': 2, 'x4': 7, 'x5': 9}\nSet x2 = 3 -> {'x0': 1, 'x1': 7, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 9}\nIf x5 > x1, set x1 = 4; else set x1 = 8 | x5(9) > x1(4)? YES -> x1=4 -> {'x0': 1, 'x1': 4, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 9}\nSet x2 = 6 -> {'x0': 1, 'x1': 4, 'x2': 6, 'x3': 2, 'x4': 7, 'x5': 9}\nIf x3 > x2, set x5 = 5; else set x5 = 4 | x3(2) > x2(6)? NO -> x5=4 -> {'x0': 1, 'x1': 4, 'x2': 6, 'x3': 2, 'x4': 7, 'x5': 4}\nIf x2 > x1, set x2 = 4; else set x2 = 9 | x2(4) > x1(4)? YES -> x2=4 -> {'x0': 1, 'x1': 4, 'x2': 4, 'x3': 2, 'x4': 7, 'x5': 4}\nSet x2 = 3 -> {'x0': 1, 'x1': 4, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 4}\nx5 = x5 +4 -> {'x0': 1, 'x1': 4, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 8}\nSet x5 = 3 -> {'x0': 1, 'x1': 4, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 3}\nSet x1 = 7 -> {'x0': 1, 'x1': 7, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 3}\nx0 = x0 +4 -> {'x0': 5, 'x1': 7, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 3}\nIf x3 > x2, set x1 = 3; else set x1 = 8 | x3(2) > x2(3)? NO -> x1=8 -> {'x0': 5, 'x1': 8, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 3}\nSet x2 = 2 -> {'x0': 5, 'x1': 8, 'x2': 2, 'x3': 2, 'x4': 7, 'x5': 3}\nSwap x2 and x5 -> {'x0': 5, 'x1': 8, 'x2': 3, 'x3': 2, 'x4': 7, 'x5': 2}\nSwap x2 and x0 -> {'x0': 3, 'x1': 8, 'x2': 5, 'x3': 2, 'x4': 7, 'x5': 2}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2075",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 7 into queue\nStep 2: Dequeue from queue and push onto stack\nStep 3: Enqueue 8 into queue\nStep 4: Enqueue 2 into queue\nStep 5: Enqueue 1 into queue\nStep 6: Dequeue from queue (discard)\nStep 7: Pop from stack (discard)\nStep 8: Dequeue from queue (discard)\nStep 9: Enqueue 5 into queue\nStep 10: Push 3 onto stack\nStep 11: Pop from stack and enqueue into queue\nStep 12: Push 5 onto stack\nStep 13: Enqueue 5 into queue\nStep 14: Pop from stack and enqueue into queue\nStep 15: Push 3 onto stack\nStep 16: Push 5 onto stack\nStep 17: Push 6 onto stack\nStep 18: Dequeue from queue and push onto stack\nHow many elements are in the stack? Answer with just the number.",
+      "answer": "4",
+      "accept": [
+        "4"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 7 into queue -> stack=[], queue=[7]\nDequeue from queue and push onto stack -> stack=[7], queue=[]\nEnqueue 8 into queue -> stack=[7], queue=[8]\nEnqueue 2 into queue -> stack=[7], queue=[8, 2]\nEnqueue 1 into queue -> stack=[7], queue=[8, 2, 1]\nDequeue from queue (discard) -> stack=[7], queue=[2, 1]\nPop from stack (discard) -> stack=[], queue=[2, 1]\nDequeue from queue (discard) -> stack=[], queue=[1]\nEnqueue 5 into queue -> stack=[], queue=[1, 5]\nPush 3 onto stack -> stack=[3], queue=[1, 5]\nPop from stack and enqueue into queue -> stack=[], queue=[1, 5, 3]\nPush 5 onto stack -> stack=[5], queue=[1, 5, 3]\nEnqueue 5 into queue -> stack=[5], queue=[1, 5, 3, 5]\nPop from stack and enqueue into queue -> stack=[], queue=[1, 5, 3, 5, 5]\nPush 3 onto stack -> stack=[3], queue=[1, 5, 3, 5, 5]\nPush 5 onto stack -> stack=[3, 5], queue=[1, 5, 3, 5, 5]\nPush 6 onto stack -> stack=[3, 5, 6], queue=[1, 5, 3, 5, 5]\nDequeue from queue and push onto stack -> stack=[3, 5, 6, 1], queue=[5, 3, 5, 5]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2082",
+      "type": "conditional",
+      "question": "Variables start as: x0=1, x1=1, x2=6, x3=0, x4=2, x5=5\nStep 1: If x1 > x5, set x4 = 5; else set x4 = 1\nStep 2: Set x5 = 2\nStep 3: If x1 > x4, set x0 = 6; else set x0 = 9\nStep 4: If x0 == 2, set x1 = 3; else x1 unchanged\nStep 5: If x3 > x4, set x4 = 2; else set x4 = 8\nStep 6: x0 = x0 +2\nStep 7: If x5 > x4, set x5 = 8; else set x5 = 3\nStep 8: Swap x2 and x3\nStep 9: Set x1 = 3\nStep 10: x0 = x0 -4\nStep 11: Swap x2 and x3\nStep 12: Set x2 = 6\nStep 13: x1 = x1 +4\nStep 14: Set x4 = 7\nStep 15: Swap x4 and x2\nStep 16: x2 = x2 +0\nStep 17: x0 = x0 +1\nStep 18: Set x4 = 4\nWhat is the value of x5? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: {'x0': 1, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 2, 'x5': 5}\nIf x1 > x5, set x4 = 5; else set x4 = 1 | x1(1) > x5(5)? NO -> x4=1 -> {'x0': 1, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 1, 'x5': 5}\nSet x5 = 2 -> {'x0': 1, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 1, 'x5': 2}\nIf x1 > x4, set x0 = 6; else set x0 = 9 | x1(1) > x4(1)? NO -> x0=9 -> {'x0': 9, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 1, 'x5': 2}\nx0==2? NO -> no change -> {'x0': 9, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 1, 'x5': 2}\nIf x3 > x4, set x4 = 2; else set x4 = 8 | x3(0) > x4(8)? NO -> x4=8 -> {'x0': 9, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 2}\nx0 = x0 +2 -> {'x0': 11, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 2}\nIf x5 > x4, set x5 = 8; else set x5 = 3 | x5(3) > x4(8)? NO -> x5=3 -> {'x0': 11, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 3}\nSwap x2 and x3 -> {'x0': 11, 'x1': 1, 'x2': 0, 'x3': 6, 'x4': 8, 'x5': 3}\nSet x1 = 3 -> {'x0': 11, 'x1': 3, 'x2': 0, 'x3': 6, 'x4': 8, 'x5': 3}\nx0 = x0 -4 -> {'x0': 7, 'x1': 3, 'x2': 0, 'x3': 6, 'x4': 8, 'x5': 3}\nSwap x2 and x3 -> {'x0': 7, 'x1': 3, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 3}\nSet x2 = 6 -> {'x0': 7, 'x1': 3, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 3}\nx1 = x1 +4 -> {'x0': 7, 'x1': 7, 'x2': 6, 'x3': 0, 'x4': 8, 'x5': 3}\nSet x4 = 7 -> {'x0': 7, 'x1': 7, 'x2': 6, 'x3': 0, 'x4': 7, 'x5': 3}\nSwap x4 and x2 -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 0, 'x4': 6, 'x5': 3}\nx2 = x2 +0 -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 0, 'x4': 6, 'x5': 3}\nx0 = x0 +1 -> {'x0': 8, 'x1': 7, 'x2': 7, 'x3': 0, 'x4': 6, 'x5': 3}\nSet x4 = 4 -> {'x0': 8, 'x1': 7, 'x2': 7, 'x3': 0, 'x4': 4, 'x5': 3}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2089",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Push 2 onto stack\nStep 2: Pop from stack (discard)\nStep 3: Enqueue 9 into queue\nStep 4: Enqueue 2 into queue\nStep 5: Enqueue 5 into queue\nStep 6: Push 4 onto stack\nStep 7: Pop from stack (discard)\nStep 8: Dequeue from queue and push onto stack\nStep 9: Enqueue 4 into queue\nStep 10: Enqueue 3 into queue\nStep 11: Dequeue from queue and push onto stack\nStep 12: Pop from stack and enqueue into queue\nStep 13: Pop from stack (discard)\nStep 14: Push 7 onto stack\nStep 15: Pop from stack (discard)\nStep 16: Enqueue 3 into queue\nStep 17: Dequeue from queue (discard)\nStep 18: Push 6 onto stack\nHow many elements are in the queue? Answer with just the number.",
+      "answer": "4",
+      "accept": [
+        "4"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nPush 2 onto stack -> stack=[2], queue=[]\nPop from stack (discard) -> stack=[], queue=[]\nEnqueue 9 into queue -> stack=[], queue=[9]\nEnqueue 2 into queue -> stack=[], queue=[9, 2]\nEnqueue 5 into queue -> stack=[], queue=[9, 2, 5]\nPush 4 onto stack -> stack=[4], queue=[9, 2, 5]\nPop from stack (discard) -> stack=[], queue=[9, 2, 5]\nDequeue from queue and push onto stack -> stack=[9], queue=[2, 5]\nEnqueue 4 into queue -> stack=[9], queue=[2, 5, 4]\nEnqueue 3 into queue -> stack=[9], queue=[2, 5, 4, 3]\nDequeue from queue and push onto stack -> stack=[9, 2], queue=[5, 4, 3]\nPop from stack and enqueue into queue -> stack=[9], queue=[5, 4, 3, 2]\nPop from stack (discard) -> stack=[], queue=[5, 4, 3, 2]\nPush 7 onto stack -> stack=[7], queue=[5, 4, 3, 2]\nPop from stack (discard) -> stack=[], queue=[5, 4, 3, 2]\nEnqueue 3 into queue -> stack=[], queue=[5, 4, 3, 2, 3]\nDequeue from queue (discard) -> stack=[], queue=[4, 3, 2, 3]\nPush 6 onto stack -> stack=[6], queue=[4, 3, 2, 3]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2096",
+      "type": "conditional",
+      "question": "Variables start as: x0=0, x1=1, x2=4, x3=4, x4=8, x5=6\nStep 1: Swap x1 and x5\nStep 2: If x5 > x0, set x2 = 0; else set x2 = 2\nStep 3: Swap x1 and x5\nStep 4: If x1 == 2, set x1 = 9; else x1 unchanged\nStep 5: If x4 > x5, set x1 = 1; else set x1 = 0\nStep 6: If x1 == 9, set x1 = 6; else x1 unchanged\nStep 7: If x4 > x3, set x0 = 2; else set x0 = 3\nStep 8: x2 = x2 +5\nStep 9: x2 = x2 -4\nStep 10: If x5 > x4, set x5 = 7; else set x5 = 4\nStep 11: If x4 > x0, set x2 = 2; else set x2 = 8\nStep 12: Swap x2 and x0\nStep 13: Swap x3 and x4\nStep 14: Set x4 = 8\nStep 15: If x2 > x5, set x2 = 0; else set x2 = 8\nStep 16: Set x1 = 4\nStep 17: x2 = x2 +1\nStep 18: Set x5 = 6\nWhat is the value of x4? Answer with just the number.",
+      "answer": "8",
+      "accept": [
+        "8"
+      ],
+      "cot": "Initial: {'x0': 0, 'x1': 1, 'x2': 4, 'x3': 4, 'x4': 8, 'x5': 6}\nSwap x1 and x5 -> {'x0': 0, 'x1': 6, 'x2': 4, 'x3': 4, 'x4': 8, 'x5': 1}\nIf x5 > x0, set x2 = 0; else set x2 = 2 | x5(1) > x0(0)? YES -> x2=0 -> {'x0': 0, 'x1': 6, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 1}\nSwap x1 and x5 -> {'x0': 0, 'x1': 1, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 6}\nx1==2? NO -> no change -> {'x0': 0, 'x1': 1, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 6}\nIf x4 > x5, set x1 = 1; else set x1 = 0 | x4(8) > x5(6)? YES -> x1=1 -> {'x0': 0, 'x1': 1, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 6}\nx1==9? NO -> no change -> {'x0': 0, 'x1': 1, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 6}\nIf x4 > x3, set x0 = 2; else set x0 = 3 | x4(8) > x3(4)? YES -> x0=2 -> {'x0': 2, 'x1': 1, 'x2': 0, 'x3': 4, 'x4': 8, 'x5': 6}\nx2 = x2 +5 -> {'x0': 2, 'x1': 1, 'x2': 5, 'x3': 4, 'x4': 8, 'x5': 6}\nx2 = x2 -4 -> {'x0': 2, 'x1': 1, 'x2': 1, 'x3': 4, 'x4': 8, 'x5': 6}\nIf x5 > x4, set x5 = 7; else set x5 = 4 | x5(4) > x4(8)? NO -> x5=4 -> {'x0': 2, 'x1': 1, 'x2': 1, 'x3': 4, 'x4': 8, 'x5': 4}\nIf x4 > x0, set x2 = 2; else set x2 = 8 | x4(8) > x0(2)? YES -> x2=2 -> {'x0': 2, 'x1': 1, 'x2': 2, 'x3': 4, 'x4': 8, 'x5': 4}\nSwap x2 and x0 -> {'x0': 2, 'x1': 1, 'x2': 2, 'x3': 4, 'x4': 8, 'x5': 4}\nSwap x3 and x4 -> {'x0': 2, 'x1': 1, 'x2': 2, 'x3': 8, 'x4': 4, 'x5': 4}\nSet x4 = 8 -> {'x0': 2, 'x1': 1, 'x2': 2, 'x3': 8, 'x4': 8, 'x5': 4}\nIf x2 > x5, set x2 = 0; else set x2 = 8 | x2(8) > x5(4)? NO -> x2=8 -> {'x0': 2, 'x1': 1, 'x2': 8, 'x3': 8, 'x4': 8, 'x5': 4}\nSet x1 = 4 -> {'x0': 2, 'x1': 4, 'x2': 8, 'x3': 8, 'x4': 8, 'x5': 4}\nx2 = x2 +1 -> {'x0': 2, 'x1': 4, 'x2': 9, 'x3': 8, 'x4': 8, 'x5': 4}\nSet x5 = 6 -> {'x0': 2, 'x1': 4, 'x2': 9, 'x3': 8, 'x4': 8, 'x5': 6}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2103",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 9 into queue\nStep 2: Enqueue 1 into queue\nStep 3: Push 1 onto stack\nStep 4: Push 7 onto stack\nStep 5: Enqueue 8 into queue\nStep 6: Dequeue from queue and push onto stack\nStep 7: Dequeue from queue (discard)\nStep 8: Pop from stack (discard)\nStep 9: Push 1 onto stack\nStep 10: Enqueue 8 into queue\nStep 11: Dequeue from queue and push onto stack\nStep 12: Pop from stack and enqueue into queue\nStep 13: Push 9 onto stack\nStep 14: Pop from stack (discard)\nStep 15: Pop from stack and enqueue into queue\nStep 16: Pop from stack and enqueue into queue\nStep 17: Dequeue from queue (discard)\nStep 18: Push 1 onto stack\nHow many elements are in the queue? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 9 into queue -> stack=[], queue=[9]\nEnqueue 1 into queue -> stack=[], queue=[9, 1]\nPush 1 onto stack -> stack=[1], queue=[9, 1]\nPush 7 onto stack -> stack=[1, 7], queue=[9, 1]\nEnqueue 8 into queue -> stack=[1, 7], queue=[9, 1, 8]\nDequeue from queue and push onto stack -> stack=[1, 7, 9], queue=[1, 8]\nDequeue from queue (discard) -> stack=[1, 7, 9], queue=[8]\nPop from stack (discard) -> stack=[1, 7], queue=[8]\nPush 1 onto stack -> stack=[1, 7, 1], queue=[8]\nEnqueue 8 into queue -> stack=[1, 7, 1], queue=[8, 8]\nDequeue from queue and push onto stack -> stack=[1, 7, 1, 8], queue=[8]\nPop from stack and enqueue into queue -> stack=[1, 7, 1], queue=[8, 8]\nPush 9 onto stack -> stack=[1, 7, 1, 9], queue=[8, 8]\nPop from stack (discard) -> stack=[1, 7, 1], queue=[8, 8]\nPop from stack and enqueue into queue -> stack=[1, 7], queue=[8, 8, 1]\nPop from stack and enqueue into queue -> stack=[1], queue=[8, 8, 1, 7]\nDequeue from queue (discard) -> stack=[1], queue=[8, 1, 7]\nPush 1 onto stack -> stack=[1, 1], queue=[8, 1, 7]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2110",
+      "type": "conditional",
+      "question": "Variables start as: x0=1, x1=3, x2=7, x3=9, x4=7, x5=2\nStep 1: If x1 == 0, set x4 = 1; else x4 unchanged\nStep 2: If x4 > x2, set x0 = 2; else set x0 = 6\nStep 3: Set x3 = 9\nStep 4: If x4 == 5, set x4 = 9; else x4 unchanged\nStep 5: Swap x4 and x1\nStep 6: Set x5 = 9\nStep 7: Swap x4 and x5\nStep 8: Set x5 = 4\nStep 9: If x1 == 9, set x4 = 8; else x4 unchanged\nStep 10: If x4 == 0, set x2 = 6; else x2 unchanged\nStep 11: If x3 > x1, set x3 = 5; else set x3 = 5\nStep 12: x0 = x0 +1\nStep 13: If x4 > x5, set x0 = 6; else set x0 = 3\nStep 14: x0 = x0 +1\nStep 15: If x5 == 2, set x0 = 3; else x0 unchanged\nStep 16: x4 = x4 +2\nStep 17: Set x2 = 9\nStep 18: Swap x1 and x0\nWhat is the value of x5? Answer with just the number.",
+      "answer": "4",
+      "accept": [
+        "4"
+      ],
+      "cot": "Initial: {'x0': 1, 'x1': 3, 'x2': 7, 'x3': 9, 'x4': 7, 'x5': 2}\nx1==0? NO -> no change -> {'x0': 1, 'x1': 3, 'x2': 7, 'x3': 9, 'x4': 7, 'x5': 2}\nIf x4 > x2, set x0 = 2; else set x0 = 6 | x4(7) > x2(7)? NO -> x0=6 -> {'x0': 6, 'x1': 3, 'x2': 7, 'x3': 9, 'x4': 7, 'x5': 2}\nSet x3 = 9 -> {'x0': 6, 'x1': 3, 'x2': 7, 'x3': 9, 'x4': 7, 'x5': 2}\nx4==5? NO -> no change -> {'x0': 6, 'x1': 3, 'x2': 7, 'x3': 9, 'x4': 7, 'x5': 2}\nSwap x4 and x1 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 3, 'x5': 2}\nSet x5 = 9 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 3, 'x5': 9}\nSwap x4 and x5 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 9, 'x5': 3}\nSet x5 = 4 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 9, 'x5': 4}\nx1==9? NO -> no change -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 9, 'x5': 4}\nx4==0? NO -> no change -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 9, 'x4': 9, 'x5': 4}\nIf x3 > x1, set x3 = 5; else set x3 = 5 | x3(5) > x1(7)? YES -> x3=5 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 9, 'x5': 4}\nx0 = x0 +1 -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 9, 'x5': 4}\nIf x4 > x5, set x0 = 6; else set x0 = 3 | x4(9) > x5(4)? YES -> x0=6 -> {'x0': 6, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 9, 'x5': 4}\nx0 = x0 +1 -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 9, 'x5': 4}\nx5==2? NO -> no change -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 9, 'x5': 4}\nx4 = x4 +2 -> {'x0': 7, 'x1': 7, 'x2': 7, 'x3': 5, 'x4': 11, 'x5': 4}\nSet x2 = 9 -> {'x0': 7, 'x1': 7, 'x2': 9, 'x3': 5, 'x4': 11, 'x5': 4}\nSwap x1 and x0 -> {'x0': 7, 'x1': 7, 'x2': 9, 'x3': 5, 'x4': 11, 'x5': 4}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2117",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 8 into queue\nStep 2: Dequeue from queue and push onto stack\nStep 3: Pop from stack (discard)\nStep 4: Enqueue 3 into queue\nStep 5: Push 3 onto stack\nStep 6: Push 9 onto stack\nStep 7: Pop from stack and enqueue into queue\nStep 8: Push 7 onto stack\nStep 9: Enqueue 1 into queue\nStep 10: Pop from stack and enqueue into queue\nStep 11: Pop from stack and enqueue into queue\nStep 12: Push 4 onto stack\nStep 13: Dequeue from queue (discard)\nStep 14: Dequeue from queue and push onto stack\nStep 15: Dequeue from queue (discard)\nStep 16: Pop from stack and enqueue into queue\nStep 17: Pop from stack (discard)\nStep 18: Push 4 onto stack\nWhat is the top element of the stack? Answer with just the number.",
+      "answer": "4",
+      "accept": [
+        "4"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 8 into queue -> stack=[], queue=[8]\nDequeue from queue and push onto stack -> stack=[8], queue=[]\nPop from stack (discard) -> stack=[], queue=[]\nEnqueue 3 into queue -> stack=[], queue=[3]\nPush 3 onto stack -> stack=[3], queue=[3]\nPush 9 onto stack -> stack=[3, 9], queue=[3]\nPop from stack and enqueue into queue -> stack=[3], queue=[3, 9]\nPush 7 onto stack -> stack=[3, 7], queue=[3, 9]\nEnqueue 1 into queue -> stack=[3, 7], queue=[3, 9, 1]\nPop from stack and enqueue into queue -> stack=[3], queue=[3, 9, 1, 7]\nPop from stack and enqueue into queue -> stack=[], queue=[3, 9, 1, 7, 3]\nPush 4 onto stack -> stack=[4], queue=[3, 9, 1, 7, 3]\nDequeue from queue (discard) -> stack=[4], queue=[9, 1, 7, 3]\nDequeue from queue and push onto stack -> stack=[4, 9], queue=[1, 7, 3]\nDequeue from queue (discard) -> stack=[4, 9], queue=[7, 3]\nPop from stack and enqueue into queue -> stack=[4], queue=[7, 3, 9]\nPop from stack (discard) -> stack=[], queue=[7, 3, 9]\nPush 4 onto stack -> stack=[4], queue=[7, 3, 9]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2124",
+      "type": "conditional",
+      "question": "Variables start as: x0=0, x1=0, x2=2, x3=5, x4=3, x5=6\nStep 1: Set x3 = 8\nStep 2: If x1 > x0, set x0 = 4; else set x0 = 6\nStep 3: Set x2 = 1\nStep 4: If x4 == 8, set x0 = 7; else x0 unchanged\nStep 5: x0 = x0 -5\nStep 6: x0 = x0 +2\nStep 7: x3 = x3 +3\nStep 8: If x1 == 6, set x3 = 0; else x3 unchanged\nStep 9: If x0 > x5, set x4 = 6; else set x4 = 2\nStep 10: Swap x2 and x4\nStep 11: If x0 == 3, set x4 = 5; else x4 unchanged\nStep 12: Swap x1 and x0\nStep 13: If x4 > x3, set x0 = 0; else set x0 = 3\nStep 14: x5 = x5 -3\nStep 15: If x1 > x5, set x4 = 2; else set x4 = 3\nStep 16: x0 = x0 -5\nStep 17: If x1 > x3, set x0 = 5; else set x0 = 3\nStep 18: Set x0 = 2\nWhat is the value of x1? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: {'x0': 0, 'x1': 0, 'x2': 2, 'x3': 5, 'x4': 3, 'x5': 6}\nSet x3 = 8 -> {'x0': 0, 'x1': 0, 'x2': 2, 'x3': 8, 'x4': 3, 'x5': 6}\nIf x1 > x0, set x0 = 4; else set x0 = 6 | x1(0) > x0(6)? NO -> x0=6 -> {'x0': 6, 'x1': 0, 'x2': 2, 'x3': 8, 'x4': 3, 'x5': 6}\nSet x2 = 1 -> {'x0': 6, 'x1': 0, 'x2': 1, 'x3': 8, 'x4': 3, 'x5': 6}\nx4==8? NO -> no change -> {'x0': 6, 'x1': 0, 'x2': 1, 'x3': 8, 'x4': 3, 'x5': 6}\nx0 = x0 -5 -> {'x0': 1, 'x1': 0, 'x2': 1, 'x3': 8, 'x4': 3, 'x5': 6}\nx0 = x0 +2 -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 8, 'x4': 3, 'x5': 6}\nx3 = x3 +3 -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 11, 'x4': 3, 'x5': 6}\nx1==6? NO -> no change -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 11, 'x4': 3, 'x5': 6}\nIf x0 > x5, set x4 = 6; else set x4 = 2 | x0(3) > x5(6)? NO -> x4=2 -> {'x0': 3, 'x1': 0, 'x2': 1, 'x3': 11, 'x4': 2, 'x5': 6}\nSwap x2 and x4 -> {'x0': 3, 'x1': 0, 'x2': 2, 'x3': 11, 'x4': 1, 'x5': 6}\nx0==3? YES -> x4=5 -> {'x0': 3, 'x1': 0, 'x2': 2, 'x3': 11, 'x4': 5, 'x5': 6}\nSwap x1 and x0 -> {'x0': 0, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 5, 'x5': 6}\nIf x4 > x3, set x0 = 0; else set x0 = 3 | x4(5) > x3(11)? NO -> x0=3 -> {'x0': 3, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 5, 'x5': 6}\nx5 = x5 -3 -> {'x0': 3, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 5, 'x5': 3}\nIf x1 > x5, set x4 = 2; else set x4 = 3 | x1(3) > x5(3)? NO -> x4=3 -> {'x0': 3, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 3, 'x5': 3}\nx0 = x0 -5 -> {'x0': -2, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 3, 'x5': 3}\nIf x1 > x3, set x0 = 5; else set x0 = 3 | x1(3) > x3(11)? NO -> x0=3 -> {'x0': 3, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 3, 'x5': 3}\nSet x0 = 2 -> {'x0': 2, 'x1': 3, 'x2': 2, 'x3': 11, 'x4': 3, 'x5': 3}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2131",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Push 6 onto stack\nStep 2: Enqueue 3 into queue\nStep 3: Pop from stack and enqueue into queue\nStep 4: Push 6 onto stack\nStep 5: Pop from stack and enqueue into queue\nStep 6: Enqueue 9 into queue\nStep 7: Push 7 onto stack\nStep 8: Enqueue 1 into queue\nStep 9: Dequeue from queue and push onto stack\nStep 10: Push 8 onto stack\nStep 11: Pop from stack and enqueue into queue\nStep 12: Pop from stack and enqueue into queue\nStep 13: Enqueue 9 into queue\nStep 14: Enqueue 6 into queue\nStep 15: Push 5 onto stack\nStep 16: Push 9 onto stack\nStep 17: Pop from stack and enqueue into queue\nStep 18: Dequeue from queue and push onto stack\nWhat is the front element of the queue? Answer with just the number.",
+      "answer": "6",
+      "accept": [
+        "6"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nPush 6 onto stack -> stack=[6], queue=[]\nEnqueue 3 into queue -> stack=[6], queue=[3]\nPop from stack and enqueue into queue -> stack=[], queue=[3, 6]\nPush 6 onto stack -> stack=[6], queue=[3, 6]\nPop from stack and enqueue into queue -> stack=[], queue=[3, 6, 6]\nEnqueue 9 into queue -> stack=[], queue=[3, 6, 6, 9]\nPush 7 onto stack -> stack=[7], queue=[3, 6, 6, 9]\nEnqueue 1 into queue -> stack=[7], queue=[3, 6, 6, 9, 1]\nDequeue from queue and push onto stack -> stack=[7, 3], queue=[6, 6, 9, 1]\nPush 8 onto stack -> stack=[7, 3, 8], queue=[6, 6, 9, 1]\nPop from stack and enqueue into queue -> stack=[7, 3], queue=[6, 6, 9, 1, 8]\nPop from stack and enqueue into queue -> stack=[7], queue=[6, 6, 9, 1, 8, 3]\nEnqueue 9 into queue -> stack=[7], queue=[6, 6, 9, 1, 8, 3, 9]\nEnqueue 6 into queue -> stack=[7], queue=[6, 6, 9, 1, 8, 3, 9, 6]\nPush 5 onto stack -> stack=[7, 5], queue=[6, 6, 9, 1, 8, 3, 9, 6]\nPush 9 onto stack -> stack=[7, 5, 9], queue=[6, 6, 9, 1, 8, 3, 9, 6]\nPop from stack and enqueue into queue -> stack=[7, 5], queue=[6, 6, 9, 1, 8, 3, 9, 6, 9]\nDequeue from queue and push onto stack -> stack=[7, 5, 6], queue=[6, 9, 1, 8, 3, 9, 6, 9]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2138",
+      "type": "conditional",
+      "question": "Variables start as: x0=9, x1=9, x2=5, x3=5, x4=5, x5=8\nStep 1: x0 = x0 -2\nStep 2: If x3 > x1, set x3 = 4; else set x3 = 6\nStep 3: Set x3 = 7\nStep 4: x3 = x3 +0\nStep 5: Swap x5 and x3\nStep 6: Swap x5 and x2\nStep 7: If x3 == 8, set x2 = 0; else x2 unchanged\nStep 8: If x0 == 1, set x3 = 8; else x3 unchanged\nStep 9: Swap x4 and x2\nStep 10: If x2 == 8, set x0 = 3; else x0 unchanged\nStep 11: x5 = x5 +3\nStep 12: If x4 > x3, set x4 = 7; else set x4 = 4\nStep 13: If x2 == 0, set x4 = 2; else x4 unchanged\nStep 14: Swap x5 and x3\nStep 15: Set x2 = 1\nStep 16: Set x2 = 2\nStep 17: x0 = x0 +0\nStep 18: x0 = x0 +3\nWhat is the value of x1? Answer with just the number.",
+      "answer": "9",
+      "accept": [
+        "9"
+      ],
+      "cot": "Initial: {'x0': 9, 'x1': 9, 'x2': 5, 'x3': 5, 'x4': 5, 'x5': 8}\nx0 = x0 -2 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 5, 'x4': 5, 'x5': 8}\nIf x3 > x1, set x3 = 4; else set x3 = 6 | x3(6) > x1(9)? NO -> x3=6 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 6, 'x4': 5, 'x5': 8}\nSet x3 = 7 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 7, 'x4': 5, 'x5': 8}\nx3 = x3 +0 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 7, 'x4': 5, 'x5': 8}\nSwap x5 and x3 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 5, 'x5': 7}\nSwap x5 and x2 -> {'x0': 7, 'x1': 9, 'x2': 7, 'x3': 8, 'x4': 5, 'x5': 5}\nx3==8? YES -> x2=0 -> {'x0': 7, 'x1': 9, 'x2': 0, 'x3': 8, 'x4': 5, 'x5': 5}\nx0==1? NO -> no change -> {'x0': 7, 'x1': 9, 'x2': 0, 'x3': 8, 'x4': 5, 'x5': 5}\nSwap x4 and x2 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 0, 'x5': 5}\nx2==8? NO -> no change -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 0, 'x5': 5}\nx5 = x5 +3 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 0, 'x5': 8}\nIf x4 > x3, set x4 = 7; else set x4 = 4 | x4(4) > x3(8)? NO -> x4=4 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 4, 'x5': 8}\nx2==0? NO -> no change -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 4, 'x5': 8}\nSwap x5 and x3 -> {'x0': 7, 'x1': 9, 'x2': 5, 'x3': 8, 'x4': 4, 'x5': 8}\nSet x2 = 1 -> {'x0': 7, 'x1': 9, 'x2': 1, 'x3': 8, 'x4': 4, 'x5': 8}\nSet x2 = 2 -> {'x0': 7, 'x1': 9, 'x2': 2, 'x3': 8, 'x4': 4, 'x5': 8}\nx0 = x0 +0 -> {'x0': 7, 'x1': 9, 'x2': 2, 'x3': 8, 'x4': 4, 'x5': 8}\nx0 = x0 +3 -> {'x0': 10, 'x1': 9, 'x2': 2, 'x3': 8, 'x4': 4, 'x5': 8}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2145",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Push 9 onto stack\nStep 2: Push 7 onto stack\nStep 3: Enqueue 5 into queue\nStep 4: Push 3 onto stack\nStep 5: Push 7 onto stack\nStep 6: Enqueue 9 into queue\nStep 7: Enqueue 5 into queue\nStep 8: Push 5 onto stack\nStep 9: Enqueue 9 into queue\nStep 10: Dequeue from queue and push onto stack\nStep 11: Enqueue 2 into queue\nStep 12: Pop from stack and enqueue into queue\nStep 13: Dequeue from queue and push onto stack\nStep 14: Pop from stack (discard)\nStep 15: Enqueue 6 into queue\nStep 16: Enqueue 1 into queue\nStep 17: Enqueue 7 into queue\nStep 18: Push 8 onto stack\nWhat is the front element of the queue? Answer with just the number.",
+      "answer": "5",
+      "accept": [
+        "5"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nPush 9 onto stack -> stack=[9], queue=[]\nPush 7 onto stack -> stack=[9, 7], queue=[]\nEnqueue 5 into queue -> stack=[9, 7], queue=[5]\nPush 3 onto stack -> stack=[9, 7, 3], queue=[5]\nPush 7 onto stack -> stack=[9, 7, 3, 7], queue=[5]\nEnqueue 9 into queue -> stack=[9, 7, 3, 7], queue=[5, 9]\nEnqueue 5 into queue -> stack=[9, 7, 3, 7], queue=[5, 9, 5]\nPush 5 onto stack -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 5]\nEnqueue 9 into queue -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 5, 9]\nDequeue from queue and push onto stack -> stack=[9, 7, 3, 7, 5, 5], queue=[9, 5, 9]\nEnqueue 2 into queue -> stack=[9, 7, 3, 7, 5, 5], queue=[9, 5, 9, 2]\nPop from stack and enqueue into queue -> stack=[9, 7, 3, 7, 5], queue=[9, 5, 9, 2, 5]\nDequeue from queue and push onto stack -> stack=[9, 7, 3, 7, 5, 9], queue=[5, 9, 2, 5]\nPop from stack (discard) -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 2, 5]\nEnqueue 6 into queue -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 2, 5, 6]\nEnqueue 1 into queue -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 2, 5, 6, 1]\nEnqueue 7 into queue -> stack=[9, 7, 3, 7, 5], queue=[5, 9, 2, 5, 6, 1, 7]\nPush 8 onto stack -> stack=[9, 7, 3, 7, 5, 8], queue=[5, 9, 2, 5, 6, 1, 7]",
+      "difficulty": {
+        "steps": 18
+      }
+    },
+    {
+      "id": "cond_2152",
+      "type": "conditional",
+      "question": "Variables start as: x0=7, x1=3, x2=4, x3=2, x4=4, x5=8\nStep 1: If x3 == 0, set x3 = 4; else x3 unchanged\nStep 2: Swap x5 and x4\nStep 3: If x2 == 1, set x4 = 6; else x4 unchanged\nStep 4: Swap x3 and x4\nStep 5: If x1 > x2, set x5 = 0; else set x5 = 3\nStep 6: x4 = x4 +1\nStep 7: Set x3 = 4\nStep 8: If x5 > x2, set x4 = 4; else set x4 = 6\nStep 9: x3 = x3 +0\nStep 10: x2 = x2 +3\nStep 11: Set x0 = 8\nStep 12: If x2 == 2, set x0 = 6; else x0 unchanged\nStep 13: Swap x0 and x5\nStep 14: If x1 > x4, set x4 = 5; else set x4 = 4\nStep 15: x1 = x1 +4\nStep 16: If x0 == 6, set x5 = 0; else x5 unchanged\nStep 17: x3 = x3 -3\nStep 18: Swap x3 and x1\nWhat is the value of x1? Answer with just the number.",
+      "answer": "1",
+      "accept": [
+        "1"
+      ],
+      "cot": "Initial: {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 2, 'x4': 4, 'x5': 8}\nx3==0? NO -> no change -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 2, 'x4': 4, 'x5': 8}\nSwap x5 and x4 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 2, 'x4': 8, 'x5': 4}\nx2==1? NO -> no change -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 2, 'x4': 8, 'x5': 4}\nSwap x3 and x4 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 8, 'x4': 2, 'x5': 4}\nIf x1 > x2, set x5 = 0; else set x5 = 3 | x1(3) > x2(4)? NO -> x5=3 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 8, 'x4': 2, 'x5': 3}\nx4 = x4 +1 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 8, 'x4': 3, 'x5': 3}\nSet x3 = 4 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 4, 'x4': 3, 'x5': 3}\nIf x5 > x2, set x4 = 4; else set x4 = 6 | x5(3) > x2(4)? NO -> x4=6 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 4, 'x4': 6, 'x5': 3}\nx3 = x3 +0 -> {'x0': 7, 'x1': 3, 'x2': 4, 'x3': 4, 'x4': 6, 'x5': 3}\nx2 = x2 +3 -> {'x0': 7, 'x1': 3, 'x2': 7, 'x3': 4, 'x4': 6, 'x5': 3}\nSet x0 = 8 -> {'x0': 8, 'x1': 3, 'x2': 7, 'x3': 4, 'x4': 6, 'x5': 3}\nx2==2? NO -> no change -> {'x0': 8, 'x1': 3, 'x2': 7, 'x3': 4, 'x4': 6, 'x5': 3}\nSwap x0 and x5 -> {'x0': 3, 'x1': 3, 'x2': 7, 'x3': 4, 'x4': 6, 'x5': 8}\nIf x1 > x4, set x4 = 5; else set x4 = 4 | x1(3) > x4(4)? NO -> x4=4 -> {'x0': 3, 'x1': 3, 'x2': 7, 'x3': 4, 'x4': 4, 'x5': 8}\nx1 = x1 +4 -> {'x0': 3, 'x1': 7, 'x2': 7, 'x3': 4, 'x4': 4, 'x5': 8}\nx0==6? NO -> no change -> {'x0': 3, 'x1': 7, 'x2': 7, 'x3': 4, 'x4': 4, 'x5': 8}\nx3 = x3 -3 -> {'x0': 3, 'x1': 7, 'x2': 7, 'x3': 1, 'x4': 4, 'x5': 8}\nSwap x3 and x1 -> {'x0': 3, 'x1': 1, 'x2': 7, 'x3': 7, 'x4': 4, 'x5': 8}",
+      "difficulty": {
+        "steps": 18,
+        "n_vars": 6
+      }
+    },
+    {
+      "id": "sq_2159",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 1 into queue\nStep 2: Push 3 onto stack\nStep 3: Enqueue 8 into queue\nStep 4: Push 1 onto stack\nStep 5: Enqueue 3 into queue\nStep 6: Push 6 onto stack\nStep 7: Push 7 onto stack\nStep 8: Enqueue 5 into queue\nStep 9: Pop from stack and enqueue into queue\nStep 10: Dequeue from queue and push onto stack\nStep 11: Dequeue from queue and push onto stack\nStep 12: Pop from stack (discard)\nStep 13: Enqueue 4 into queue\nStep 14: Push 8 onto stack\nStep 15: Dequeue from queue and push onto stack\nStep 16: Dequeue from queue (discard)\nStep 17: Push 6 onto stack\nStep 18: Pop from stack (discard)\nHow many elements are in the queue? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 1 into queue -> stack=[], queue=[1]\nPush 3 onto stack -> stack=[3], queue=[1]\nEnqueue 8 into queue -> stack=[3], queue=[1, 8]\nPush 1 onto stack -> stack=[3, 1], queue=[1, 8]\nEnqueue 3 into queue -> stack=[3, 1], queue=[1, 8, 3]\nPush 6 onto stack -> stack=[3, 1, 6], queue=[1, 8, 3]\nPush 7 onto stack -> stack=[3, 1, 6, 7], queue=[1, 8, 3]\nEnqueue 5 into queue -> stack=[3, 1, 6, 7], queue=[1, 8, 3, 5]\nPop from stack and enqueue into queue -> stack=[3, 1, 6], queue=[1, 8, 3, 5, 7]\nDequeue from queue and push onto stack -> stack=[3, 1, 6, 1], queue=[8, 3, 5, 7]\nDequeue from queue and push onto stack -> stack=[3, 1, 6, 1, 8], queue=[3, 5, 7]\nPop from stack (discard) -> stack=[3, 1, 6, 1], queue=[3, 5, 7]\nEnqueue 4 into queue -> stack=[3, 1, 6, 1], queue=[3, 5, 7, 4]\nPush 8 onto stack -> stack=[3, 1, 6, 1, 8], queue=[3, 5, 7, 4]\nDequeue from queue and push onto stack -> stack=[3, 1, 6, 1, 8, 3], queue=[5, 7, 4]\nDequeue from queue (discard) -> stack=[3, 1, 6, 1, 8, 3], queue=[7, 4]\nPush 6 onto stack -> stack=[3, 1, 6, 1, 8, 3, 6], queue=[7, 4]\nPop from stack (discard) -> stack=[3, 1, 6, 1, 8, 3], queue=[7, 4]",
+      "difficulty": {
+        "steps": 18
+      }
+    }
+  ],
+  "meta": {
+    "type": "conditional,stack_queue",
+    "n": 20,
+    "seed": 2026,
+    "difficulty": "brutal",
+    "steps": 18
+  },
+  "exemplars": [
+    {
+      "type": "array_ops",
+      "q": "Consider an array initially set to [9, 7, 6]. Perform the following operations in exact order:\n1. Add 3 to element at index 0\n2. Swap elements at index 1 and 2\n3. Shift array left by 1 (wrap around)\nWhat is the final array? Answer strictly as ['a', 'a', 'a'] format.",
+      "a": "Initial: [9, 7, 6]\nAdd 3 to idx 0 -> [12, 7, 6]\nSwap idx 1,2 -> [12, 6, 7]\nShift left -> [6, 7, 12]\nAnswer: [6, 7, 12]"
+    },
+    {
+      "type": "array_ops",
+      "q": "Consider an array initially set to [7, 8, 5]. Perform the following operations in exact order:\n1. Negate the element at index 1\n2. Reverse the entire array\n3. Shift array right by 1 (wrap around)\nWhat is the final array? Answer strictly as ['a', 'a', 'a'] format.",
+      "a": "Initial: [7, 8, 5]\nNegate idx 1 -> [7, -8, 5]\nReverse -> [5, -8, 7]\nShift right -> [7, 5, -8]\nAnswer: [7, 5, -8]"
+    },
+    {
+      "type": "coin_flip",
+      "q": "You have 3 coins, all starting as H (heads).\nStep 1: Flip every coin at even-indexed positions\nStep 2: Flip every coin that is currently H\nStep 3: Set all coins to H\nHow many coins show H at the end? Answer with just the number.",
+      "a": "Initial: ['H', 'H', 'H']\nFlip even-idx -> ['T', 'H', 'T']\nFlip all H -> ['T', 'T', 'T']\nSet all to H -> ['H', 'H', 'H']\nAnswer: 3"
+    },
+    {
+      "type": "coin_flip",
+      "q": "You have 3 coins, all starting as H (heads).\nStep 1: Flip all coins from 0 to 1\nStep 2: Flip every coin that is currently T\nStep 3: Flip every coin that is currently H\nHow many coins show H at the end? Answer with just the number.",
+      "a": "Initial: ['H', 'H', 'H']\nFlip range [0,1] -> ['T', 'T', 'H']\nFlip all T -> ['H', 'H', 'H']\nFlip all H -> ['T', 'T', 'T']\nAnswer: 0"
+    },
+    {
+      "type": "register",
+      "q": "Registers start as: A=7, B=6, C=0\nStep 1: B = B + 5\nStep 2: B = B + C\nStep 3: A = A mod 6\nWhat is the value of A? Answer with just the number.",
+      "a": "Initial: {'A': 7, 'B': 6, 'C': 0}\nB = B + 5 -> {'A': 7, 'B': 11, 'C': 0}\nB = B + C -> {'A': 7, 'B': 11, 'C': 0}\nA = A mod 6 -> {'A': 1, 'B': 11, 'C': 0}\nAnswer: 1"
+    },
+    {
+      "type": "register",
+      "q": "Registers start as: A=9, B=4, C=0\nStep 1: C = C - B\nStep 2: A = A * B\nStep 3: A = A - B\nWhat is the value of A? Answer with just the number.",
+      "a": "Initial: {'A': 9, 'B': 4, 'C': 0}\nC = C - B -> {'A': 9, 'B': 4, 'C': -4}\nA = A * B -> {'A': 36, 'B': 4, 'C': -4}\nA = A - B -> {'A': 32, 'B': 4, 'C': -4}\nAnswer: 32"
+    },
+    {
+      "type": "conditional",
+      "q": "Variables start as: x0=1, x1=6, x2=0\nStep 1: Set x0 = 4\nStep 2: Swap x0 and x1\nStep 3: Set x1 = 2\nWhat is the value of x1? Answer with just the number.",
+      "a": "Initial: {'x0': 1, 'x1': 6, 'x2': 0}\nSet x0 = 4 -> {'x0': 4, 'x1': 6, 'x2': 0}\nSwap x0 and x1 -> {'x0': 6, 'x1': 4, 'x2': 0}\nSet x1 = 2 -> {'x0': 6, 'x1': 2, 'x2': 0}\nAnswer: 2"
+    },
+    {
+      "type": "conditional",
+      "q": "Variables start as: x0=0, x1=4, x2=5\nStep 1: Swap x1 and x2\nStep 2: If x2 == 5, set x0 = 1; else x0 unchanged\nStep 3: Set x0 = 8\nWhat is the value of x1? Answer with just the number.",
+      "a": "Initial: {'x0': 0, 'x1': 4, 'x2': 5}\nSwap x1 and x2 -> {'x0': 0, 'x1': 5, 'x2': 4}\nx2==5? NO -> no change -> {'x0': 0, 'x1': 5, 'x2': 4}\nSet x0 = 8 -> {'x0': 8, 'x1': 5, 'x2': 4}\nAnswer: 5"
+    },
+    {
+      "type": "stack_queue",
+      "q": "You have an empty stack and an empty queue.\nStep 1: Enqueue 8 into queue\nStep 2: Dequeue from queue and push onto stack\nStep 3: Enqueue 3 into queue\nHow many elements are in the queue? Answer with just the number.",
+      "a": "Initial: stack=[], queue=[]\nEnqueue 8 into queue -> stack=[], queue=[8]\nDequeue from queue and push onto stack -> stack=[8], queue=[]\nEnqueue 3 into queue -> stack=[8], queue=[3]\nAnswer: 1"
+    },
+    {
+      "type": "stack_queue",
+      "q": "You have an empty stack and an empty queue.\nStep 1: Enqueue 4 into queue\nStep 2: Enqueue 5 into queue\nStep 3: Dequeue from queue and push onto stack\nWhat is the top element of the stack? Answer with just the number.",
+      "a": "Initial: stack=[], queue=[]\nEnqueue 4 into queue -> stack=[], queue=[4]\nEnqueue 5 into queue -> stack=[], queue=[4, 5]\nDequeue from queue and push onto stack -> stack=[4], queue=[5]\nAnswer: 4"
+    }
+  ]
+}

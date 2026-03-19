@@ -25,122 +25,181 @@ MAX_CONCURRENT = 5
 
 
 # ═══════════════════════════════════════════════════════════════════
-#  1. 벤치마크 태스크 (정답이 확정된 문제들)
+#  1. 벤치마크 태스크 — 프로그래밍 생성 (상태 추적 문제)
+#     LLM이 구조적으로 실패하는 영역: 다단계 상태 변이 추적
 # ═══════════════════════════════════════════════════════════════════
 
-TASKS = [
-    # ── 모듈러 산술 / 정수론 ──
-    {
-        "id": "hard_01",
-        "type": "number_theory",
-        "question": "What is the remainder when 2^2026 is divided by 7?",
-        "answer": "2",
-        "accept": ["2"],
-    },
-    {
-        "id": "hard_02",
-        "type": "number_theory",
-        "question": "How many trailing zeros are in 100! (100 factorial)?",
-        "answer": "24",
-        "accept": ["24"],
-    },
-    {
-        "id": "hard_03",
-        "type": "number_theory",
-        "question": "What is the last digit of 3^4567?",
-        "answer": "7",
-        "accept": ["7"],
-    },
-    # ── 기호 대수 ──
-    {
-        "id": "hard_04",
-        "type": "algebra",
-        "question": "If x + 1/x = 3, what is the value of x^3 + 1/x^3?",
-        "answer": "18",
-        "accept": ["18"],
-    },
-    {
-        "id": "hard_05",
-        "type": "algebra",
-        "question": "The area of a triangle with sides 13, 14, and 15 is?",
-        "answer": "84",
-        "accept": ["84"],
-    },
-    # ── 조합론 / 확률 ──
-    {
-        "id": "hard_06",
-        "type": "combinatorics",
-        "question": "How many diagonals does a regular icosagon (20-sided polygon) have?",
-        "answer": "170",
-        "accept": ["170"],
-    },
-    {
-        "id": "hard_07",
-        "type": "combinatorics",
-        "question": "A bag has 3 red and 4 blue marbles. Two are drawn without replacement. The probability they are the same color is P/Q in simplest form. What is P+Q?",
-        "answer": "10",
-        "accept": ["10"],
-    },
-    # ── 논리 퍼즐 (비자명) ──
-    {
-        "id": "hard_08",
-        "type": "logic",
-        "question": "A says 'We are both knaves'. B says nothing. In a knights-and-knaves puzzle where knights always tell the truth and knaves always lie, who is the knight? Answer with just 'A' or 'B'.",
-        "answer": "B",
-        "accept": ["B", "b"],
-    },
-    {
-        "id": "hard_09",
-        "type": "logic",
-        "question": "Five people A,B,C,D,E are ranked by height. A>B, C<A, C>B, D>C, E<B. Who is the shortest? Answer with a single letter.",
-        "answer": "E",
-        "accept": ["E", "e"],
-    },
-    # ── 다단계 응용 ──
-    {
-        "id": "hard_10",
-        "type": "multihop",
-        "question": "In 10 years, John will be twice as old as he was 5 years ago. How old is John now?",
-        "answer": "20",
-        "accept": ["20"],
-    },
-]
+import random as _rng
+
+def _gen_array_swap(seed: int, steps: int = 8) -> dict:
+    """배열 원소 교환을 N단계 추적하는 문제 생성."""
+    r = _rng.Random(seed)
+    size = 5
+    arr = list(range(1, size + 1))  # [1,2,3,4,5]
+    ops = []
+    for _ in range(steps):
+        i, j = r.sample(range(size), 2)
+        ops.append((i, j))
+        arr[i], arr[j] = arr[j], arr[i]
+
+    q_lines = [f"Start with array: [1, 2, 3, 4, 5]"]
+    for step, (i, j) in enumerate(ops, 1):
+        q_lines.append(f"Step {step}: Swap positions {i} and {j}")
+    target_pos = r.randint(0, size - 1)
+    q_lines.append(f"What number is at position {target_pos} after all swaps? Answer with just the number.")
+
+    return {
+        "id": f"swap_{seed}",
+        "type": "state_tracking",
+        "question": "\n".join(q_lines),
+        "answer": str(arr[target_pos]),
+        "accept": [str(arr[target_pos])],
+    }
+
+
+def _gen_coin_flip(seed: int, n_coins: int = 6, steps: int = 10) -> dict:
+    """N개 코인의 앞/뒤를 M단계 뒤집기 후 상태 추적."""
+    r = _rng.Random(seed)
+    coins = ["H"] * n_coins  # 모두 앞면으로 시작
+    ops = []
+    for _ in range(steps):
+        kind = r.choice(["flip", "flip_range", "flip_if"])
+        if kind == "flip":
+            idx = r.randint(0, n_coins - 1)
+            ops.append(f"Flip coin {idx}")
+            coins[idx] = "T" if coins[idx] == "H" else "H"
+        elif kind == "flip_range":
+            a = r.randint(0, n_coins - 2)
+            b = r.randint(a + 1, n_coins - 1)
+            ops.append(f"Flip all coins from {a} to {b}")
+            for i in range(a, b + 1):
+                coins[i] = "T" if coins[i] == "H" else "H"
+        else:  # flip_if
+            target = r.choice(["H", "T"])
+            ops.append(f"Flip every coin that is currently {target}")
+            coins = [("T" if c == "H" else "H") if c == target else c for c in coins]
+
+    q_lines = [f"You have {n_coins} coins, all starting as H (heads)."]
+    for step, op in enumerate(ops, 1):
+        q_lines.append(f"Step {step}: {op}")
+    q_lines.append(f"How many coins show H (heads) at the end? Answer with just the number.")
+    answer = str(coins.count("H"))
+
+    return {
+        "id": f"coin_{seed}",
+        "type": "state_tracking",
+        "question": "\n".join(q_lines),
+        "answer": answer,
+        "accept": [answer],
+    }
+
+
+def _gen_register_machine(seed: int, steps: int = 10) -> dict:
+    """3개 레지스터(A,B,C)에 대한 연산을 추적."""
+    r = _rng.Random(seed)
+    regs = {"A": r.randint(1, 9), "B": r.randint(1, 9), "C": 0}
+    init = dict(regs)
+    ops = []
+    names = ["A", "B", "C"]
+    for _ in range(steps):
+        kind = r.choice(["add", "sub", "mov", "swap", "inc"])
+        if kind == "add":
+            dst, src = r.sample(names, 2)
+            ops.append(f"{dst} = {dst} + {src}")
+            regs[dst] = regs[dst] + regs[src]
+        elif kind == "sub":
+            dst, src = r.sample(names, 2)
+            ops.append(f"{dst} = {dst} - {src}")
+            regs[dst] = regs[dst] - regs[src]
+        elif kind == "mov":
+            dst, src = r.sample(names, 2)
+            ops.append(f"{dst} = {src}")
+            regs[dst] = regs[src]
+        elif kind == "swap":
+            a, b = r.sample(names, 2)
+            ops.append(f"Swap {a} and {b}")
+            regs[a], regs[b] = regs[b], regs[a]
+        else:
+            dst = r.choice(names)
+            val = r.randint(1, 5)
+            ops.append(f"{dst} = {dst} + {val}")
+            regs[dst] = regs[dst] + val
+
+    target = r.choice(names)
+    q_lines = [f"Registers start as: A={init['A']}, B={init['B']}, C={init['C']}"]
+    for step, op in enumerate(ops, 1):
+        q_lines.append(f"Step {step}: {op}")
+    q_lines.append(f"What is the value of {target}? Answer with just the number.")
+    answer = str(regs[target])
+
+    return {
+        "id": f"reg_{seed}",
+        "type": "state_tracking",
+        "question": "\n".join(q_lines),
+        "answer": answer,
+        "accept": [answer],
+    }
+
+
+DIFFICULTY = 1  # 1=normal(8-10steps), 2=hard(15-20steps), 3=extreme(25-30steps)
+
+
+def generate_tasks(n: int = 12, seed: int = 2026, difficulty: int = 1) -> list[dict]:
+    """3가지 유형의 상태 추적 문제를 균등하게 n개 생성."""
+    swap_steps = {1: 8, 2: 15, 3: 25}[difficulty]
+    coin_steps = {1: 10, 2: 18, 3: 28}[difficulty]
+    reg_steps = {1: 10, 2: 16, 3: 25}[difficulty]
+    n_coins = {1: 6, 2: 8, 3: 10}[difficulty]
+
+    tasks = []
+    for i in range(n):
+        s = seed + i * 7
+        if i % 3 == 0:
+            tasks.append(_gen_array_swap(s, steps=swap_steps))
+        elif i % 3 == 1:
+            tasks.append(_gen_coin_flip(s, n_coins=n_coins, steps=coin_steps))
+        else:
+            tasks.append(_gen_register_machine(s, steps=reg_steps))
+    return tasks
+
+
+TASKS = generate_tasks(12, seed=2026, difficulty=DIFFICULTY)
 
 
 # ═══════════════════════════════════════════════════════════════════
-#  2. Few-shot 예시 풀 (태스크와 다른 문제들)
+#  2. Few-shot 예시 풀 — 같은 유형의 더 짧은 문제
 # ═══════════════════════════════════════════════════════════════════
 
 EXEMPLARS = [
     {
-        "type": "number_theory",
-        "q": "What is the remainder when 7^100 is divided by 5?",
-        "a": "7 mod 5 = 2. Powers of 2 mod 5 cycle: 2,4,3,1 (period 4). 100 mod 4 = 0, so 7^100 mod 5 = 2^100 mod 5 = 1. Answer: 1",
+        "type": "state_tracking",
+        "q": "Start with array: [1, 2, 3]\nStep 1: Swap positions 0 and 2\nStep 2: Swap positions 1 and 2\nWhat number is at position 0?",
+        "a": "After step 1: [3, 2, 1]. After step 2: [3, 1, 2]. Position 0 has 3. Answer: 3",
     },
     {
-        "type": "number_theory",
-        "q": "How many trailing zeros are in 50!?",
-        "a": "Count factors of 5: floor(50/5)=10, floor(50/25)=2. Total=12. Answer: 12",
+        "type": "state_tracking",
+        "q": "You have 3 coins, all starting as H.\nStep 1: Flip coin 1\nStep 2: Flip all coins from 0 to 2\nStep 3: Flip coin 1\nHow many coins show H?",
+        "a": "Start: [H,H,H]. Step 1: [H,T,H]. Step 2: [T,H,T]. Step 3: [T,T,T]. 0 coins show H. Answer: 0",
     },
     {
-        "type": "algebra",
-        "q": "If x + 1/x = 5, what is x^2 + 1/x^2?",
-        "a": "Square both sides: (x+1/x)^2 = x^2 + 2 + 1/x^2 = 25. So x^2+1/x^2 = 23. Answer: 23",
+        "type": "state_tracking",
+        "q": "Registers: A=3, B=5, C=0\nStep 1: C = A + B\nStep 2: A = A - B\nStep 3: Swap A and C\nWhat is A?",
+        "a": "Step 1: C=3+5=8. Step 2: A=3-5=-2. Step 3: Swap A,C → A=8, C=-2. Answer: 8",
     },
     {
-        "type": "combinatorics",
-        "q": "How many diagonals does a regular 12-sided polygon have?",
-        "a": "Formula: n(n-3)/2. 12(12-3)/2 = 12*9/2 = 54. Answer: 54",
+        "type": "state_tracking",
+        "q": "Start with array: [1, 2, 3, 4]\nStep 1: Swap positions 0 and 3\nStep 2: Swap positions 1 and 2\nWhat number is at position 2?",
+        "a": "After step 1: [4, 2, 3, 1]. After step 2: [4, 3, 2, 1]. Position 2 has 2. Answer: 2",
     },
     {
-        "type": "logic",
-        "q": "On an island, A says 'I am a knave'. Is A a knight or a knave?",
-        "a": "If A is a knight, he tells truth, but a knight can't say 'I am a knave' (contradiction). If A is a knave, he lies, so 'I am a knave' is false, meaning he's a knight (contradiction). This statement is a paradox — but in standard puzzles, A cannot make this statement, so we deduce A is a knave. Answer: knave",
+        "type": "state_tracking",
+        "q": "Registers: A=2, B=7, C=0\nStep 1: C = B\nStep 2: B = A\nStep 3: A = C\nWhat is B?",
+        "a": "Step 1: C=7. Step 2: B=2. Step 3: A=7. B is 2. Answer: 2",
     },
     {
-        "type": "combinatorics",
-        "q": "A box has 5 red, 3 blue balls. Draw 2 without replacement. Probability both red?",
-        "a": "P = C(5,2)/C(8,2) = 10/28 = 5/14. Answer: 5/14",
+        "type": "state_tracking",
+        "q": "You have 4 coins, all starting as H.\nStep 1: Flip every coin that is currently H\nStep 2: Flip coin 0\nStep 3: Flip coin 2\nHow many coins show H?",
+        "a": "Start: [H,H,H,H]. Step 1: all H→T: [T,T,T,T]. Step 2: [H,T,T,T]. Step 3: [H,T,H,T]. 2 show H. Answer: 2",
     },
 ]
 
@@ -152,6 +211,9 @@ EXEMPLARS = [
 _semaphore: asyncio.Semaphore | None = None
 
 
+MODEL: str = ""  # 빈 문자열이면 기본 모델 사용
+
+
 async def claude_call_async(prompt: str, timeout: int = 90) -> str:
     """Claude CLI를 비동기로 호출한다. semaphore로 동시성 제한."""
     global _semaphore
@@ -160,8 +222,11 @@ async def claude_call_async(prompt: str, timeout: int = 90) -> str:
 
     async with _semaphore:
         try:
+            cmd = ["claude", "-p", prompt]
+            if MODEL:
+                cmd = ["claude", "--model", MODEL, "-p", prompt]
             proc = await asyncio.create_subprocess_exec(
-                "claude", "-p", prompt,
+                *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
@@ -595,10 +660,26 @@ if __name__ == "__main__":
     parser.add_argument("--k-values", type=str, default=None, help="Specific k values, e.g. '0,2,4,6'")
     parser.add_argument("--trials", type=int, default=5, help="Trials per k value")
     parser.add_argument("--concurrency", type=int, default=5, help="Max concurrent CLI calls")
-    parser.add_argument("--output", default="results/icl_phase_hard.json")
+    parser.add_argument("--model", type=str, default="", help="Claude model (e.g. haiku, sonnet, opus)")
+    parser.add_argument("--difficulty", type=int, default=1, choices=[1,2,3], help="1=normal, 2=hard, 3=extreme")
+    parser.add_argument("--output", default="results/icl_phase_state.json")
+    parser.add_argument("--tasks-file", type=str, default=None,
+                        help="Load tasks from synthetic_gen.py output JSON (overrides built-in tasks)")
     args = parser.parse_args()
 
     MAX_CONCURRENT = args.concurrency
+    MODEL = args.model
+    DIFFICULTY = args.difficulty
+    if args.tasks_file:
+        with open(args.tasks_file) as _f:
+            _data = json.load(_f)
+            TASKS = _data["tasks"]
+            # synthetic_gen exemplars를 EXEMPLARS에 병합
+            if "exemplars" in _data:
+                EXEMPLARS.extend(_data["exemplars"])
+        print(f"  Loaded {len(TASKS)} tasks from {args.tasks_file}")
+    else:
+        TASKS = generate_tasks(12, seed=2026, difficulty=DIFFICULTY)
     k_vals = [int(x) for x in args.k_values.split(",")] if args.k_values else None
     asyncio.run(run_experiment_async(
         max_k=args.max_k, trials=args.trials,

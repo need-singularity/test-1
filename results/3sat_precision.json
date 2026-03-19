@@ -1,0 +1,283 @@
+{
+  "alpha_range": [
+    4.0,
+    5.5
+  ],
+  "delta_alpha": 0.1,
+  "n_seeds": 5,
+  "results": {
+    "18": [
+      {
+        "alpha": 4.0,
+        "mean_beta1": 4.6,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.1,
+        "mean_beta1": 49.8,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.2,
+        "mean_beta1": 145.8,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.3,
+        "mean_beta1": 39.4,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.4,
+        "mean_beta1": 35.4,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 13.6,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 4.6,
+        "mean_beta1": 3.4,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.7,
+        "mean_beta1": 7.2,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.8,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 4.9,
+        "mean_beta1": 1.0,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.4,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.1,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.2,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.3,
+        "mean_beta1": 1.2,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 5.4,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.4
+      }
+    ],
+    "20": [
+      {
+        "alpha": 4.0,
+        "mean_beta1": 364.4,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.1,
+        "mean_beta1": 22.2,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.2,
+        "mean_beta1": 0.6,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.3,
+        "mean_beta1": 51.2,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.4,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 31.6,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.6,
+        "mean_beta1": 0.6,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.7,
+        "mean_beta1": 1.6,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 4.8,
+        "mean_beta1": 0.2,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 4.9,
+        "mean_beta1": 11.0,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      },
+      {
+        "alpha": 5.1,
+        "mean_beta1": 0.2,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.2,
+        "mean_beta1": 0.6,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.3,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.4,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.2,
+        "sat_rate": 0.2
+      }
+    ],
+    "22": [
+      {
+        "alpha": 4.0,
+        "mean_beta1": 215.4,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.1,
+        "mean_beta1": 259.6,
+        "sat_rate": 0.8
+      },
+      {
+        "alpha": 4.2,
+        "mean_beta1": 76.4,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.3,
+        "mean_beta1": 20.8,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 4.4,
+        "mean_beta1": 102.0,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 2.6,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 4.6,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 4.7,
+        "mean_beta1": 2.0,
+        "sat_rate": 0.4
+      },
+      {
+        "alpha": 4.8,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      },
+      {
+        "alpha": 4.9,
+        "mean_beta1": 0.4,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.1,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      },
+      {
+        "alpha": 5.2,
+        "mean_beta1": 0.6,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.3,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      },
+      {
+        "alpha": 5.4,
+        "mean_beta1": 0.4,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      }
+    ]
+  },
+  "transitions": [
+    {
+      "N": 18,
+      "alpha_c_beta1": 5.05,
+      "alpha_c_sat": 4.35
+    },
+    {
+      "N": 20,
+      "alpha_c_beta1": 4.95,
+      "alpha_c_sat": 4.35
+    },
+    {
+      "N": 22,
+      "alpha_c_beta1": 5.0,
+      "alpha_c_sat": 4.25
+    }
+  ],
+  "fit_N": [
+    18,
+    20,
+    22
+  ],
+  "fit_alpha": [
+    5.05,
+    4.95,
+    5.0
+  ]
+}

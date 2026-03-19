@@ -1,0 +1,203 @@
+{
+  "tasks": [
+    {
+      "id": "array_2026",
+      "type": "array_ops",
+      "question": "Consider an array initially set to [2, 6, 9, 9, 2, 4]. Perform the following operations in exact order:\n1. Set element at index 4 to 7\n2. Set element at index 4 to the value at index 5\n3. Shift array right by 1 (wrap around)\n4. Add 5 to element at index 0\n5. Swap elements at index 0 and 2\n6. Swap elements at index 3 and 0\n7. Negate the element at index 3\n8. Negate the element at index 2\n9. Add 3 to element at index 3\n10. Reverse the entire array\n11. Reverse the entire array\n12. Shift array left by 1 (wrap around)\nWhat is the final array? Answer strictly as ['a', 'a', 'a', 'a', 'a', 'a'] format.",
+      "answer": "[2, -9, -3, 9, 4, 9]",
+      "accept": [
+        "[2, -9, -3, 9, 4, 9]",
+        "[2,-9,-3,9,4,9]"
+      ],
+      "cot": "Initial: [2, 6, 9, 9, 2, 4]\nSet idx 4 = 7 -> [2, 6, 9, 9, 7, 4]\nSet idx 4 = idx 5 -> [2, 6, 9, 9, 4, 4]\nShift right -> [4, 2, 6, 9, 9, 4]\nAdd 5 to idx 0 -> [9, 2, 6, 9, 9, 4]\nSwap idx 0,2 -> [6, 2, 9, 9, 9, 4]\nSwap idx 3,0 -> [9, 2, 9, 6, 9, 4]\nNegate idx 3 -> [9, 2, 9, -6, 9, 4]\nNegate idx 2 -> [9, 2, -9, -6, 9, 4]\nAdd 3 to idx 3 -> [9, 2, -9, -3, 9, 4]\nReverse -> [4, 9, -3, -9, 2, 9]\nReverse -> [9, 2, -9, -3, 9, 4]\nShift left -> [2, -9, -3, 9, 4, 9]",
+      "difficulty": {
+        "steps": 12,
+        "array_size": 6
+      }
+    },
+    {
+      "id": "coin_2033",
+      "type": "coin_flip",
+      "question": "You have 8 coins, all starting as H (heads).\nStep 1: Set all coins to H\nStep 2: Flip coin 6\nStep 3: Flip every coin at even-indexed positions\nStep 4: Set all coins to T\nStep 5: Set all coins to H\nStep 6: Set all coins to H\nStep 7: Flip every coin at even-indexed positions\nStep 8: Set all coins to H\nStep 9: Set all coins to T\nStep 10: Flip coin 0\nStep 11: Flip all coins from 5 to 7\nStep 12: Set all coins to T\nHow many coins show H at the end? Answer with just the number.",
+      "answer": "0",
+      "accept": [
+        "0"
+      ],
+      "cot": "Initial: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nFlip coin 6 -> ['H', 'H', 'H', 'H', 'H', 'H', 'T', 'H']\nFlip even-idx -> ['T', 'H', 'T', 'H', 'T', 'H', 'H', 'H']\nSet all to T -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nFlip even-idx -> ['T', 'H', 'T', 'H', 'T', 'H', 'T', 'H']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nSet all to T -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip coin 0 -> ['H', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip range [5,7] -> ['H', 'T', 'T', 'T', 'T', 'H', 'H', 'H']\nSet all to T -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']",
+      "difficulty": {
+        "steps": 12,
+        "n_coins": 8
+      }
+    },
+    {
+      "id": "reg_2040",
+      "type": "register",
+      "question": "Registers start as: A=7, B=9, C=6, D=0\nStep 1: Swap D and C\nStep 2: B = A\nStep 3: A = A + C\nStep 4: D = D - A\nStep 5: C = C + 3\nStep 6: A = C\nStep 7: C = C mod 3\nStep 8: A = A mod 2\nStep 9: C = C * D\nStep 10: D = A\nStep 11: A = A + C\nStep 12: B = B + A\nWhat is the value of C? Answer with just the number.",
+      "answer": "0",
+      "accept": [
+        "0"
+      ],
+      "cot": "Initial: {'A': 7, 'B': 9, 'C': 6, 'D': 0}\nSwap D and C -> {'A': 7, 'B': 9, 'C': 0, 'D': 6}\nB = A -> {'A': 7, 'B': 7, 'C': 0, 'D': 6}\nA = A + C -> {'A': 7, 'B': 7, 'C': 0, 'D': 6}\nD = D - A -> {'A': 7, 'B': 7, 'C': 0, 'D': -1}\nC = C + 3 -> {'A': 7, 'B': 7, 'C': 3, 'D': -1}\nA = C -> {'A': 3, 'B': 7, 'C': 3, 'D': -1}\nC = C mod 3 -> {'A': 3, 'B': 7, 'C': 0, 'D': -1}\nA = A mod 2 -> {'A': 1, 'B': 7, 'C': 0, 'D': -1}\nC = C * D -> {'A': 1, 'B': 7, 'C': 0, 'D': -1}\nD = A -> {'A': 1, 'B': 7, 'C': 0, 'D': 1}\nA = A + C -> {'A': 1, 'B': 7, 'C': 0, 'D': 1}\nB = B + A -> {'A': 1, 'B': 8, 'C': 0, 'D': 1}",
+      "difficulty": {
+        "steps": 12,
+        "n_regs": 4
+      }
+    },
+    {
+      "id": "cond_2047",
+      "type": "conditional",
+      "question": "Variables start as: x0=3, x1=7, x2=2, x3=6, x4=0\nStep 1: If x3 == 0, set x0 = 4; else x0 unchanged\nStep 2: x1 = x1 +1\nStep 3: Set x4 = 8\nStep 4: Set x3 = 1\nStep 5: If x3 > x4, set x1 = 7; else set x1 = 8\nStep 6: If x3 == 2, set x0 = 6; else x0 unchanged\nStep 7: If x1 > x4, set x3 = 8; else set x3 = 7\nStep 8: Swap x2 and x0\nStep 9: If x1 == 1, set x4 = 6; else x4 unchanged\nStep 10: If x1 == 0, set x2 = 8; else x2 unchanged\nStep 11: If x1 > x2, set x4 = 4; else set x4 = 5\nStep 12: x0 = x0 +4\nWhat is the value of x2? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: {'x0': 3, 'x1': 7, 'x2': 2, 'x3': 6, 'x4': 0}\nx3==0? NO -> no change -> {'x0': 3, 'x1': 7, 'x2': 2, 'x3': 6, 'x4': 0}\nx1 = x1 +1 -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 6, 'x4': 0}\nSet x4 = 8 -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 6, 'x4': 8}\nSet x3 = 1 -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 1, 'x4': 8}\nIf x3 > x4, set x1 = 7; else set x1 = 8 | x3(1) > x4(8)? NO -> x1=8 -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 1, 'x4': 8}\nx3==2? NO -> no change -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 1, 'x4': 8}\nIf x1 > x4, set x3 = 8; else set x3 = 7 | x1(8) > x4(8)? NO -> x3=7 -> {'x0': 3, 'x1': 8, 'x2': 2, 'x3': 7, 'x4': 8}\nSwap x2 and x0 -> {'x0': 2, 'x1': 8, 'x2': 3, 'x3': 7, 'x4': 8}\nx1==1? NO -> no change -> {'x0': 2, 'x1': 8, 'x2': 3, 'x3': 7, 'x4': 8}\nx1==0? NO -> no change -> {'x0': 2, 'x1': 8, 'x2': 3, 'x3': 7, 'x4': 8}\nIf x1 > x2, set x4 = 4; else set x4 = 5 | x1(8) > x2(3)? YES -> x4=4 -> {'x0': 2, 'x1': 8, 'x2': 3, 'x3': 7, 'x4': 4}\nx0 = x0 +4 -> {'x0': 6, 'x1': 8, 'x2': 3, 'x3': 7, 'x4': 4}",
+      "difficulty": {
+        "steps": 12,
+        "n_vars": 5
+      }
+    },
+    {
+      "id": "sq_2054",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Enqueue 9 into queue\nStep 2: Enqueue 6 into queue\nStep 3: Push 9 onto stack\nStep 4: Dequeue from queue (discard)\nStep 5: Dequeue from queue (discard)\nStep 6: Enqueue 3 into queue\nStep 7: Dequeue from queue (discard)\nStep 8: Enqueue 1 into queue\nStep 9: Pop from stack (discard)\nStep 10: Push 7 onto stack\nStep 11: Push 9 onto stack\nStep 12: Pop from stack (discard)\nWhat is the front element of the queue? Answer with just the number.",
+      "answer": "1",
+      "accept": [
+        "1"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nEnqueue 9 into queue -> stack=[], queue=[9]\nEnqueue 6 into queue -> stack=[], queue=[9, 6]\nPush 9 onto stack -> stack=[9], queue=[9, 6]\nDequeue from queue (discard) -> stack=[9], queue=[6]\nDequeue from queue (discard) -> stack=[9], queue=[]\nEnqueue 3 into queue -> stack=[9], queue=[3]\nDequeue from queue (discard) -> stack=[9], queue=[]\nEnqueue 1 into queue -> stack=[9], queue=[1]\nPop from stack (discard) -> stack=[], queue=[1]\nPush 7 onto stack -> stack=[7], queue=[1]\nPush 9 onto stack -> stack=[7, 9], queue=[1]\nPop from stack (discard) -> stack=[7], queue=[1]",
+      "difficulty": {
+        "steps": 12
+      }
+    },
+    {
+      "id": "array_2061",
+      "type": "array_ops",
+      "question": "Consider an array initially set to [6, 5, 8, 2, 6, 2]. Perform the following operations in exact order:\n1. Set element at index 4 to the value at index 5\n2. Shift array left by 1 (wrap around)\n3. Shift array left by 1 (wrap around)\n4. Swap elements at index 3 and 1\n5. Add 1 to element at index 2\n6. Swap elements at index 3 and 2\n7. Add 2 to element at index 2\n8. Reverse the entire array\n9. Add 5 to element at index 2\n10. Set element at index 2 to the value at index 0\n11. Negate the element at index 3\n12. Set element at index 4 to the value at index 2\nWhat is the final array? Answer strictly as ['a', 'a', 'a', 'a', 'a', 'a'] format.",
+      "answer": "[5, 6, 5, -4, 5, 8]",
+      "accept": [
+        "[5, 6, 5, -4, 5, 8]",
+        "[5,6,5,-4,5,8]"
+      ],
+      "cot": "Initial: [6, 5, 8, 2, 6, 2]\nSet idx 4 = idx 5 -> [6, 5, 8, 2, 2, 2]\nShift left -> [5, 8, 2, 2, 2, 6]\nShift left -> [8, 2, 2, 2, 6, 5]\nSwap idx 3,1 -> [8, 2, 2, 2, 6, 5]\nAdd 1 to idx 2 -> [8, 2, 3, 2, 6, 5]\nSwap idx 3,2 -> [8, 2, 2, 3, 6, 5]\nAdd 2 to idx 2 -> [8, 2, 4, 3, 6, 5]\nReverse -> [5, 6, 3, 4, 2, 8]\nAdd 5 to idx 2 -> [5, 6, 8, 4, 2, 8]\nSet idx 2 = idx 0 -> [5, 6, 5, 4, 2, 8]\nNegate idx 3 -> [5, 6, 5, -4, 2, 8]\nSet idx 4 = idx 2 -> [5, 6, 5, -4, 5, 8]",
+      "difficulty": {
+        "steps": 12,
+        "array_size": 6
+      }
+    },
+    {
+      "id": "coin_2068",
+      "type": "coin_flip",
+      "question": "You have 8 coins, all starting as H (heads).\nStep 1: Flip coin 7\nStep 2: Set all coins to H\nStep 3: Flip every coin at odd-indexed positions\nStep 4: Set all coins to H\nStep 5: Flip coin 3\nStep 6: Flip every coin at even-indexed positions\nStep 7: Flip all coins from 6 to 7\nStep 8: Set all coins to T\nStep 9: Flip coin 0\nStep 10: Flip every coin that is currently H\nStep 11: Flip every coin that is currently H\nStep 12: Flip all coins from 5 to 7\nHow many coins show H at the end? Answer with just the number.",
+      "answer": "3",
+      "accept": [
+        "3"
+      ],
+      "cot": "Initial: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nFlip coin 7 -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'T']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nFlip odd-idx -> ['H', 'T', 'H', 'T', 'H', 'T', 'H', 'T']\nSet all to H -> ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H']\nFlip coin 3 -> ['H', 'H', 'H', 'T', 'H', 'H', 'H', 'H']\nFlip even-idx -> ['T', 'H', 'T', 'T', 'T', 'H', 'T', 'H']\nFlip range [6,7] -> ['T', 'H', 'T', 'T', 'T', 'H', 'H', 'T']\nSet all to T -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip coin 0 -> ['H', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip all H -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip all H -> ['T', 'T', 'T', 'T', 'T', 'T', 'T', 'T']\nFlip range [5,7] -> ['T', 'T', 'T', 'T', 'T', 'H', 'H', 'H']",
+      "difficulty": {
+        "steps": 12,
+        "n_coins": 8
+      }
+    },
+    {
+      "id": "reg_2075",
+      "type": "register",
+      "question": "Registers start as: A=6, B=7, C=8, D=0\nStep 1: D = D - A\nStep 2: A = A + D\nStep 3: B = B + 2\nStep 4: C = C - B\nStep 5: D = D + 2\nStep 6: D = D mod 6\nStep 7: C = C mod 4\nStep 8: C = C + B\nStep 9: A = A * D\nStep 10: C = C + A\nStep 11: D = B\nStep 12: C = C * D\nWhat is the value of B? Answer with just the number.",
+      "answer": "9",
+      "accept": [
+        "9"
+      ],
+      "cot": "Initial: {'A': 6, 'B': 7, 'C': 8, 'D': 0}\nD = D - A -> {'A': 6, 'B': 7, 'C': 8, 'D': -6}\nA = A + D -> {'A': 0, 'B': 7, 'C': 8, 'D': -6}\nB = B + 2 -> {'A': 0, 'B': 9, 'C': 8, 'D': -6}\nC = C - B -> {'A': 0, 'B': 9, 'C': -1, 'D': -6}\nD = D + 2 -> {'A': 0, 'B': 9, 'C': -1, 'D': -4}\nD = D mod 6 -> {'A': 0, 'B': 9, 'C': -1, 'D': 2}\nC = C mod 4 -> {'A': 0, 'B': 9, 'C': 3, 'D': 2}\nC = C + B -> {'A': 0, 'B': 9, 'C': 12, 'D': 2}\nA = A * D -> {'A': 0, 'B': 9, 'C': 12, 'D': 2}\nC = C + A -> {'A': 0, 'B': 9, 'C': 12, 'D': 2}\nD = B -> {'A': 0, 'B': 9, 'C': 12, 'D': 9}\nC = C * D -> {'A': 0, 'B': 9, 'C': 108, 'D': 9}",
+      "difficulty": {
+        "steps": 12,
+        "n_regs": 4
+      }
+    },
+    {
+      "id": "cond_2082",
+      "type": "conditional",
+      "question": "Variables start as: x0=1, x1=1, x2=6, x3=0, x4=2\nStep 1: If x2 > x1, set x1 = 8; else set x1 = 5\nStep 2: Set x0 = 2\nStep 3: If x1 > x0, set x3 = 9; else set x3 = 7\nStep 4: Set x1 = 2\nStep 5: x2 = x2 +2\nStep 6: Swap x4 and x1\nStep 7: Swap x1 and x0\nStep 8: If x2 == 9, set x4 = 3; else x4 unchanged\nStep 9: Swap x2 and x3\nStep 10: Set x1 = 3\nStep 11: x0 = x0 -4\nStep 12: Swap x2 and x3\nWhat is the value of x0? Answer with just the number.",
+      "answer": "-2",
+      "accept": [
+        "-2"
+      ],
+      "cot": "Initial: {'x0': 1, 'x1': 1, 'x2': 6, 'x3': 0, 'x4': 2}\nIf x2 > x1, set x1 = 8; else set x1 = 5 | x2(6) > x1(8)? YES -> x1=8 -> {'x0': 1, 'x1': 8, 'x2': 6, 'x3': 0, 'x4': 2}\nSet x0 = 2 -> {'x0': 2, 'x1': 8, 'x2': 6, 'x3': 0, 'x4': 2}\nIf x1 > x0, set x3 = 9; else set x3 = 7 | x1(8) > x0(2)? YES -> x3=9 -> {'x0': 2, 'x1': 8, 'x2': 6, 'x3': 9, 'x4': 2}\nSet x1 = 2 -> {'x0': 2, 'x1': 2, 'x2': 6, 'x3': 9, 'x4': 2}\nx2 = x2 +2 -> {'x0': 2, 'x1': 2, 'x2': 8, 'x3': 9, 'x4': 2}\nSwap x4 and x1 -> {'x0': 2, 'x1': 2, 'x2': 8, 'x3': 9, 'x4': 2}\nSwap x1 and x0 -> {'x0': 2, 'x1': 2, 'x2': 8, 'x3': 9, 'x4': 2}\nx2==9? NO -> no change -> {'x0': 2, 'x1': 2, 'x2': 8, 'x3': 9, 'x4': 2}\nSwap x2 and x3 -> {'x0': 2, 'x1': 2, 'x2': 9, 'x3': 8, 'x4': 2}\nSet x1 = 3 -> {'x0': 2, 'x1': 3, 'x2': 9, 'x3': 8, 'x4': 2}\nx0 = x0 -4 -> {'x0': -2, 'x1': 3, 'x2': 9, 'x3': 8, 'x4': 2}\nSwap x2 and x3 -> {'x0': -2, 'x1': 3, 'x2': 8, 'x3': 9, 'x4': 2}",
+      "difficulty": {
+        "steps": 12,
+        "n_vars": 5
+      }
+    },
+    {
+      "id": "sq_2089",
+      "type": "stack_queue",
+      "question": "You have an empty stack and an empty queue.\nStep 1: Push 2 onto stack\nStep 2: Pop from stack (discard)\nStep 3: Enqueue 9 into queue\nStep 4: Enqueue 2 into queue\nStep 5: Enqueue 5 into queue\nStep 6: Push 4 onto stack\nStep 7: Pop from stack (discard)\nStep 8: Dequeue from queue and push onto stack\nStep 9: Enqueue 4 into queue\nStep 10: Enqueue 3 into queue\nStep 11: Dequeue from queue and push onto stack\nStep 12: Pop from stack and enqueue into queue\nWhat is the front element of the queue? Answer with just the number.",
+      "answer": "5",
+      "accept": [
+        "5"
+      ],
+      "cot": "Initial: stack=[], queue=[]\nPush 2 onto stack -> stack=[2], queue=[]\nPop from stack (discard) -> stack=[], queue=[]\nEnqueue 9 into queue -> stack=[], queue=[9]\nEnqueue 2 into queue -> stack=[], queue=[9, 2]\nEnqueue 5 into queue -> stack=[], queue=[9, 2, 5]\nPush 4 onto stack -> stack=[4], queue=[9, 2, 5]\nPop from stack (discard) -> stack=[], queue=[9, 2, 5]\nDequeue from queue and push onto stack -> stack=[9], queue=[2, 5]\nEnqueue 4 into queue -> stack=[9], queue=[2, 5, 4]\nEnqueue 3 into queue -> stack=[9], queue=[2, 5, 4, 3]\nDequeue from queue and push onto stack -> stack=[9, 2], queue=[5, 4, 3]\nPop from stack and enqueue into queue -> stack=[9], queue=[5, 4, 3, 2]",
+      "difficulty": {
+        "steps": 12
+      }
+    }
+  ],
+  "meta": {
+    "type": "all",
+    "n": 10,
+    "seed": 2026,
+    "difficulty": "hard",
+    "steps": 12
+  },
+  "exemplars": [
+    {
+      "type": "array_ops",
+      "q": "Consider an array initially set to [3, 6, 8]. Perform the following operations in exact order:\n1. Reverse the entire array\n2. Set element at index 2 to the value at index 1\n3. Negate the element at index 1\nWhat is the final array? Answer strictly as ['a', 'a', 'a'] format.",
+      "a": "Initial: [3, 6, 8]\nReverse -> [8, 6, 3]\nSet idx 2 = idx 1 -> [8, 6, 6]\nNegate idx 1 -> [8, -6, 6]\nAnswer: [8, -6, 6]"
+    },
+    {
+      "type": "array_ops",
+      "q": "Consider an array initially set to [1, 5, 6]. Perform the following operations in exact order:\n1. Add 3 to element at index 0\n2. Add 4 to element at index 1\n3. Set element at index 1 to the value at index 2\nWhat is the final array? Answer strictly as ['a', 'a', 'a'] format.",
+      "a": "Initial: [1, 5, 6]\nAdd 3 to idx 0 -> [4, 5, 6]\nAdd 4 to idx 1 -> [4, 9, 6]\nSet idx 1 = idx 2 -> [4, 6, 6]\nAnswer: [4, 6, 6]"
+    },
+    {
+      "type": "coin_flip",
+      "q": "You have 3 coins, all starting as H (heads).\nStep 1: Flip every coin at odd-indexed positions\nStep 2: Flip all coins from 0 to 2\nStep 3: Flip all coins from 1 to 2\nHow many coins show H at the end? Answer with just the number.",
+      "a": "Initial: ['H', 'H', 'H']\nFlip odd-idx -> ['H', 'T', 'H']\nFlip range [0,2] -> ['T', 'H', 'T']\nFlip range [1,2] -> ['T', 'T', 'H']\nAnswer: 1"
+    },
+    {
+      "type": "coin_flip",
+      "q": "You have 3 coins, all starting as H (heads).\nStep 1: Set all coins to T\nStep 2: Flip every coin at even-indexed positions\nStep 3: Set all coins to T\nHow many coins show H at the end? Answer with just the number.",
+      "a": "Initial: ['H', 'H', 'H']\nSet all to T -> ['T', 'T', 'T']\nFlip even-idx -> ['H', 'T', 'H']\nSet all to T -> ['T', 'T', 'T']\nAnswer: 0"
+    },
+    {
+      "type": "register",
+      "q": "Registers start as: A=6, B=4, C=0\nStep 1: A = A + B\nStep 2: B = B mod 5\nStep 3: B = A\nWhat is the value of A? Answer with just the number.",
+      "a": "Initial: {'A': 6, 'B': 4, 'C': 0}\nA = A + B -> {'A': 10, 'B': 4, 'C': 0}\nB = B mod 5 -> {'A': 10, 'B': 4, 'C': 0}\nB = A -> {'A': 10, 'B': 10, 'C': 0}\nAnswer: 10"
+    },
+    {
+      "type": "register",
+      "q": "Registers start as: A=7, B=4, C=0\nStep 1: A = A - B\nStep 2: A = A - B\nStep 3: A = A + 5\nWhat is the value of B? Answer with just the number.",
+      "a": "Initial: {'A': 7, 'B': 4, 'C': 0}\nA = A - B -> {'A': 3, 'B': 4, 'C': 0}\nA = A - B -> {'A': -1, 'B': 4, 'C': 0}\nA = A + 5 -> {'A': 4, 'B': 4, 'C': 0}\nAnswer: 4"
+    },
+    {
+      "type": "conditional",
+      "q": "Variables start as: x0=3, x1=2, x2=9\nStep 1: If x2 > x0, set x2 = 0; else set x2 = 6\nStep 2: Swap x1 and x0\nStep 3: x1 = x1 +4\nWhat is the value of x2? Answer with just the number.",
+      "a": "Initial: {'x0': 3, 'x1': 2, 'x2': 9}\nIf x2 > x0, set x2 = 0; else set x2 = 6 | x2(0) > x0(3)? YES -> x2=0 -> {'x0': 3, 'x1': 2, 'x2': 0}\nSwap x1 and x0 -> {'x0': 2, 'x1': 3, 'x2': 0}\nx1 = x1 +4 -> {'x0': 2, 'x1': 7, 'x2': 0}\nAnswer: 0"
+    },
+    {
+      "type": "conditional",
+      "q": "Variables start as: x0=5, x1=7, x2=3\nStep 1: x1 = x1 -3\nStep 2: Set x0 = 6\nStep 3: Swap x1 and x0\nWhat is the value of x0? Answer with just the number.",
+      "a": "Initial: {'x0': 5, 'x1': 7, 'x2': 3}\nx1 = x1 -3 -> {'x0': 5, 'x1': 4, 'x2': 3}\nSet x0 = 6 -> {'x0': 6, 'x1': 4, 'x2': 3}\nSwap x1 and x0 -> {'x0': 4, 'x1': 6, 'x2': 3}\nAnswer: 4"
+    },
+    {
+      "type": "stack_queue",
+      "q": "You have an empty stack and an empty queue.\nStep 1: Push 9 onto stack\nStep 2: Pop from stack (discard)\nStep 3: Enqueue 2 into queue\nHow many elements are in the stack? Answer with just the number.",
+      "a": "Initial: stack=[], queue=[]\nPush 9 onto stack -> stack=[9], queue=[]\nPop from stack (discard) -> stack=[], queue=[]\nEnqueue 2 into queue -> stack=[], queue=[2]\nAnswer: 0"
+    },
+    {
+      "type": "stack_queue",
+      "q": "You have an empty stack and an empty queue.\nStep 1: Enqueue 6 into queue\nStep 2: Enqueue 9 into queue\nStep 3: Dequeue from queue and push onto stack\nHow many elements are in the queue? Answer with just the number.",
+      "a": "Initial: stack=[], queue=[]\nEnqueue 6 into queue -> stack=[], queue=[6]\nEnqueue 9 into queue -> stack=[], queue=[6, 9]\nDequeue from queue and push onto stack -> stack=[6], queue=[9]\nAnswer: 1"
+    }
+  ]
+}

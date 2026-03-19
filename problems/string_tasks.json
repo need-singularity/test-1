@@ -1,0 +1,180 @@
+{
+  "tasks": [
+    {
+      "id": "charAt_3000",
+      "type": "string_manipulation",
+      "question": "What is the 5th letter of the word 'EXTRAORDINARY'? Answer with just the single letter.",
+      "answer": "A",
+      "accept": [
+        "A",
+        "a"
+      ]
+    },
+    {
+      "id": "revChar_3017",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'ENTREPRENEURSHIP'. What is the 2th letter of the reversed word? Answer with just the single letter.",
+      "answer": "I",
+      "accept": [
+        "I",
+        "i"
+      ]
+    },
+    {
+      "id": "count_3034",
+      "type": "string_manipulation",
+      "question": "How many times does the letter 'E' appear in the word 'PERPENDICULAR'? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    },
+    {
+      "id": "extract_3051",
+      "type": "string_manipulation",
+      "question": "Take the letters at positions 1, 3, 7, 9, 13 of the word 'PHILOSOPHICAL' (1-indexed). Concatenate them in order. What do you get? Answer with just the letters.",
+      "answer": "PIOHL",
+      "accept": [
+        "PIOHL",
+        "piohl"
+      ]
+    },
+    {
+      "id": "revCount_3068",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'SOPHISTICATED'. In the reversed word, how many times does 'I' appear? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    },
+    {
+      "id": "charAt_3085",
+      "type": "string_manipulation",
+      "question": "What is the 2th letter of the word 'STRAWBERRY'? Answer with just the single letter.",
+      "answer": "T",
+      "accept": [
+        "T",
+        "t"
+      ]
+    },
+    {
+      "id": "revChar_3102",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'ACKNOWLEDGEMENT'. What is the 10th letter of the reversed word? Answer with just the single letter.",
+      "answer": "W",
+      "accept": [
+        "W",
+        "w"
+      ]
+    },
+    {
+      "id": "count_3119",
+      "type": "string_manipulation",
+      "question": "How many times does the letter 'P' appear in the word 'PHILOSOPHICAL'? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    },
+    {
+      "id": "extract_3136",
+      "type": "string_manipulation",
+      "question": "Take the letters at positions 3, 8, 9, 11 of the word 'PHILOSOPHICAL' (1-indexed). Concatenate them in order. What do you get? Answer with just the letters.",
+      "answer": "IPHC",
+      "accept": [
+        "IPHC",
+        "iphc"
+      ]
+    },
+    {
+      "id": "revCount_3153",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'COMPUTATION'. In the reversed word, how many times does 'O' appear? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    },
+    {
+      "id": "charAt_3170",
+      "type": "string_manipulation",
+      "question": "What is the 10th letter of the word 'ENTREPRENEURSHIP'? Answer with just the single letter.",
+      "answer": "E",
+      "accept": [
+        "E",
+        "e"
+      ]
+    },
+    {
+      "id": "revChar_3187",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'PERPENDICULAR'. What is the 1th letter of the reversed word? Answer with just the single letter.",
+      "answer": "R",
+      "accept": [
+        "R",
+        "r"
+      ]
+    },
+    {
+      "id": "count_3204",
+      "type": "string_manipulation",
+      "question": "How many times does the letter 'P' appear in the word 'PHILOSOPHICAL'? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    },
+    {
+      "id": "extract_3221",
+      "type": "string_manipulation",
+      "question": "Take the letters at positions 1, 2, 4, 5, 8 of the word 'INFRASTRUCTURE' (1-indexed). Concatenate them in order. What do you get? Answer with just the letters.",
+      "answer": "INRAR",
+      "accept": [
+        "INRAR",
+        "inrar"
+      ]
+    },
+    {
+      "id": "revCount_3238",
+      "type": "string_manipulation",
+      "question": "Reverse the word 'ENTREPRENEURSHIP'. In the reversed word, how many times does 'P' appear? Answer with just the number.",
+      "answer": "2",
+      "accept": [
+        "2"
+      ]
+    }
+  ],
+  "exemplars": [
+    {
+      "type": "string_manipulation",
+      "q": "What is the 3rd letter of the word 'HELLO'? Answer with just the single letter.",
+      "a": "H-E-L-L-O. The 3rd letter is L. Answer: L"
+    },
+    {
+      "type": "string_manipulation",
+      "q": "Reverse the word 'CAT'. What is the 2nd letter of the reversed word? Answer with just the single letter.",
+      "a": "CAT reversed is TAC. The 2nd letter is A. Answer: A"
+    },
+    {
+      "type": "string_manipulation",
+      "q": "How many times does 'L' appear in the word 'LLAMA'? Answer with just the number.",
+      "a": "L-L-A-M-A. L appears at positions 1 and 2. Count: 2. Answer: 2"
+    },
+    {
+      "type": "string_manipulation",
+      "q": "Take the letters at positions 1, 3, 5 of the word 'ABCDE' (1-indexed). Concatenate them. What do you get?",
+      "a": "Position 1=A, 3=C, 5=E. Concatenated: ACE. Answer: ACE"
+    },
+    {
+      "type": "string_manipulation",
+      "q": "Reverse the word 'BANANA'. How many times does 'A' appear? Answer with just the number.",
+      "a": "BANANA reversed is ANANAB. Count A's: A-N-A-N-A-B → 3 times. Answer: 3"
+    },
+    {
+      "type": "string_manipulation",
+      "q": "What is the 4th letter of the word 'PYTHON'? Answer with just the single letter.",
+      "a": "P-Y-T-H-O-N. The 4th letter is H. Answer: H"
+    }
+  ]
+}
