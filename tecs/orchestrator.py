@@ -493,6 +493,10 @@ class Orchestrator:
         self._scale.on_phase_change(phase)
         max_gen = self._scale.max_generations(phase)
 
+        # Reset plateau counter so previous phase's convergence
+        # doesn't cause immediate termination in the new phase
+        self._fitness_history.clear()
+
         if not self.population:
             self._init_population()
 

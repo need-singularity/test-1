@@ -88,13 +88,14 @@ class EmergenceDetector:
                         "sigma": float(abs(value - mean) / std),
                     }
             elif abs(value - mean) > 0:
-                # Zero variance history: any deviation is a spike
+                # Zero variance history: report with capped sigma instead
+                # of inf to avoid numerical artifacts in downstream analysis.
                 return {
                     "generation": generation,
                     "metric": key,
                     "value": value,
                     "type": "sigma_spike",
-                    "sigma": float("inf"),
+                    "sigma": min(abs(value - mean), 1e6),
                 }
 
         return None
