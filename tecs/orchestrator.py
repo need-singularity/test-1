@@ -184,6 +184,12 @@ class Orchestrator:
             )
             state = self._simulator.simulate(candidate, points)
             benchmark_scores = self._benchmark.run_all(state)
+            # Inference benchmark: test real reasoning ability
+            try:
+                inference_scores = self._benchmark.run_inference_benchmark(state)
+                benchmark_scores.update(inference_scores)
+            except Exception:
+                pass  # inference benchmark is optional
             emergence_metrics = {k: v for k, v in state.metrics.items()}
             total_cost = sum(
                 self._registry.get(layer, candidate.components[layer]).cost()

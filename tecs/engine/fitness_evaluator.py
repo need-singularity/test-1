@@ -21,7 +21,11 @@ class FitnessEvaluator:
     }
 
     # Benchmark keys used for scoring
-    BENCHMARK_KEYS = {"concept", "contradiction", "analogy"}
+    BENCHMARK_KEYS = {
+        "concept", "contradiction", "analogy",
+        "query_accuracy", "multihop_accuracy", "analogy_score",
+        "inference_combined",
+    }
 
     def compute(self, emergence: dict, benchmark: dict, cost: float) -> float:
         """Compute absolute weighted fitness (no relative normalization)."""

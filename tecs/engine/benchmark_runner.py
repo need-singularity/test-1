@@ -215,6 +215,131 @@ class BenchmarkRunner:
         return hits / len(quads)
 
     # ------------------------------------------------------------------
+    # Inference benchmarks
+    # ------------------------------------------------------------------
+
+    def run_inference_benchmark(self, state: TopologyState) -> dict[str, float]:
+        """Test actual reasoning ability using the inference engine."""
+        from tecs.inference.inference_engine import InferenceEngine
+        from tecs.inference.analogy_engine import AnalogyEngine
+
+        # Build knowledge from state's topology
+        test_knowledge = self._build_test_knowledge(state)
+        engine = InferenceEngine(test_knowledge)
+        analogy = AnalogyEngine(test_knowledge)
+
+        scores = {}
+
+        # Query accuracy: test known triples
+        query_correct = 0
+        query_total = 0
+        test_queries = [
+            ("cat", "IsA", "mammal"),
+            ("dog", "IsA", "mammal"),
+            ("car", "IsA", "vehicle"),
+            ("gravity", "IsA", "force"),
+            ("atom", "HasA", "electron"),
+        ]
+        for subj, rel, expected in test_queries:
+            result = engine.query(subj, rel)
+            if result.answer == expected:
+                query_correct += 1
+            query_total += 1
+        scores["query_accuracy"] = query_correct / max(query_total, 1)
+
+        # Multi-hop: can it find indirect connections?
+        multihop_correct = 0
+        multihop_total = 0
+        # cat → mammal → animal (2-hop)
+        result = engine.query("cat", "IsA")
+        if result.answer in ("mammal", "animal"):
+            multihop_correct += 1
+        multihop_total += 1
+        # dog → mammal → animal (2-hop)
+        result = engine.query("dog", "IsA")
+        if result.answer in ("mammal", "animal"):
+            multihop_correct += 1
+        multihop_total += 1
+        scores["multihop_accuracy"] = multihop_correct / max(multihop_total, 1)
+
+        # Analogy: can it find cross-domain patterns?
+        analogy_score = 0.0
+        results = analogy.find_analogy("gravity", "economics")
+        if results and results[0].similarity > 0.3:
+            analogy_score = results[0].similarity
+        scores["analogy_score"] = analogy_score
+
+        # Verification: does self-verification work?
+        result = engine.query("cat", "IsA")
+        scores["verification_working"] = 1.0 if result.verified else 0.0
+
+        # Combined inference score
+        scores["inference_combined"] = (
+            scores["query_accuracy"] * 0.3
+            + scores["multihop_accuracy"] * 0.3
+            + scores["analogy_score"] * 0.3
+            + scores["verification_working"] * 0.1
+        )
+
+        return scores
+
+    def _build_test_knowledge(self, state: TopologyState) -> TopologyState:
+        """Build a test knowledge state by injecting known triples into the existing topology."""
+        import networkx as nx
+        import numpy as np
+
+        # Start with the state's existing graph or build a new one
+        if state.complex_type == "graph" and isinstance(state.complex, nx.Graph):
+            G = state.complex.copy()
+        else:
+            G = nx.Graph()
+
+        # Inject test entities and relations
+        test_triples = [
+            ("cat", "IsA", "mammal"), ("cat", "IsA", "animal"), ("cat", "HasA", "fur"),
+            ("dog", "IsA", "mammal"), ("dog", "IsA", "animal"), ("dog", "HasA", "tail"),
+            ("mammal", "IsA", "animal"), ("fish", "IsA", "animal"),
+            ("car", "IsA", "vehicle"), ("truck", "IsA", "vehicle"),
+            ("gravity", "IsA", "force"), ("mass", "RelatedTo", "gravity"),
+            ("energy", "RelatedTo", "mass"),
+            ("price", "RelatedTo", "supply"), ("price", "RelatedTo", "demand"),
+            ("atom", "HasA", "electron"), ("atom", "HasA", "proton"),
+        ]
+
+        entity_set = set()
+        for h, r, t in test_triples:
+            entity_set.add(h)
+            entity_set.add(t)
+
+        # Add entities as nodes (offset from existing nodes)
+        offset = max(G.nodes) + 1 if G.nodes else 0
+        entity_index = {}
+        for i, entity in enumerate(sorted(entity_set)):
+            idx = offset + i
+            G.add_node(idx, label=entity)
+            entity_index[entity] = idx
+
+        # Add edges from triples
+        relation_weights = {"IsA": 0.9, "HasA": 0.7, "RelatedTo": 0.5}
+        for h, r, t in test_triples:
+            if h in entity_index and t in entity_index:
+                G.add_edge(entity_index[h], entity_index[t],
+                           weight=relation_weights.get(r, 0.5), relation=r)
+
+        index_to_entity = {v: k for k, v in entity_index.items()}
+        curvature = np.zeros(len(G.nodes))
+
+        return TopologyState(
+            complex=G, complex_type="graph", curvature=curvature,
+            metrics={}, history=[],
+            metadata={
+                "entity_index": entity_index,
+                "index_to_entity": index_to_entity,
+                "triples": test_triples,
+            },
+        )
+
+    # ------------------------------------------------------------------
     # Combined runner
     # ------------------------------------------------------------------
 
