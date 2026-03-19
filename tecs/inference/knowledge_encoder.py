@@ -171,6 +171,18 @@ class KnowledgeEncoder:
                       "triples": self._triples},
         )
 
+    def load_wikipedia(self, topics: list[str], depth: int = 1, max_related: int = 10):
+        """Load knowledge from Wikipedia for given topics."""
+        from tecs.inference.wikipedia_loader import WikipediaLoader
+        loader = WikipediaLoader()
+        for topic in topics:
+            print(f"  Loading Wikipedia: {topic}...")
+            loader.load_topic(topic, depth=depth, max_related=max_related)
+
+        new_triples = loader.extract_triples()
+        self._triples.extend(new_triples)
+        print(f"  Wikipedia: {len(loader.articles)} articles, {len(new_triples)} triples extracted")
+
     @property
     def entity_index(self) -> dict[str, int]:
         return self._entity_index

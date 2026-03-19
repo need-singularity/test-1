@@ -8,6 +8,7 @@ def main():
     parser.add_argument("query", nargs="?", help="Query: 'subject relation [object]'")
     parser.add_argument("--glove", default="data/glove.6B.50d.txt", help="GloVe vectors path")
     parser.add_argument("--interactive", action="store_true", help="Interactive mode")
+    parser.add_argument("--topics", nargs="+", default=None, help="Wikipedia topics to load")
     args = parser.parse_args()
 
     from tecs.inference.knowledge_encoder import KnowledgeEncoder
@@ -18,6 +19,8 @@ def main():
     enc.load_glove(args.glove)
     enc.load_conceptnet_triples()
     enc.load_wordnet()
+    if args.topics:
+        enc.load_wikipedia(args.topics, depth=1, max_related=10)
     knowledge = enc.build_complex()
     engine = InferenceEngine(knowledge)
     n_entities = len(knowledge.complex.nodes)
