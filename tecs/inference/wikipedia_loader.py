@@ -48,7 +48,7 @@ DEEP_PATTERNS = [
     (r"(?:equivalent|analogous|similar)\s+to\s+(?:the\s+)?(\w[\w\s]{1,40}?)(?:\.|,)", "AnalogousTo"),
     # Process / distribution relationships
     (r"(?:based\s+on|assumes?|using)\s+(?:a\s+)?(\w[\w\s]{1,40}?)\s+(?:process|distribution|model)", "UsesProcess"),
-    (r"(\w[\w\s]{1,30}?)\s+(?:process|distribution|equation|formula|model)\b", "TypeOf"),
+    (r"\b([A-Z][a-z]{2,20}(?:\s+[a-z]{3,15})?)\s+(?:process|distribution|equation|formula|model)\b", "TypeOf"),
     # Causal / functional
     (r"(?:determines?|predicts?|calculates?|computes?)\s+(?:the\s+)?(\w[\w\s]{1,40}?)(?:\.|,)", "Determines"),
     (r"(?:depends?\s+on|function\s+of)\s+(?:the\s+)?(\w[\w\s]{1,40}?)(?:\.|,)", "DependsOn"),
@@ -86,6 +86,47 @@ class WikipediaLoader:
                 return True
         # Filter pure numbers / punctuation sequences
         if text_lower.replace(" ", "").replace(".", "").isdigit():
+            return True
+        # Filter sentence fragments (starts with lowercase article/preposition/conjunction)
+        if text_lower.startswith(("the ", "a ", "an ", "is ", "are ", "was ", "in ", "of ",
+                                   "and ", "or ", "to ", "for ", "with ", "by ", "on ",
+                                   "that ", "which ", "who ", "this ", "these ", "those ",
+                                   "its ", "his ", "her ", "their ", "our ", "your ",
+                                   "ed ", "ing ", "tion ", "ment ", "ity ", "ness ")):
+            return True
+        # Filter if mostly non-alpha (broken extraction)
+        alpha_ratio = sum(1 for c in text_lower if c.isalpha()) / max(len(text_lower), 1)
+        if alpha_ratio < 0.6:
+            return True
+        # Filter very short words that are likely fragments
+        words = text_lower.split()
+        if len(words) == 1 and len(words[0]) < 3:
+            return True
+        # Filter if all words are common stop-words / function words
+        function_words = {"the", "a", "an", "is", "are", "was", "were", "be", "been",
+                         "and", "or", "but", "not", "also", "then", "than", "that",
+                         "this", "which", "who", "whom", "whose", "what", "where",
+                         "when", "how", "if", "so", "as", "at", "by", "for", "from",
+                         "in", "into", "of", "on", "to", "with", "its", "his", "her",
+                         "their", "our", "your", "my", "it", "he", "she", "they", "we"}
+        if all(w in function_words for w in words):
+            return True
+        # Filter if entity is just a single generic word (adjective, person name, etc.)
+        if len(words) == 1:
+            # Allow known scientific terms
+            science_terms = {"brownian", "gaussian", "markov", "wiener", "hamiltonian",
+                           "lagrangian", "newtonian", "euclidean", "riemannian", "boltzmann",
+                           "diffusion", "entropy", "quantum", "stochastic", "probability",
+                           "thermodynamics", "relativity", "electromagnetism"}
+            if text_lower in science_terms:
+                return False
+            # Filter single words that are likely names or generic adjectives
+            if len(text_lower) < 12:
+                return True
+        # Filter partial sentence fragments (contains verbs/articles mid-phrase)
+        fragment_indicators = {" the ", " is ", " are ", " was ", " a ", " an ",
+                              " who ", " that ", " which ", " its ", " has ", " had "}
+        if any(ind in f" {text_lower} " for ind in fragment_indicators):
             return True
         return False
 
