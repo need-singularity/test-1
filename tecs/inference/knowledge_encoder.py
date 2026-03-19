@@ -183,6 +183,16 @@ class KnowledgeEncoder:
         self._triples.extend(new_triples)
         print(f"  Wikipedia: {len(loader.articles)} articles, {len(new_triples)} triples extracted")
 
+    def load_arxiv(self, query: str, max_papers: int = 100, categories: str = ""):
+        """Load knowledge from arXiv papers."""
+        from tecs.inference.arxiv_loader import ArxivLoader
+        loader = ArxivLoader()
+        print(f"  Searching arXiv: '{query}' (max {max_papers})...")
+        loader.search(query, max_results=max_papers, categories=categories)
+        new_triples = loader.extract_triples()
+        self._triples.extend(new_triples)
+        print(f"  arXiv: {len(loader.papers)} papers, {len(new_triples)} triples, {len(loader.concepts)} concepts")
+
     @property
     def entity_index(self) -> dict[str, int]:
         return self._entity_index
