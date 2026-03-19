@@ -62,5 +62,651 @@
       }
     },
     "status": "FAILED_VERIFY"
+  },
+  {
+    "cycle": 2,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:33:45.290746",
+    "phases": {
+      "generate": {
+        "response_length": 4899,
+        "code_extracted": true,
+        "code_length": 4462
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"WS small-world at p_rewire=ln(N)/N\\u22480.0682 maximizes macro-beta1 vs ER (ratio>=1.5) with fixed edge budget\", \"result\": {\"N\": 60, \"E_ws\": 120, \"predicted_p_star\": 0.0682, \"best_p_rewire\": 0.821, \"best_ws_macro_beta1\": 38.15, \"ws_at_predicted_p\": 7.0, \"er_mean_macro_beta1\": 20.55, \"ratio_best\": 1.8564, \"ratio_at_predicted\": 0.3406, \"p_error_relative\": 11.0312}, \"expected\": {\"ratio_min\": 1.5, \"p_star\": 0.0682, \"p_error_max\": 1.0}, \"error\": 0.7729, \"verdict\": \"FAIL\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "FAIL",
+        "error": 0.7729,
+        "hypothesis": "WS small-world at p_rewire=ln(N)/N≈0.0682 maximizes macro-beta1 vs ER (ratio>=1.5) with fixed edge budget",
+        "result": {
+          "N": 60,
+          "E_ws": 120,
+          "predicted_p_star": 0.0682,
+          "best_p_rewire": 0.821,
+          "best_ws_macro_beta1": 38.15,
+          "ws_at_predicted_p": 7.0,
+          "er_mean_macro_beta1": 20.55,
+          "ratio_best": 1.8564,
+          "ratio_at_predicted": 0.3406,
+          "p_error_relative": 11.0312
+        },
+        "expected": {
+          "ratio_min": 1.5,
+          "p_star": 0.0682,
+          "p_error_max": 1.0
+        },
+        "full_output": {
+          "hypothesis": "WS small-world at p_rewire=ln(N)/N≈0.0682 maximizes macro-beta1 vs ER (ratio>=1.5) with fixed edge budget",
+          "result": {
+            "N": 60,
+            "E_ws": 120,
+            "predicted_p_star": 0.0682,
+            "best_p_rewire": 0.821,
+            "best_ws_macro_beta1": 38.15,
+            "ws_at_predicted_p": 7.0,
+            "er_mean_macro_beta1": 20.55,
+            "ratio_best": 1.8564,
+            "ratio_at_predicted": 0.3406,
+            "p_error_relative": 11.0312
+          },
+          "expected": {
+            "ratio_min": 1.5,
+            "p_star": 0.0682,
+            "p_error_max": 1.0
+          },
+          "error": 0.7729,
+          "verdict": "FAIL"
+        }
+      },
+      "critique": {
+        "response": "**PASS** (3개 형식 기준 모두 통과)\n\n1. **동어반복 아님** — p_rewire=ln(N)/N이라는 구체적 수치 예측을 하고 있고, ratio≥1.5라는 독립적으로 측정 가능한 기준을 제시함.\n2. **반증 가능** — 실제로 반증됨. predicted p=0.0682에서 ratio=0.34로 기준(1.5)에 한참 못 미침. best p=0.821로 12배 오차.\n3. **Non-trivial** — ln(N)/N은 ER 연결성 임계값에서 가져온 것으로, 자명한 예측이 아님.\n\n---\n\n그러나 형식은 통과하지만 **가설 자체는 empirically falsified**되었고, 근본 원인을 짚으면:\n\n- **False analogy**: ln(N)/N은 ER 그래프가 connected되는 임계값이지, WS rewiring에서 beta1을 극대화하는 파라미터와 이론적 연결이 없음. 다른 맥락의 공식을 근거 없이 이식한 **numerology**.\n- **실제 최적 p=0.",
+        "passed": false
+      }
+    },
+    "status": "FAILED_VERIFY"
+  },
+  {
+    "cycle": 3,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:35:29.760093",
+    "phases": {
+      "generate": {
+        "response_length": 7406,
+        "code_extracted": true,
+        "code_length": 6960
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"GA converges to s_min_frac~0.5 (half depth) for macro-beta1/beta1 ratio >= 0.8\", \"result\": {\"mean_optimal_s_min_frac\": 0.6681, \"std_s_min_frac\": 0.0628, \"mean_macro_ratio\": 0.7313, \"mean_macro_beta1\": 86.0, \"baseline_macro_ratio_no_constraint\": 0.1768, \"ratio_improvement\": 4.14}, \"expected\": {\"s_min_frac_target\": 0.5, \"s_min_error_max\": 0.3, \"macro_ratio_min\": 0.8}, \"error\": 0.3363, \"verdict\": \"FAIL\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "FAIL",
+        "error": 0.3363,
+        "hypothesis": "GA converges to s_min_frac~0.5 (half depth) for macro-beta1/beta1 ratio >= 0.8",
+        "result": {
+          "mean_optimal_s_min_frac": 0.6681,
+          "std_s_min_frac": 0.0628,
+          "mean_macro_ratio": 0.7313,
+          "mean_macro_beta1": 86.0,
+          "baseline_macro_ratio_no_constraint": 0.1768,
+          "ratio_improvement": 4.14
+        },
+        "expected": {
+          "s_min_frac_target": 0.5,
+          "s_min_error_max": 0.3,
+          "macro_ratio_min": 0.8
+        },
+        "full_output": {
+          "hypothesis": "GA converges to s_min_frac~0.5 (half depth) for macro-beta1/beta1 ratio >= 0.8",
+          "result": {
+            "mean_optimal_s_min_frac": 0.6681,
+            "std_s_min_frac": 0.0628,
+            "mean_macro_ratio": 0.7313,
+            "mean_macro_beta1": 86.0,
+            "baseline_macro_ratio_no_constraint": 0.1768,
+            "ratio_improvement": 4.14
+          },
+          "expected": {
+            "s_min_frac_target": 0.5,
+            "s_min_error_max": 0.3,
+            "macro_ratio_min": 0.8
+          },
+          "error": 0.3363,
+          "verdict": "FAIL"
+        }
+      },
+      "critique": {
+        "response": "**문제 있음 — FAIL**\n\n**이유: 조건부가 실험적으로 도달 불가능하여 사실상 반증 불가**\n\n가설 구조: \"macro_ratio ≥ 0.8 **일 때** s_min_frac ≈ 0.5로 수렴한다\"\n\n실험 결과에서 `mean_macro_ratio = 0.7313` — 조건 자체가 한 번도 충족되지 않았다. 조건이 충족되지 않은 상태에서 결론부(s_min_frac ≈ 0.5)의 성립 여부를 판단하는 것은 의미가 없다.\n\n구체적으로:\n\n1. **동어반복**: 아님. s_min_frac(GA 파라미터)와 macro_ratio(출력 메트릭)는 독립적 정의를 가짐.\n\n2. **반증 가능성**: **실질적으로 불가**. \"ratio ≥ 0.8이면 ~\"이라는 조건부 가설인데, 실험에서 ratio ≥ 0.8인 regime에 도달한 적이 없다. 도달 불가능한 전제조건에 대한 주장은 vacuously true — 논리적으로 반증할 수 없다. baseline_macro_ratio가 0.1768이",
+        "passed": false
+      }
+    },
+    "status": "FAILED_VERIFY"
+  },
+  {
+    "cycle": 4,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:37:36.704818",
+    "phases": {
+      "generate": {
+        "response_length": 6468,
+        "code_extracted": true,
+        "code_length": 5962
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"EA optimizing macro-beta1 converges to individuals with long-range edge fraction >= 0.4, and Spearman(long_range_frac, macro_beta1) >= 0.6 across population\", \"result\": {\"best_individual\": {\"branch\": 6, \"p_xref\": 1.0, \"p_long_bias\": 1.0}, \"avg_best_macro_beta1\": 37.45, \"avg_best_long_range_fraction\": 0.4775, \"spearman_r\": 0.7685, \"spearman_p\": 0.0, \"n_samples\": 1800}, \"expected\": {\"long_range_fraction_min\": 0.4, \"spearman_r_min\": 0.6}, \"error\": 0.0, \"verdict\": \"PASS\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "PASS",
+        "error": 0.0,
+        "hypothesis": "EA optimizing macro-beta1 converges to individuals with long-range edge fraction >= 0.4, and Spearman(long_range_frac, macro_beta1) >= 0.6 across population",
+        "result": {
+          "best_individual": {
+            "branch": 6,
+            "p_xref": 1.0,
+            "p_long_bias": 1.0
+          },
+          "avg_best_macro_beta1": 37.45,
+          "avg_best_long_range_fraction": 0.4775,
+          "spearman_r": 0.7685,
+          "spearman_p": 0.0,
+          "n_samples": 1800
+        },
+        "expected": {
+          "long_range_fraction_min": 0.4,
+          "spearman_r_min": 0.6
+        },
+        "full_output": {
+          "hypothesis": "EA optimizing macro-beta1 converges to individuals with long-range edge fraction >= 0.4, and Spearman(long_range_frac, macro_beta1) >= 0.6 across population",
+          "result": {
+            "best_individual": {
+              "branch": 6,
+              "p_xref": 1.0,
+              "p_long_bias": 1.0
+            },
+            "avg_best_macro_beta1": 37.45,
+            "avg_best_long_range_fraction": 0.4775,
+            "spearman_r": 0.7685,
+            "spearman_p": 0.0,
+            "n_samples": 1800
+          },
+          "expected": {
+            "long_range_fraction_min": 0.4,
+            "spearman_r_min": 0.6
+          },
+          "error": 0.0,
+          "verdict": "PASS"
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 아래 문제들이 있음.\n\n---\n\n**1) 동어반복 (near-tautology)**\n\n`macro_beta1`(첫째 Betti 수)은 그래프의 독립 순환(cycle) 수를 측정한다. Long-range edge를 추가하면 그래프의 먼 노드 사이에 새로운 경로가 생기고, 이 경로는 기존 local cycle과 독립인 cycle을 거의 확정적으로 형성한다. 즉 **long-range edge → 독립 cycle 증가 → β₁ 증가**는 구조적으로 거의 보장된 관계다.\n\n결정적으로, best individual의 파라미터가 `p_xref=1.0, p_long_bias=1.0`이다. EA가 직접 조절하는 knob이 \"long-range edge를 얼마나 넣을까\"이고, fitness가 β₁이면, **\"β₁ 최대화 → long-range edge 최대화\"는 입력-출력의 직접 연결**이다. 상관관계가 아니라 인과의 직접 경로.\n\n**2) 반증 불가능성**\n\n이 가설이 거짓이 ",
+        "passed": false
+      }
+    },
+    "status": "VERIFIED"
+  },
+  {
+    "cycle": 5,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:39:26.533944",
+    "phases": {
+      "generate": {
+        "response_length": 6385,
+        "code_extracted": true,
+        "code_length": 6000
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"EA-optimized macro-beta1/beta1 ratio is size-invariant (CV < 0.15) across N=30,50,70,90\", \"result\": {\"N_values\": [30, 50, 70, 90], \"mean_ratios_per_N\": {\"30\": 0.7428, \"50\": 0.6866, \"70\": 0.7058, \"90\": 0.7017}, \"grand_mean_ratio\": 0.7092, \"cv\": 0.0291}, \"expected\": {\"cv_max\": 0.15}, \"error\": 0.0, \"verdict\": \"PASS\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "PASS",
+        "error": 0.0,
+        "hypothesis": "EA-optimized macro-beta1/beta1 ratio is size-invariant (CV < 0.15) across N=30,50,70,90",
+        "result": {
+          "N_values": [
+            30,
+            50,
+            70,
+            90
+          ],
+          "mean_ratios_per_N": {
+            "30": 0.7428,
+            "50": 0.6866,
+            "70": 0.7058,
+            "90": 0.7017
+          },
+          "grand_mean_ratio": 0.7092,
+          "cv": 0.0291
+        },
+        "expected": {
+          "cv_max": 0.15
+        },
+        "full_output": {
+          "hypothesis": "EA-optimized macro-beta1/beta1 ratio is size-invariant (CV < 0.15) across N=30,50,70,90",
+          "result": {
+            "N_values": [
+              30,
+              50,
+              70,
+              90
+            ],
+            "mean_ratios_per_N": {
+              "30": 0.7428,
+              "50": 0.6866,
+              "70": 0.7058,
+              "90": 0.7017
+            },
+            "grand_mean_ratio": 0.7092,
+            "cv": 0.0291
+          },
+          "expected": {
+            "cv_max": 0.15
+          },
+          "error": 0.0,
+          "verdict": "PASS"
+        }
+      },
+      "critique": {
+        "response": "## 가설 공격\n\n### 1. 동어반복 (Tautology) — 의심됨\n\nEA의 fitness function이 무엇을 최적화하는지가 핵심이다. 만약 fitness가 beta1 관련 metric을 포함하고 있다면, EA가 자연스럽게 beta1과 macro-beta1의 관계를 안정화시키는 방향으로 수렴한다. 즉 **\"EA가 최적화한 결과가 안정적이다\"는 것은 EA가 잘 작동한다는 것 이상의 의미가 없을 수 있다.**\n\n→ fitness function 정의를 확인해야 판단 가능.\n\n### 2. 반증 가능성 (Falsifiability) — CV < 0.15는 너무 관대\n\nCV = 0.0291인데 threshold가 0.15다. **기준이 실제 값의 ~5배.** 이 정도 threshold면 random baseline도 통과할 가능성이 높다. 반증 가능하려면:\n- random/uniform 초기화된 candidate의 동일 ratio CV를 측정해서 비교해야 함\n- 0.15가 아니라 n",
+        "passed": false
+      }
+    },
+    "status": "VERIFIED"
+  },
+  {
+    "cycle": 6,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:41:53.718063",
+    "phases": {
+      "generate": {
+        "response_length": 2407,
+        "code_extracted": true,
+        "code_length": 2146
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"Diamond lattice with k hubs and s=3 spokes yields beta1 = k*(s-1), scaling O(k). At k=5, beta1>=4.\", \"result\": 10, \"expected\": 4, \"error\": 1.5, \"verdict\": \"PASS\", \"details\": {\"linear_beta1\": 0, \"diamond_beta1_by_k\": {\"1\": 2, \"2\": 4, \"3\": 6, \"4\": 8, \"5\": 10, \"6\": 12, \"7\": 14, \"8\": 16}, \"fitted_slope\": 2.0, \"expected_slope\": 2, \"slope_error\": 0.0}}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "PASS",
+        "error": 1.5,
+        "hypothesis": "Diamond lattice with k hubs and s=3 spokes yields beta1 = k*(s-1), scaling O(k). At k=5, beta1>=4.",
+        "result": 10,
+        "expected": 4,
+        "full_output": {
+          "hypothesis": "Diamond lattice with k hubs and s=3 spokes yields beta1 = k*(s-1), scaling O(k). At k=5, beta1>=4.",
+          "result": 10,
+          "expected": 4,
+          "error": 1.5,
+          "verdict": "PASS",
+          "details": {
+            "linear_beta1": 0,
+            "diamond_beta1_by_k": {
+              "1": 2,
+              "2": 4,
+              "3": 6,
+              "4": 8,
+              "5": 10,
+              "6": 12,
+              "7": 14,
+              "8": 16
+            },
+            "fitted_slope": 2.0,
+            "expected_slope": 2,
+            "slope_error": 0.0
+          }
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 세 가지 기준 모두 문제 있음.\n\n---\n\n**1) 동어반복 (Tautology): 문제 있음**\n\nDiamond lattice에서 hub 하나에 s개 spoke를 붙이면, 정의상 s-1개의 독립 cycle이 생긴다. k개 hub를 독립적으로 배치하면 cycle rank는 단순 합산 k*(s-1)이다. 이건 그래프의 **구성 방식 자체가 결과를 내포**하고 있다. \"내가 cycle을 k*(s-1)개 만들도록 그래프를 구성했더니 beta1이 k*(s-1)이었다\"와 다를 바 없다.\n\n**2) 반증 불가능 (Not falsifiable): 문제 있음**\n\nbeta1 = k*(s-1)은 이 특정 그래프 구성에 대한 **수학적 항등식**이다. Cycle rank 공식 `β₁ = |E| - |V| + c`를 적용하면 필연적으로 도출된다. 경험적으로 반증할 수 있는 가설이 아니라 **정리(theorem)**다. 검증 데이터에서 fitted_slope = 2.0, expecte",
+        "passed": false
+      }
+    },
+    "status": "VERIFIED"
+  },
+  {
+    "cycle": 7,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:42:50.208680",
+    "phases": {
+      "generate": {
+        "response_length": 3743,
+        "code_extracted": true,
+        "code_length": 3410
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"Cross-reference density > 0.3 triggers linear macro-beta1 growth; density=0.8 yields beta1 >= 3\", \"result\": 285.1, \"expected\": 3.0, \"error\": 94.0333, \"verdict\": \"FAIL\", \"details\": {\"r_squared_linearity\": 0.9999, \"slope\": 357.42, \"beta1_at_0.8\": 285.1, \"density_beta1_curve\": [[0.0, 0.0], [0.05, 19.1], [0.1, 36.6], [0.15, 54.1], [0.2, 71.9], [0.25, 89.0], [0.3, 107.9], [0.35, 124.2], [0.4, 141.4], [0.45, 160.2], [0.5, 177.3], [0.55, 195.7], [0.6, 214.7], [0.65, 232.0], [0.7, 249.4], [0.75, 267.9], [0.8, 285.1]]}}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "FAIL",
+        "error": 94.0333,
+        "hypothesis": "Cross-reference density > 0.3 triggers linear macro-beta1 growth; density=0.8 yields beta1 >= 3",
+        "result": 285.1,
+        "expected": 3.0,
+        "full_output": {
+          "hypothesis": "Cross-reference density > 0.3 triggers linear macro-beta1 growth; density=0.8 yields beta1 >= 3",
+          "result": 285.1,
+          "expected": 3.0,
+          "error": 94.0333,
+          "verdict": "FAIL",
+          "details": {
+            "r_squared_linearity": 0.9999,
+            "slope": 357.42,
+            "beta1_at_0.8": 285.1,
+            "density_beta1_curve": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.05,
+                19.1
+              ],
+              [
+                0.1,
+                36.6
+              ],
+              [
+                0.15,
+                54.1
+              ],
+              [
+                0.2,
+                71.9
+              ],
+              [
+                0.25,
+                89.0
+              ],
+              [
+                0.3,
+                107.9
+              ],
+              [
+                0.35,
+                124.2
+              ],
+              [
+                0.4,
+                141.4
+              ],
+              [
+                0.45,
+                160.2
+              ],
+              [
+                0.5,
+                177.3
+              ],
+              [
+                0.55,
+                195.7
+              ],
+              [
+                0.6,
+                214.7
+              ],
+              [
+                0.65,
+                232.0
+              ],
+              [
+                0.7,
+                249.4
+              ],
+              [
+                0.75,
+                267.9
+              ],
+              [
+                0.8,
+                285.1
+              ]
+            ]
+          }
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 세 가지 기준 모두에서 문제 있음.\n\n---\n\n**1) 동어반복 (Tautology) — 의심됨**\n\nr² = 0.9999, slope = 357.42로 거의 완벽한 선형관계. 이 정도 상관은 beta1이 density로부터 직접 계산되거나, 둘이 같은 underlying quantity의 변환일 가능성이 높음. \"X가 높으면 f(X)도 높다\"는 동어반복.\n\n실제로 데이터를 보면 `beta1 ≈ 357 * density`가 거의 정확히 성립 — 이건 법칙 발견이 아니라 정의의 재서술일 수 있음.\n\n**2) 반증 가능성 (Falsifiability) — 형식적으로는 있으나 실질적으로 실패**\n\n가설은 \"density=0.8 → beta1 ≥ 3\"을 예측했는데 실측값은 285.1. **94배 오차**. 가설이 반증 가능한 건 맞지만, 실제로 반증됨. 예측이 이 정도로 빗나가면 모델 자체가 현상을 이해하지 못한 것.\n\n**3) Triviality — 치명적**\n\n- 가",
+        "passed": false
+      }
+    },
+    "status": "FAILED_VERIFY"
+  },
+  {
+    "cycle": 8,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:43:47.968624",
+    "phases": {
+      "generate": {
+        "response_length": 4998,
+        "code_extracted": true,
+        "code_length": 4624
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"period-k back-edge \\uc0bd\\uc785 \\uc2dc \\u03b2\\u2081=floor(N/k)-1 \\uc120\\ud615 \\uc99d\\uac00, EA\\ub294 k\\u22483\\uc5d0\\uc11c \\u03b2\\u2081/cost \\ucd5c\\ub300\\ud654 \\uc218\\ub834\", \"result\": {\"linear_beta1\": 0, \"best_evolved_beta1\": 7, \"best_evolved_n_back_edges\": 7, \"best_fitness_beta1_per_edge\": 1.0, \"avg_back_edge_distance_k\": 6.0, \"k3_theory_beta1\": 9, \"k3_actual_beta1\": 9, \"ea_converged\": true, \"convergence_value\": 1.0}, \"expected\": {\"linear_beta1\": 0, \"optimal_fitness\": 1.0, \"k3_match\": true}, \"error\": 0.0, \"verdict\": \"PASS\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "PASS",
+        "error": 0.0,
+        "hypothesis": "period-k back-edge 삽입 시 β₁=floor(N/k)-1 선형 증가, EA는 k≈3에서 β₁/cost 최대화 수렴",
+        "result": {
+          "linear_beta1": 0,
+          "best_evolved_beta1": 7,
+          "best_evolved_n_back_edges": 7,
+          "best_fitness_beta1_per_edge": 1.0,
+          "avg_back_edge_distance_k": 6.0,
+          "k3_theory_beta1": 9,
+          "k3_actual_beta1": 9,
+          "ea_converged": true,
+          "convergence_value": 1.0
+        },
+        "expected": {
+          "linear_beta1": 0,
+          "optimal_fitness": 1.0,
+          "k3_match": true
+        },
+        "full_output": {
+          "hypothesis": "period-k back-edge 삽입 시 β₁=floor(N/k)-1 선형 증가, EA는 k≈3에서 β₁/cost 최대화 수렴",
+          "result": {
+            "linear_beta1": 0,
+            "best_evolved_beta1": 7,
+            "best_evolved_n_back_edges": 7,
+            "best_fitness_beta1_per_edge": 1.0,
+            "avg_back_edge_distance_k": 6.0,
+            "k3_theory_beta1": 9,
+            "k3_actual_beta1": 9,
+            "ea_converged": true,
+            "convergence_value": 1.0
+          },
+          "expected": {
+            "linear_beta1": 0,
+            "optimal_fitness": 1.0,
+            "k3_match": true
+          },
+          "error": 0.0,
+          "verdict": "PASS"
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 문제 3가지 모두 해당.\n\n---\n\n**1) 동어반복 (β₁=floor(N/k)-1 부분)**\n\nPath graph에 period-k back-edge를 삽입하면 floor(N/k)-1개의 독립 cycle이 생긴다. β₁은 독립 cycle 수를 세는 것이므로, 이건 그래프 이론의 **정의적 결과**다. \"k 간격으로 back-edge를 넣으면 ~N/k개 cycle이 생긴다\"는 것은 가설이 아니라 구성 방식의 재진술이다.\n\n**2) 반증 불가 (β₁/cost = 1.0 수렴 부분)**\n\nTree/path에 back-edge를 하나 추가하면 **항상** 정확히 1개의 새로운 independent cycle이 생긴다. 따라서 중복 edge가 없는 한 β₁/edge = 1.0은 **항상 성립**한다. EA가 어떤 k에 수렴하든 이 값은 1.0이다. 이걸 \"수렴\"이라 부르는 건 반증 불가능한 명제를 검증한 것이다.\n\n**3) 검증 로직이 가설과 불일치**\n\n가설은 \"k≈3",
+        "passed": false
+      }
+    },
+    "status": "VERIFIED"
+  },
+  {
+    "cycle": 9,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:47:11.877209",
+    "phases": {
+      "generate": {
+        "response_length": 3534,
+        "code_extracted": true,
+        "code_length": 3137
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"Multi-hub prompt structure with crosslink density p=0.3-0.5 maximizes macro beta_1 per node, achieving O(k*(k-1)/2+k) independent cycles vs 0 for linear chain\", \"result\": 36.0, \"expected\": 10.0, \"optimal_crosslink_p\": 1.0, \"beta1_per_node_at_optimal\": 0.288, \"linear_beta1\": 0, \"all_results\": {\"0.0\": {\"mean_b1\": 0.0, \"b1_per_node\": 0.0}, \"0.1\": {\"mean_b1\": 3.1, \"b1_per_node\": 0.0248}, \"0.2\": {\"mean_b1\": 6.0, \"b1_per_node\": 0.048}, \"0.3\": {\"mean_b1\": 9.15, \"b1_per_node\": 0.0732}, \"0.4\": {\"mean_b1\": 12.4, \"b1_per_node\": 0.0992}, \"0.5\": {\"mean_b1\": 16.05, \"b1_per_node\": 0.1284}, \"0.6\": {\"mean_b1\": 20.5, \"b1_per_node\": 0.164}, \"0.7\": {\"mean_b1\": 24.8, \"b1_per_node\": 0.1984}, \"0.8\": {\"mean_b1\": 28.9, \"b1_per_node\": 0.2312}, \"0.9\": {\"mean_b1\": 32.45, \"b1_per_node\": 0.2596}, \"1.0\": {\"mean_b1\": 36.0, \"b1_per_node\": 0.288}}, \"error\": 2.6, \"verdict\": \"FAIL\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "FAIL",
+        "error": 2.6,
+        "hypothesis": "Multi-hub prompt structure with crosslink density p=0.3-0.5 maximizes macro beta_1 per node, achieving O(k*(k-1)/2+k) independent cycles vs 0 for linear chain",
+        "result": 36.0,
+        "expected": 10.0,
+        "full_output": {
+          "hypothesis": "Multi-hub prompt structure with crosslink density p=0.3-0.5 maximizes macro beta_1 per node, achieving O(k*(k-1)/2+k) independent cycles vs 0 for linear chain",
+          "result": 36.0,
+          "expected": 10.0,
+          "optimal_crosslink_p": 1.0,
+          "beta1_per_node_at_optimal": 0.288,
+          "linear_beta1": 0,
+          "all_results": {
+            "0.0": {
+              "mean_b1": 0.0,
+              "b1_per_node": 0.0
+            },
+            "0.1": {
+              "mean_b1": 3.1,
+              "b1_per_node": 0.0248
+            },
+            "0.2": {
+              "mean_b1": 6.0,
+              "b1_per_node": 0.048
+            },
+            "0.3": {
+              "mean_b1": 9.15,
+              "b1_per_node": 0.0732
+            },
+            "0.4": {
+              "mean_b1": 12.4,
+              "b1_per_node": 0.0992
+            },
+            "0.5": {
+              "mean_b1": 16.05,
+              "b1_per_node": 0.1284
+            },
+            "0.6": {
+              "mean_b1": 20.5,
+              "b1_per_node": 0.164
+            },
+            "0.7": {
+              "mean_b1": 24.8,
+              "b1_per_node": 0.1984
+            },
+            "0.8": {
+              "mean_b1": 28.9,
+              "b1_per_node": 0.2312
+            },
+            "0.9": {
+              "mean_b1": 32.45,
+              "b1_per_node": 0.2596
+            },
+            "1.0": {
+              "mean_b1": 36.0,
+              "b1_per_node": 0.288
+            }
+          },
+          "error": 2.6,
+          "verdict": "FAIL"
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 여러 문제가 있음.\n\n---\n\n## 1. 동어반복 (Tautology) — **문제 있음**\n\n\"Crosslink density를 높이면 independent cycle이 많아진다\"는 그래프 이론의 **정의적 사실**이다. 단체복합체(simplicial complex)에서 edge를 추가하면 β₁이 증가하는 건 Euler characteristic 관계에서 자명하다. 특히 `O(k*(k-1)/2 + k)` independent cycles라는 주장은 complete graph의 cycle rank 공식 `|E| - |V| + 1`을 재진술한 것에 불과하다.\n\n\"linear chain의 β₁ = 0\" 역시 tree의 정의상 자명 — cycle이 없으니 당연하다.\n\n## 2. 반증 불가능 (Unfalsifiable) — **핵심 문제**\n\n가설은 p=0.3-0.5가 **최적**이라고 주장하지만, 실험 데이터가 명백히 반증했다:\n\n| p | β₁/node |\n|---|",
+        "passed": false
+      }
+    },
+    "status": "FAILED_VERIFY"
+  },
+  {
+    "cycle": 10,
+    "target": "LLM의 논리 추론(CoT) 텍스트를 네트워크 그래프로 변환했을 때, 단순 선형 트리(β₁=0)를 탈피하고 자기 교정(Self-correction)을 의미하는\n  거시적 위상 루프(macro-β₁ > 0)를 극대화하는 '최적의 추론 유도 프롬프트 구조'를 진화 알고리즘으로 탐색하고 수치로 검증하라.",
+    "timestamp": "2026-03-19T19:48:08.541599",
+    "phases": {
+      "generate": {
+        "response_length": 7620,
+        "code_extracted": true,
+        "code_length": 6993
+      },
+      "run": {
+        "success": true,
+        "stdout": "{\"hypothesis\": \"macro-beta1 undergoes phase transition at rho_fb=p_back*b*deep_fraction~1; EA-optimized graph achieves >=50% of upper bound b(b-1)(d-1)/2\", \"result\": {\"transition_rho_fb\": 0.13, \"best_params\": {\"b\": 3, \"p_xref\": 0.9251, \"p_back\": 0.9846, \"topology\": \"full_feedback\"}, \"rho_fb_best\": 2.5599, \"avg_macro_beta1\": 74.9, \"baseline\": 0.0, \"upper_bound\": 6, \"achievement_ratio\": 12.4833}, \"expected\": {\"transition_rho_range\": [0.2, 2.0], \"achievement_min\": 0.5, \"baseline_zero\": true}, \"error\": 11.4833, \"verdict\": \"FAIL\"}\n",
+        "stderr": ""
+      },
+      "verify": {
+        "verdict": "FAIL",
+        "error": 11.4833,
+        "hypothesis": "macro-beta1 undergoes phase transition at rho_fb=p_back*b*deep_fraction~1; EA-optimized graph achieves >=50% of upper bound b(b-1)(d-1)/2",
+        "result": {
+          "transition_rho_fb": 0.13,
+          "best_params": {
+            "b": 3,
+            "p_xref": 0.9251,
+            "p_back": 0.9846,
+            "topology": "full_feedback"
+          },
+          "rho_fb_best": 2.5599,
+          "avg_macro_beta1": 74.9,
+          "baseline": 0.0,
+          "upper_bound": 6,
+          "achievement_ratio": 12.4833
+        },
+        "expected": {
+          "transition_rho_range": [
+            0.2,
+            2.0
+          ],
+          "achievement_min": 0.5,
+          "baseline_zero": true
+        },
+        "full_output": {
+          "hypothesis": "macro-beta1 undergoes phase transition at rho_fb=p_back*b*deep_fraction~1; EA-optimized graph achieves >=50% of upper bound b(b-1)(d-1)/2",
+          "result": {
+            "transition_rho_fb": 0.13,
+            "best_params": {
+              "b": 3,
+              "p_xref": 0.9251,
+              "p_back": 0.9846,
+              "topology": "full_feedback"
+            },
+            "rho_fb_best": 2.5599,
+            "avg_macro_beta1": 74.9,
+            "baseline": 0.0,
+            "upper_bound": 6,
+            "achievement_ratio": 12.4833
+          },
+          "expected": {
+            "transition_rho_range": [
+              0.2,
+              2.0
+            ],
+            "achievement_min": 0.5,
+            "baseline_zero": true
+          },
+          "error": 11.4833,
+          "verdict": "FAIL"
+        }
+      },
+      "critique": {
+        "response": "**FAIL** — 세 가지 모두 문제 있음.\n\n---\n\n**1) 동어반복 여부: 문제 있음 (부분적)**\n\n`rho_fb = p_back * b * deep_fraction`은 세 파라미터의 곱일 뿐이고, \"~1에서 phase transition\"이라는 주장은 검증 가능한 예측이다. 여기까진 괜찮다. 그러나 **\"upper bound\" b(b-1)(d-1)/2**는 실제 upper bound가 아니다 — 실측값 74.9가 이 \"bound\" 6을 **12배 초과**한다. 존재하지 않는 bound에 대해 \"50% 달성\"을 주장하는 건, 기준 자체가 무의미하므로 사실상 내용 없는 명제다.\n\n**2) 반증 가능성: 형식적으로는 가능, 실질적으로 무의미**\n\n- **전이점 예측**: rho_fb~1을 예측했는데 실측은 0.13. 8배 차이. 이미 반증됨.\n- **50% 달성 기준**: \"upper bound\"가 실제 bound가 아니므로 이 기준은 항상 통과한다. **반증 불가능한 조건**",
+        "passed": false
+      }
+    },
+    "status": "FAILED_VERIFY"
   }
 ]
