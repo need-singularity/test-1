@@ -9,6 +9,7 @@ import networkx as nx
 import numpy as np
 
 from tecs.types import TopologyState
+from tecs.inference.poincare_utils import generate_poincare_embeddings
 
 if TYPE_CHECKING:
     from tecs.data.data_manager import DataManager
@@ -61,10 +62,9 @@ def _get_graph_nodes(state: TopologyState) -> list:
 def _topological_distance(state: TopologyState, a, b) -> float:
     """Return a topological distance between node indices a and b.
 
-    For graph types uses NetworkX shortest path length (capped at a large
-    value when not connected).  For simplicial / hypergraph types counts the
-    number of simplices / hyperedges that contain *both* a and b (higher
-    co-occurrence → lower distance).  Returns a non-negative float.
+    Topology benchmarks (concept, contradiction, analogy) test graph
+    structure, so we use hop-count here.  Hyperbolic / Ouroboros
+    distance is used only in the inference engine (Level 2).
     """
     ctype = state.complex_type
 
@@ -315,6 +315,9 @@ class BenchmarkRunner:
         index_to_entity = {v: k for k, v in entity_index.items()}
         curvature = np.zeros(len(G.nodes))
 
+        # Generate Poincare embeddings for hyperbolic inference
+        poincare_emb = generate_poincare_embeddings(G)
+
         return TopologyState(
             complex=G, complex_type="graph", curvature=curvature,
             metrics={}, history=[],
@@ -322,6 +325,7 @@ class BenchmarkRunner:
                 "entity_index": entity_index,
                 "index_to_entity": index_to_entity,
                 "triples": triples,
+                "poincare_embeddings": poincare_emb,
             },
         )
 

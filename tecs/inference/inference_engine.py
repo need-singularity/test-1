@@ -1,8 +1,12 @@
 """Topological reasoning engine -- multi-level inference."""
 from __future__ import annotations
+import heapq
 import numpy as np
 import networkx as nx
 from tecs.types import TopologyState
+from tecs.inference.poincare_utils import (
+    poincare_distance, generate_poincare_embeddings, ouroboros_distance,
+)
 
 
 class InferenceResult:
@@ -28,12 +32,21 @@ class InferenceResult:
 
 
 class InferenceEngine:
+    # Hyperbolic search parameters (replace hardcoded 3-hop BFS)
+    TAU = 3.0            # max single-hop hyperbolic distance (wormhole pruning)
+    MAX_RADIUS = 12.0    # max cumulative hyperbolic distance (cognitive horizon)
+
     def __init__(self, knowledge: TopologyState):
         self._knowledge = knowledge
         self._G: nx.Graph = knowledge.complex
         self._entity_index: dict[str, int] = knowledge.metadata.get("entity_index", {})
         self._index_to_entity: dict[int, str] = knowledge.metadata.get("index_to_entity", {})
         self._triples = knowledge.metadata.get("triples", [])
+        # Generate or reuse Poincare embeddings
+        self._embeddings = knowledge.metadata.get("poincare_embeddings")
+        if self._embeddings is None:
+            self._embeddings = generate_poincare_embeddings(self._G)
+            knowledge.metadata["poincare_embeddings"] = self._embeddings
 
     def query(self, subject: str, relation: str, obj: str = "?") -> InferenceResult:
         """Multi-level inference."""
@@ -110,45 +123,87 @@ class InferenceEngine:
         return None
 
     def _level2_multipath(self, subject: str, relation: str, obj: str) -> InferenceResult | None:
-        """Level 2: Multi-hop path search."""
+        """Level 2: Hyperbolic Dijkstra search (replaces BFS 3-hop).
+
+        Instead of counting discrete hops, we accumulate Poincare disk
+        distance along edges.  Paths through the disk center (abstract
+        concepts with high centrality) are cheap; paths along the
+        boundary (peripheral/concrete concepts) are expensive.
+        """
         subj_idx = self._entity_index.get(subject)
         if subj_idx is None:
             return None
 
-        # BFS up to 3 hops
-        visited = {subj_idx: [subject]}
-        queue = [(subj_idx, 0)]
+        # Collect target entity indices that would satisfy the query
+        target_entities: dict[int, tuple[str, float]] = {}  # idx → (entity, base_conf)
+        for h, r, t in self._triples:
+            if h == subject and r == relation:
+                t_idx = self._entity_index.get(t)
+                if t_idx is not None:
+                    target_entities[t_idx] = (t, 0.8)
+            elif r == relation:
+                t_idx = self._entity_index.get(t)
+                if t_idx is not None and t_idx not in target_entities:
+                    target_entities[t_idx] = (t, 0.6)
+
+        if not target_entities:
+            return None
+
+        # Hyperbolic Dijkstra: priority queue = (cumulative_distance, node, path)
+        pq = [(0.0, subj_idx, [subject])]
+        min_dist: dict[int, float] = {subj_idx: 0.0}
         candidates = []
 
-        while queue:
-            node, depth = queue.pop(0)
-            if depth >= 3:
+        while pq:
+            cum_dist, node, path = heapq.heappop(pq)
+
+            # Skip if already found a shorter route
+            if cum_dist > min_dist.get(node, float("inf")):
                 continue
+
+            # Check if we reached a target
+            if node in target_entities:
+                entity, base_conf = target_entities[node]
+                # Confidence: decays smoothly with hyperbolic distance
+                # instead of the old harsh 1/(depth+1) step function
+                conf = base_conf * np.exp(-0.15 * cum_dist)
+                hop_count = len(path) - 1
+                # Tag if any step used ouroboros wormhole
+                has_wormhole = any("W" in str(p) for p in path)
+                mode = "ouroboros" if has_wormhole else "geodesic"
+                candidates.append(InferenceResult(
+                    answer=entity, confidence=float(conf), level=2,
+                    reasoning=f"{hop_count}-hop {mode} (d_H={cum_dist:.2f})",
+                    path=path, verified=False,
+                ))
+
+            # Expand neighbors within cognitive horizon
             for nb in self._G.neighbors(node):
-                if nb not in visited:
-                    entity = self._index_to_entity.get(nb, str(nb))
-                    path = visited[node] + [entity]
-                    visited[nb] = path
+                emb_u = self._embeddings.get(node)
+                emb_v = self._embeddings.get(nb)
+                if emb_u is None or emb_v is None:
+                    continue
 
-                    # Check if this entity matches relation via triples
-                    for h, r, t in self._triples:
-                        if h == subject and r == relation and t == entity:
-                            conf = 0.8 / (depth + 1)  # confidence decreases with hops
-                            candidates.append(InferenceResult(
-                                answer=entity, confidence=conf, level=2,
-                                reasoning=f"{depth+1}-hop path via triples",
-                                path=path, verified=False,
-                            ))
-                        elif t == entity and r == relation:
-                            # Reverse direction check
-                            conf = 0.6 / (depth + 1)
-                            candidates.append(InferenceResult(
-                                answer=entity, confidence=conf, level=2,
-                                reasoning=f"{depth+1}-hop reverse path",
-                                path=path, verified=False,
-                            ))
+                # Ouroboros wormhole activates only for analogy/concept relations
+                is_analogy = relation in ("RelatedTo", "SimilarTo", "Analogy")
+                edge_dist, via_wormhole = ouroboros_distance(
+                    emb_u, emb_v, analogy_mode=is_analogy,
+                )
 
-                    queue.append((nb, depth + 1))
+                # Wormhole pruning: single hop too large → hallucination
+                # (wormhole paths are already compressed, so they pass this)
+                if edge_dist > self.TAU:
+                    continue
+
+                new_dist = cum_dist + edge_dist
+
+                # Cognitive horizon: cumulative distance budget
+                if new_dist <= self.MAX_RADIUS:
+                    if new_dist < min_dist.get(nb, float("inf")):
+                        min_dist[nb] = new_dist
+                        nb_entity = self._index_to_entity.get(nb, str(nb))
+                        tag = "W" if via_wormhole else ""
+                        heapq.heappush(pq, (new_dist, nb, path + [nb_entity + tag]))
 
         if candidates:
             return max(candidates, key=lambda r: r.confidence)
@@ -241,25 +296,31 @@ class InferenceEngine:
         if subj_idx not in self._G or ans_idx not in self._G:
             return False
 
-        # Check 1: Are they connected?
-        try:
-            path_length = nx.shortest_path_length(self._G, subj_idx, ans_idx)
-            if path_length > 5:
-                return False  # too far apart
-        except nx.NetworkXNoPath:
-            return False
+        # Check 1: Are they connected within the cognitive horizon?
+        emb_s = self._embeddings.get(subj_idx)
+        emb_a = self._embeddings.get(ans_idx)
+        if emb_s is not None and emb_a is not None:
+            hyp_dist = poincare_distance(emb_s, emb_a)
+            if hyp_dist > self.MAX_RADIUS:
+                return False  # beyond cognitive horizon
+        else:
+            try:
+                path_length = nx.shortest_path_length(self._G, subj_idx, ans_idx)
+                if path_length > 5:
+                    return False
+            except nx.NetworkXNoPath:
+                return False
 
         # Check 2: Structural consistency
-        # The answer should be in a structurally compatible region
         subj_sig = self._compute_signature(subj_idx)
         ans_sig = self._compute_signature(ans_idx)
         if subj_sig and ans_sig:
-            # For IsA: answer should have >= connectivity (more general)
             if relation == "IsA":
                 return self._G.degree(ans_idx) >= self._G.degree(subj_idx) * 0.5
-            # For HasA: answer should be connected to subject
             elif relation == "HasA":
-                return path_length <= 2
+                if emb_s is not None and emb_a is not None:
+                    return poincare_distance(emb_s, emb_a) <= self.TAU * 2
+                return nx.shortest_path_length(self._G, subj_idx, ans_idx) <= 2
 
         return True  # default: accept
 
