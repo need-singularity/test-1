@@ -3,6 +3,7 @@
 **Date**: 2026-03-19
 **Status**: Approved
 **Approach**: Pragmatic Patch (C) — minimal file changes, interface-preserving
+**Review**: 1 round — 3 Critical, 4 Important, 3 Suggestions resolved
 
 ## Problem Statement
 
@@ -46,6 +47,7 @@ All three paths implemented with verification and comments for future expansion.
 | Component | File | Change Type |
 |-----------|------|-------------|
 | FuchsianGroup class | `poincare_utils.py` | Add |
+| Ouroboros geometry | `ouroboros_geometry.py` | New file (FuchsianGroup + verification helpers) |
 | quotient_distance | `poincare_utils.py` | Replace `-v` internals |
 | Ollivier curvature | `poincare_utils.py` | Add |
 | Ricci flow + neck pinch | `poincare_utils.py` | Add |
@@ -59,7 +61,7 @@ All three paths implemented with verification and comments for future expansion.
 
 ### Interface Preservation
 
-The `ouroboros_distance()` signature is **unchanged**:
+The `ouroboros_distance()` signature is **strictly unchanged**:
 ```python
 def ouroboros_distance(
     u, v, analogy_mode=False, theta=0.85, sigma=0.15, eps=1e-7
@@ -67,7 +69,17 @@ def ouroboros_distance(
 ```
 
 Internal change: `poincare_distance(u, -v)` → `FuchsianGroup.quotient_distance(u, v)`.
-`sigma` gains `"auto"` option for adaptive calibration.
+
+**Adaptive sigma** is a preprocessing step that computes a float value *before*
+calling `ouroboros_distance` — not a string parameter. The caller passes the
+computed float to `sigma=`. This preserves the `sigma: float` type contract.
+
+### Rollback Strategy
+
+A feature flag `use_fuchsian: bool` in `FuchsianGroup` defaults to `True`.
+Setting it to `False` falls back to the original `-v` antipodal mapping.
+This enables safe A/B comparison and instant rollback if quotient distance
+produces worse inference results.
 
 ## Component Designs
 
@@ -75,17 +87,27 @@ Internal change: `poincare_distance(u, -v)` → `FuchsianGroup.quotient_distance
 
 ```
 class FuchsianGroup:
-    __init__(dim, num_generators=None)
-        dim=2: 2 generators (antipodal + π/2 rotation)
-        dim=d: 2d coordinate reflection generators
+    __init__(dim, num_generators=None, use_fuchsian=True)
+        dim=2: 2 generators as Moebius transformations
+               γ₁: z → -z (antipodal, existing behavior)
+               γ₂: z → iz  (π/2 rotation in Poincare disk)
+               Represented as (a, b) pairs where γ(z) = (az+b)/(b̄z+ā)
+               with |a|² - |b|² = 1
+        dim=d: 2d generators — coordinate hyperplane reflections
+               Each as Moebius transform in the d-dim ball model
         dim=3: Mostow rigidity annotations
+        use_fuchsian=False: orbit() returns only [v, -v] (legacy fallback)
 
     generators() → list[Callable]
         Each generator: np.ndarray → np.ndarray
+        Implemented as proper hyperbolic isometries (Moebius transforms),
+        NOT Euclidean linear maps applied to Poincare coordinates.
 
     orbit(v, max_depth=2) → list[np.ndarray]
-        Word length 0..max_depth, deduplicated by distance epsilon
+        Word length 0..max_depth, deduplicated by poincare_distance < 0.01
+        (hyperbolic scale epsilon, not Euclidean)
         max_depth enables GPT-5.4's "generator word length ablation"
+        Orbit size capped at 50 to prevent explosion
 
     quotient_distance(u, v) → float
         inf_{γv in orbit(v)} d_H(u, γv)
@@ -95,9 +117,11 @@ class FuchsianGroup:
 
 ```
 ollivier_ricci_curvature(G, a, b, embeddings=None) → float
-    - Uniform distribution over 1-hop neighbors
-    - Cost matrix: poincare_distance between neighbor pairs
-    - Optimal transport: scipy.optimize.linear_sum_assignment
+    - Uniform distribution μₐ, μᵦ over 1-hop neighbors of a, b
+    - Cost matrix: poincare_distance between all neighbor pairs
+    - When |N(a)| ≠ |N(b)|: pad smaller set with dummy nodes at
+      max-distance cost to make cost matrix square, then apply
+      scipy.optimize.linear_sum_assignment
     - κ(a,b) = 1 - W₁(μₐ, μᵦ) / d(a,b)
 
 compute_ricci_flow(G, embeddings, iterations=10, step=0.1)
@@ -105,10 +129,17 @@ compute_ricci_flow(G, embeddings, iterations=10, step=0.1)
     - Per-iteration: compute curvature → adjust edge weights
     - Convergence: curvature variance < epsilon
 
-detect_neck_pinch(curvature_map, threshold=0.5)
+detect_neck_pinch(curvature_map, threshold=None)
     → list[tuple[node, node, float]]
-    - Edges with positive curvature > threshold
-    - These are geometric bottlenecks created by wormholes
+    - Default threshold: mean + 2*std of curvature distribution
+      (data-driven, not hardcoded 0.5 — avoids false positives
+      from natural high-curvature clusters in small-world graphs)
+    - Edges with positive curvature above threshold
+    - These are candidate geometric bottlenecks
+    - Note: Ollivier-Ricci on graphs differs from smooth manifold
+      Ricci curvature. High positive values indicate dense clusters,
+      not necessarily pathological neck pinches. The verification
+      script reports these for human inspection rather than auto-reject.
 ```
 
 ### 3. Adaptive Sigma
@@ -118,8 +149,8 @@ adaptive_sigma(embeddings, theta=0.85) → float
     - Compute pairwise distances among boundary nodes (||x|| > theta)
     - sigma = clamp(1.0 / median_distance, 0.05, 0.30)
     - Dense boundary → lower sigma, sparse → higher sigma
-
-ouroboros_distance gains sigma="auto" option
+    - Returns a float value; caller passes it to ouroboros_distance(sigma=...)
+    - This is a preprocessing step, NOT a parameter type change
 ```
 
 ### 4. Verification Script
@@ -128,14 +159,14 @@ ouroboros_distance gains sigma="auto" option
 
 **6 Metrics (algebraic + differential-geometric):**
 
-| # | Metric | Type | Target |
-|---|--------|------|--------|
-| 1 | Group invariance violation rate | Algebraic | 0% |
-| 2 | Triangle inequality violation rate | Algebraic | 0% |
-| 3 | Antipodal dependency rate | Algebraic | High = improvement |
-| 4 | Curvature convergence (variance after Ricci flow) | Diff-geom | < 0.01 |
-| 5 | Neck pinch count (positive curvature spikes) | Diff-geom | 0 |
-| 6 | Injectivity radius distribution | Diff-geom | Within [0.5, 3.0] |
+| # | Metric | Type | Target | Notes |
+|---|--------|------|--------|-------|
+| 1 | Group invariance violation rate | Algebraic | 0% | d_M([γx],[y]) == d_M([x],[y]) |
+| 2 | Triangle inequality violation rate | Algebraic | 0% | d_M(x,z) ≤ d_M(x,y) + d_M(y,z) |
+| 3 | Antipodal dependency rate | Algebraic | High = improvement | How often quotient ≠ old -v result |
+| 4 | Curvature convergence (variance after Ricci flow) | Diff-geom | Empirical baseline first | Target TBD after initial run on current graph |
+| 5 | Neck pinch candidates (curvature > mean+2σ) | Diff-geom | Report, no auto-reject | Human inspection |
+| 6 | Injectivity radius distribution | Diff-geom | Report histogram | Defined as min quotient_distance(v, γv) over non-identity γ ∈ Γ for each node v |
 
 **Execution modes:**
 ```bash
@@ -144,15 +175,18 @@ python scripts/verify_ouroboros.py --sweep-depth 0,1,2,3 --sweep-sigma 0.05,0.10
 python scripts/verify_ouroboros.py --eval-only
 ```
 
-**Output:** PASS/FAIL + `results/ouroboros_verification.json`
+**Output:** PASS/FAIL (metrics 1-2 only) + advisory report (metrics 3-6)
++ `results/ouroboros_verification.json`
 
 ### 5. Eval Set Reinforcement
 
 Add to `eval_set.py`:
 - 5 Level-2-only queries (no direct triple in Level 1)
   - e.g., `("fur", "PartOf", "cat")`, `("wheel", "PartOf", "car")`
-- 3 Level-4 cross-domain queries
-  - e.g., `("gravity", "AnalogousTo", "price")`
+- 3 Level-4 cross-domain queries using **existing** `"RelatedTo"` relation
+  - e.g., `("gravity", "RelatedTo", "price")` — NOT "AnalogousTo"
+  - `"RelatedTo"` is already handled by the `is_analogy` check in
+    `inference_engine.py:188` and exists in EVAL_KNOWLEDGE
 - Reverse triples in EVAL_KNOWLEDGE
   - e.g., `("electron", "PartOf", "atom")`
 
@@ -160,8 +194,19 @@ Add to `eval_set.py`:
 
 Interface-preserving changes only:
 - `__init__`: Create `FuchsianGroup` instance (dim auto-detected from embeddings)
-- `_level2_multipath`: Fix `relation` variable scope (explicit parameter instead of closure)
+- `__init__`: Optionally compute `adaptive_sigma` and store as `self._sigma`
+- `_level2_multipath`: Pass `self._sigma` to `ouroboros_distance(sigma=self._sigma)`
+- Note: `_level2_multipath` already receives `relation` as an explicit parameter
+  (confirmed at line 125). No scope fix needed — the prior analysis was incorrect.
 - All imports unchanged
+
+### Benchmark Impact
+
+Existing benchmark scores may shift after the quotient distance upgrade:
+- `run_inference_benchmark` creates `InferenceEngine` which calls `ouroboros_distance`
+- The `use_fuchsian` feature flag enables A/B comparison pre/post upgrade
+- `config.yaml` targets (`target_benchmark: 0.7`) should be re-evaluated after
+  initial verification run, not pre-adjusted
 
 ## Documentation
 
@@ -184,9 +229,12 @@ Two-stage pipeline as recommended by cross-model analysis.
 | Risk | Mitigation |
 |------|-----------|
 | Phase 2 worker still running | Interface preservation — no import changes |
-| poincare_utils.py grows to ~300 lines | Post-Phase 4 refactor to package structure |
-| Orbit explosion at high max_depth | Deduplication + capped orbit size |
+| Quotient distance produces worse results | `use_fuchsian` feature flag for A/B and rollback |
+| poincare_utils.py grows large | Split FuchsianGroup into `ouroboros_geometry.py` now |
+| Orbit explosion at high max_depth | Deduplication + capped orbit size (50) |
 | Ollivier curvature slow on large graphs | Verification script is independent, not in evolution loop |
+| Neck pinch false positives | Data-driven threshold (mean+2σ), human inspection, no auto-reject |
+| Benchmark targets may shift | A/B compare before adjusting config.yaml thresholds |
 
 ## Future Work (Annotated in Code)
 
