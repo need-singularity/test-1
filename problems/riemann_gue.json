@@ -1,0 +1,14 @@
+{
+  "name": "Riemann zeros GUE cumulant",
+  "claim": "Riemann zeta zero spacing cumulants match GUE predictions",
+  "equation": "kappa_n = (-1)**n * d_n_log_zeta_R",
+  "variables": {"kappa_n": "1", "d_n_log_zeta_R": "1"},
+  "known_data": {
+    "observed_kappa2": 0.1479,
+    "GUE_kappa2": 0.1781,
+    "observed_level_repulsion": 0.0005,
+    "Poisson_level_repulsion": 0.095
+  },
+  "fitted_params": {},
+  "domain": "math+physics"
+}

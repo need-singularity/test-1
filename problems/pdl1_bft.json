@@ -1,0 +1,13 @@
+{
+  "name": "PD-L1 BFT threshold",
+  "claim": "PD-L1 expression rate 25% = Byzantine fault tolerance limit",
+  "equation": "f_c = 1/(3*k)",
+  "variables": {"f_c": "1", "k": "1"},
+  "known_data": {
+    "observed_cutoff": 0.25,
+    "BFT_classical": 0.333
+  },
+  "fitted_params": {"k": 1.3},
+  "counterexamples": [],
+  "domain": "oncology+CS"
+}

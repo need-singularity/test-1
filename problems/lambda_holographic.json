@@ -1,0 +1,14 @@
+{
+  "name": "Cosmological constant holographic",
+  "claim": "Dark energy = holographic model gradient norm",
+  "equation": "Lambda_obs = Lambda_QFT * l_P**2 / S_boundary",
+  "variables": {"Lambda_obs": "L^-2", "Lambda_QFT": "L^-4", "l_P": "L", "S_boundary": "1"},
+  "known_data": {
+    "observed_Lambda": 1e-52,
+    "QFT_Lambda": 1e120,
+    "Planck_length_squared": 1e-70,
+    "S_boundary": 1e122
+  },
+  "fitted_params": {},
+  "domain": "cosmology+ML"
+}
