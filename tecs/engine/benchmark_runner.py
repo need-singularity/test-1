@@ -120,7 +120,7 @@ def _entity_to_node(nodes: list, name: str) -> object:
 class BenchmarkRunner:
     """Runs the three standard benchmark tasks against a :class:`TopologyState`."""
 
-    _cached_inference_knowledge: "TopologyState | None" = None  # class-level cache
+    _inference_cache: "TopologyState | None" = None  # class-level cache
 
     def __init__(self, data_manager: "DataManager") -> None:
         self._dm = data_manager
@@ -221,128 +221,82 @@ class BenchmarkRunner:
     # ------------------------------------------------------------------
 
     def run_inference_benchmark(self, state: TopologyState) -> dict[str, float]:
-        """Test actual reasoning ability using cached knowledge + fixed eval set."""
+        """Test actual reasoning ability using fixed eval set."""
+        from tecs.inference.eval_set import EVAL_QUERIES, EVAL_ANALOGIES, EVAL_KNOWLEDGE
         from tecs.inference.inference_engine import InferenceEngine
         from tecs.inference.analogy_engine import AnalogyEngine
 
-        # Use cached knowledge (built once, reused across all candidates)
-        if BenchmarkRunner._cached_inference_knowledge is None:
-            BenchmarkRunner._cached_inference_knowledge = self._build_eval_knowledge()
+        # Build knowledge ONCE and cache
+        if BenchmarkRunner._inference_cache is None:
+            BenchmarkRunner._inference_cache = self._build_eval_knowledge(state, EVAL_KNOWLEDGE)
 
-        knowledge = BenchmarkRunner._cached_inference_knowledge
-        engine = InferenceEngine(knowledge)
-        analogy = AnalogyEngine(knowledge)
+        test_knowledge = BenchmarkRunner._inference_cache
+        engine = InferenceEngine(test_knowledge)
+        analogy_engine = AnalogyEngine(test_knowledge)
 
         scores = {}
 
-        # EVAL SET 1: Direct knowledge queries (10 questions)
-        QUERY_EVAL = [
-            ("cat", "IsA", "mammal"),
-            ("dog", "IsA", "mammal"),
-            ("mammal", "IsA", "animal"),
-            ("car", "IsA", "vehicle"),
-            ("truck", "IsA", "vehicle"),
-            ("gravity", "IsA", "force"),
-            ("atom", "HasA", "electron"),
-            ("cell", "HasA", "dna"),
-            ("red", "IsA", "color"),
-            ("king", "IsA", "man"),
-        ]
-        query_correct = 0
-        for subj, rel, expected in QUERY_EVAL:
+        # Query accuracy (Level 1 + 2)
+        correct = 0
+        total = 0
+        for subj, rel, expected, level, category in EVAL_QUERIES:
             result = engine.query(subj, rel)
             if result.answer == expected:
-                query_correct += 1
-        scores["query_accuracy"] = query_correct / len(QUERY_EVAL)
+                correct += 1
+            total += 1
+        scores["query_accuracy"] = correct / max(total, 1)
 
-        # EVAL SET 2: Multi-hop reasoning (5 questions, need 2+ hops)
-        MULTIHOP_EVAL = [
-            ("cat", "IsA", ["mammal", "animal"]),    # cat→mammal→animal
-            ("dog", "IsA", ["mammal", "animal"]),     # dog→mammal→animal
-            ("electron", "PartOf", ["atom", "molecule"]),  # electron→atom→molecule
-            ("gene", "PartOf", ["dna", "cell"]),      # gene→dna→cell
-            ("truck", "IsA", ["vehicle"]),             # truck→vehicle
-        ]
-        multihop_correct = 0
-        for subj, rel, acceptable in MULTIHOP_EVAL:
+        # Analogy accuracy
+        analogy_correct = 0
+        analogy_total = 0
+        for source, target_domain, expected_target in EVAL_ANALOGIES:
+            results = analogy_engine.find_analogy(source, target_domain, max_results=3)
+            if results:
+                # Check if expected_target appears in any mapping
+                for r in results:
+                    if expected_target in r.mapping.values() or r.target_concept == expected_target:
+                        analogy_correct += 1
+                        break
+            analogy_total += 1
+        scores["analogy_score"] = analogy_correct / max(analogy_total, 1)
+
+        # Verification rate
+        verified_count = 0
+        for subj, rel, expected, level, category in EVAL_QUERIES[:5]:
             result = engine.query(subj, rel)
-            if result.answer in acceptable:
-                multihop_correct += 1
-        scores["multihop_accuracy"] = multihop_correct / len(MULTIHOP_EVAL)
+            if result.verified:
+                verified_count += 1
+        scores["verification_rate"] = verified_count / 5.0
 
-        # EVAL SET 3: Analogical reasoning (5 cross-domain tests)
-        ANALOGY_EVAL = [
-            ("gravity", "economics", 0.3),   # gravity≈price
-            ("force", "economics", 0.3),     # force≈price/demand
-            ("atom", "biology", 0.3),        # atom≈cell
-            ("energy", "economics", 0.3),    # energy≈capital
-            ("mass", "economics", 0.3),      # mass≈supply
-        ]
-        analogy_total = 0.0
-        for concept, domain, threshold in ANALOGY_EVAL:
-            results = analogy.find_analogy(concept, domain)
-            if results and results[0].similarity > threshold:
-                analogy_total += results[0].similarity
-        scores["analogy_score"] = analogy_total / len(ANALOGY_EVAL)
-
-        # Verification check
-        result = engine.query("cat", "IsA")
-        scores["verification_working"] = 1.0 if result.verified else 0.0
+        # Multi-hop accuracy (only Level 2 questions)
+        multihop_correct = 0
+        multihop_total = 0
+        for subj, rel, expected, level, category in EVAL_QUERIES:
+            if level >= 2:
+                result = engine.query(subj, rel)
+                if result.answer == expected:
+                    multihop_correct += 1
+                multihop_total += 1
+        scores["multihop_accuracy"] = multihop_correct / max(multihop_total, 1)
 
         # Combined
         scores["inference_combined"] = (
             scores["query_accuracy"] * 0.3 +
-            scores["multihop_accuracy"] * 0.3 +
+            scores["multihop_accuracy"] * 0.2 +
             scores["analogy_score"] * 0.3 +
-            scores["verification_working"] * 0.1
+            scores["verification_rate"] * 0.2
         )
 
         return scores
 
-    def _build_eval_knowledge(self) -> TopologyState:
-        """Build the evaluation knowledge base. Called ONCE, cached forever."""
+    def _build_eval_knowledge(self, state: TopologyState, triples: list) -> TopologyState:
+        """Build evaluation knowledge state — called once and cached."""
         import networkx as nx
         import numpy as np
 
         G = nx.Graph()
-
-        # Comprehensive test knowledge (60+ entities, 50+ relations)
-        test_triples = [
-            # Biology
-            ("cat", "IsA", "mammal"), ("cat", "IsA", "animal"), ("cat", "HasA", "fur"),
-            ("dog", "IsA", "mammal"), ("dog", "IsA", "animal"), ("dog", "HasA", "tail"),
-            ("mammal", "IsA", "animal"), ("fish", "IsA", "animal"), ("bird", "IsA", "animal"),
-            ("cell", "HasA", "dna"), ("cell", "HasA", "membrane"), ("cell", "IsA", "organism_unit"),
-            ("dna", "HasA", "gene"), ("gene", "MadeOf", "nucleotide"),
-            ("protein", "MadeOf", "amino_acid"), ("virus", "IsA", "pathogen"),
-            # Transport
-            ("car", "IsA", "vehicle"), ("truck", "IsA", "vehicle"), ("bus", "IsA", "vehicle"),
-            ("vehicle", "HasA", "wheels"), ("vehicle", "HasA", "engine"),
-            ("bicycle", "IsA", "vehicle"), ("airplane", "IsA", "vehicle"),
-            # Physics
-            ("gravity", "IsA", "force"), ("mass", "RelatedTo", "gravity"),
-            ("energy", "RelatedTo", "mass"), ("force", "RelatedTo", "mass"),
-            ("force", "RelatedTo", "acceleration"), ("speed", "RelatedTo", "acceleration"),
-            ("light", "IsA", "wave"), ("light", "IsA", "particle"),
-            ("electron", "PartOf", "atom"), ("proton", "PartOf", "atom"),
-            ("neutron", "PartOf", "atom"), ("atom", "PartOf", "molecule"),
-            # Economics
-            ("price", "RelatedTo", "supply"), ("price", "RelatedTo", "demand"),
-            ("supply", "RelatedTo", "market"), ("demand", "RelatedTo", "market"),
-            ("inflation", "RelatedTo", "price"), ("trade", "RelatedTo", "market"),
-            ("capital", "RelatedTo", "investment"), ("labor", "RelatedTo", "production"),
-            # Colors
-            ("red", "IsA", "color"), ("blue", "IsA", "color"), ("green", "IsA", "color"),
-            # People
-            ("king", "IsA", "man"), ("queen", "IsA", "woman"),
-            ("doctor", "IsA", "profession"), ("teacher", "IsA", "profession"),
-            # Chemistry
-            ("molecule", "MadeOf", "atom"), ("water", "MadeOf", "hydrogen"),
-            ("water", "MadeOf", "oxygen"),
-        ]
-
         entity_set = set()
-        for h, r, t in test_triples:
+        for h, r, t in triples:
             entity_set.add(h)
             entity_set.add(t)
 
@@ -352,31 +306,14 @@ class BenchmarkRunner:
             entity_index[entity] = i
 
         relation_weights = {"IsA": 0.9, "HasA": 0.7, "PartOf": 0.8,
-                           "RelatedTo": 0.5, "MadeOf": 0.7, "MemberOf": 0.8}
-        for h, r, t in test_triples:
+                           "RelatedTo": 0.5, "MadeOf": 0.7}
+        for h, r, t in triples:
             if h in entity_index and t in entity_index:
                 G.add_edge(entity_index[h], entity_index[t],
                           weight=relation_weights.get(r, 0.5), relation=r)
 
-        # Add similarity edges for entities in same domain
-        domain_groups = {
-            "biology": ["cat", "dog", "mammal", "animal", "cell", "dna", "gene", "protein", "virus"],
-            "physics": ["gravity", "force", "mass", "energy", "acceleration", "speed", "light", "electron", "atom"],
-            "economics": ["price", "supply", "demand", "market", "inflation", "trade", "capital", "labor"],
-            "transport": ["car", "truck", "bus", "vehicle", "bicycle", "airplane"],
-        }
-        for domain, entities in domain_groups.items():
-            for i, e1 in enumerate(entities):
-                for e2 in entities[i+1:]:
-                    if e1 in entity_index and e2 in entity_index:
-                        idx1, idx2 = entity_index[e1], entity_index[e2]
-                        if not G.has_edge(idx1, idx2):
-                            G.add_edge(idx1, idx2, weight=0.3, relation="similar")
-
         index_to_entity = {v: k for k, v in entity_index.items()}
         curvature = np.zeros(len(G.nodes))
-
-        print(f"  Eval knowledge built: {len(G.nodes)} entities, {len(G.edges)} connections, {len(test_triples)} triples")
 
         return TopologyState(
             complex=G, complex_type="graph", curvature=curvature,
@@ -384,7 +321,7 @@ class BenchmarkRunner:
             metadata={
                 "entity_index": entity_index,
                 "index_to_entity": index_to_entity,
-                "triples": test_triples,
+                "triples": triples,
             },
         )
 
