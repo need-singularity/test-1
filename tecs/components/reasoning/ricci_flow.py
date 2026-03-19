@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import networkx as nx
 from tecs.types import TopologyState
+from tecs.utils.mps_utils import to_tensor, to_numpy, is_gpu_available
 
 class RicciFlowComponent:
     name = "ricci_flow"
@@ -22,9 +23,26 @@ class RicciFlowComponent:
         curvatures = {}
         for _ in range(n_steps):
             curvatures = self._compute_ollivier_ricci(G)
-            for (u, v), curv in curvatures.items():
-                w = G[u][v].get("weight", 1.0)
-                G[u][v]["weight"] = max(0.01, w - dt * curv * w)
+            if is_gpu_available():
+                import torch
+                edges = list(G.edges)
+                weights = np.array([G[u][v].get("weight", 1.0) for u, v in edges])
+                curvs = np.array([curvatures.get((min(u, v), max(u, v)), 0.0) for u, v in edges])
+
+                w_tensor = to_tensor(weights)
+                c_tensor = to_tensor(curvs)
+
+                # Vectorized update on GPU
+                w_tensor = torch.clamp(w_tensor - dt * c_tensor * w_tensor, min=0.01)
+
+                new_weights = to_numpy(w_tensor)
+                for idx, (u, v) in enumerate(edges):
+                    G[u][v]["weight"] = float(new_weights[idx])
+            else:
+                # Original CPU path
+                for (u, v), curv in curvatures.items():
+                    w = G[u][v].get("weight", 1.0)
+                    G[u][v]["weight"] = max(0.01, w - dt * curv * w)
         node_curv = np.zeros(len(G.nodes))
         nodes_list = list(G.nodes)
         for i, n in enumerate(nodes_list):

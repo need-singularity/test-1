@@ -4,6 +4,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 import networkx as nx
 from tecs.types import TopologyState
+from tecs.utils.mps_utils import to_tensor, to_numpy, is_gpu_available
 
 
 def _extract_graph(state: TopologyState) -> nx.Graph:
@@ -66,20 +67,39 @@ class KuramotoOscillatorComponent:
         n_steps = int(self._params["n_steps"])
         t_end = n_steps * dt
 
-        # Build adjacency list for fast ODE evaluation
+        # Build adjacency list and matrix for ODE evaluation
         adj = [[] for _ in range(N)]
+        adj_matrix = np.zeros((N, N), dtype=np.float32)
         for u, v in G.edges():
             i, j = node_idx[u], node_idx[v]
             adj[i].append(j)
             adj[j].append(i)
+            adj_matrix[i, j] = 1.0
+            adj_matrix[j, i] = 1.0
 
-        def kuramoto_rhs(t, theta):
-            dtheta = omega.copy()
-            for i in range(N):
-                if adj[i]:
-                    coupling = np.sum(np.sin(theta[adj[i]] - theta[i]))
-                    dtheta[i] += K / N * coupling
-            return dtheta
+        use_gpu = is_gpu_available() and N > 200
+
+        if use_gpu:
+            import torch
+            omega_tensor = to_tensor(omega)
+            adj_tensor = to_tensor(adj_matrix)
+
+            def kuramoto_rhs(t, theta):
+                theta_t = to_tensor(theta)  # (N,)
+                # Compute all pairwise differences: theta_j - theta_i
+                diff = theta_t.unsqueeze(1) - theta_t.unsqueeze(0)  # (N, N)
+                # Apply adjacency mask and sin
+                coupling = (K / N) * (adj_tensor * torch.sin(diff)).sum(dim=1)  # (N,)
+                dtheta = omega_tensor + to_numpy(coupling)
+                return dtheta
+        else:
+            def kuramoto_rhs(t, theta):
+                dtheta = omega.copy()
+                for i in range(N):
+                    if adj[i]:
+                        coupling = np.sum(np.sin(theta[adj[i]] - theta[i]))
+                        dtheta[i] += K / N * coupling
+                return dtheta
 
         sol = solve_ivp(
             kuramoto_rhs,
