@@ -67,3 +67,25 @@ def test_repr():
     result = engine.query("cat", "IsA")
     s = repr(result)
     assert "L" in s  # level indicator
+
+
+def test_eval_set_has_level2_only_queries():
+    from tecs.inference.eval_set import EVAL_QUERIES, EVAL_KNOWLEDGE
+    direct_triples = {(h, r, t) for h, r, t in EVAL_KNOWLEDGE}
+    level2_no_direct = []
+    for subj, rel, expected, lvl, _ in EVAL_QUERIES:
+        if lvl == 2 and (subj, rel, expected) not in direct_triples:
+            level2_no_direct.append((subj, rel, expected))
+    assert len(level2_no_direct) >= 5
+
+
+def test_eval_set_has_reverse_triples():
+    from tecs.inference.eval_set import EVAL_KNOWLEDGE
+    partof = [(h, r, t) for h, r, t in EVAL_KNOWLEDGE if r == "PartOf"]
+    assert len(partof) >= 3
+
+
+def test_eval_set_has_cross_domain_queries():
+    from tecs.inference.eval_set import EVAL_QUERIES
+    level4 = [q for q in EVAL_QUERIES if q[3] >= 4]
+    assert len(level4) >= 3

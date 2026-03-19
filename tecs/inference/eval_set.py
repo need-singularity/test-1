@@ -22,6 +22,18 @@ EVAL_QUERIES = [
     ("energy", "RelatedTo", "mass", 2, "physics"),
     ("supply", "RelatedTo", "market", 2, "economics"),
 
+    # Level 2: Multi-hop ONLY (no direct triple exists for these)
+    ("fur", "PartOf", "cat", 2, "biology"),
+    ("wheel", "PartOf", "car", 2, "transport"),
+    ("proton", "PartOf", "atom", 2, "chemistry"),
+    ("gene", "PartOf", "dna", 2, "biology"),
+    ("engine", "PartOf", "car", 2, "transport"),
+
+    # Level 4: Cross-domain (uses existing "RelatedTo" relation)
+    ("gravity", "RelatedTo", "price", 4, "cross_domain"),
+    ("force", "RelatedTo", "supply", 4, "cross_domain"),
+    ("energy", "RelatedTo", "demand", 4, "cross_domain"),
+
     # Level 3: Analogical (IQ ~160)
     # These test if the system can find structural similarity
     # We test by checking if find_analogy returns reasonable matches
@@ -61,4 +73,13 @@ EVAL_KNOWLEDGE = [
     ("king", "IsA", "man"), ("queen", "IsA", "woman"),
     ("doctor", "IsA", "profession"), ("teacher", "IsA", "profession"),
     ("capital", "RelatedTo", "market"), ("capital", "RelatedTo", "investment"),
+    # Reverse triples (PartOf — inverse of HasA)
+    # Note: only non-queried PartOf triples live here; the Level-2 PartOf
+    # queries (fur, wheel, proton, gene, engine) must NOT appear as direct
+    # triples so they remain genuine multi-hop tests.
+    ("tail", "PartOf", "dog"),
+    ("electron", "PartOf", "atom"), ("neutron", "PartOf", "atom"),
+    # Cross-domain bridge triples
+    ("gravity", "RelatedTo", "price"), ("force", "RelatedTo", "supply"),
+    ("energy", "RelatedTo", "demand"),
 ]
