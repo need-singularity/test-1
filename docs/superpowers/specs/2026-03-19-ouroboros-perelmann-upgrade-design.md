@@ -46,8 +46,8 @@ All three paths implemented with verification and comments for future expansion.
 
 | Component | File | Change Type |
 |-----------|------|-------------|
-| FuchsianGroup class | `poincare_utils.py` | Add |
-| Ouroboros geometry | `ouroboros_geometry.py` | New file (FuchsianGroup + verification helpers) |
+| FuchsianGroup class | `ouroboros_geometry.py` | New file |
+| Verification metrics | `verification.py` | New file (importable module for tests + CLI) |
 | quotient_distance | `poincare_utils.py` | Replace `-v` internals |
 | Ollivier curvature | `poincare_utils.py` | Add |
 | Ricci flow + neck pinch | `poincare_utils.py` | Add |
