@@ -1,1 +1,3 @@
 {"phase": 1, "generation": 30, "best_fitness": 0.7045554762886516, "population_size": 5, "timestamp": "2026-03-19T17:14:50.250201"}
+{"phase": 2, "generation": 39, "best_fitness": 0.7379219818382443, "population_size": 2, "timestamp": "2026-03-19T17:37:54.918940"}
+{"phase": 2, "terminated": "plateau", "timestamp": "2026-03-19T17:39:01.714162"}
