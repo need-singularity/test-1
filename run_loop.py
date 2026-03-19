@@ -85,6 +85,94 @@ def load_all_emergence_events(results_dir: str) -> list[dict]:
     return events
 
 
+def generate_analysis(result: dict, run_details: dict) -> str:
+    """Claude Code CLI로 라운드 결과를 자연어 분석."""
+    try:
+        data = {
+            "round": result["round"],
+            "best_fitness": result["best_fitness"],
+            "generations": result["generations"],
+            "phase_reached": result["phase"],
+            "emergence_events": result["emergence_events"],
+            "best_architecture": result.get("best_components", {}),
+            "key_metrics": {k: v for k, v in result.get("best_metrics", {}).items()
+                          if isinstance(v, (int, float))},
+            "emergence_details": run_details.get("emergence_details", []),
+        }
+        data_str = json.dumps(data, indent=2, default=str, ensure_ascii=False)
+        prompt = (
+            "아래는 Post-LLM 아키텍처 자율 탐색 엔진의 1라운드 실행 결과야. "
+            "이걸 읽고 비전문가도 이해할 수 있는 한국어 2-4문장으로 핵심을 요약해줘. "
+            "구체적 수치를 포함하고, 발견된 패턴이나 창발 이벤트가 있으면 그 의미를 설명해. "
+            "기술 용어는 괄호 안에 쉬운 설명을 붙여줘. "
+            "마크다운 서식 없이 평문으로만 써줘.\n\n"
+            f"{data_str}"
+        )
+        import subprocess
+        r = subprocess.run(
+            ["claude", "-p", prompt],
+            capture_output=True, text=True, timeout=60,
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return ""
+
+
+def generate_overall_insight(all_results: list[dict], results_dir: str) -> str:
+    """Claude Code CLI로 전체 진행 상황 종합 분석."""
+    try:
+        rounds_summary = []
+        for r in all_results[-10:]:  # 최근 10개만
+            rounds_summary.append({
+                "round": r["round"],
+                "fitness": r["best_fitness"],
+                "emergence": r["emergence_events"],
+                "architecture": r.get("best_components", {}),
+            })
+
+        all_emergence = load_all_emergence_events(results_dir)
+        emergence_summary = []
+        for ev in all_emergence[-5:]:
+            emergence_summary.append({
+                "metric": ev.get("metric"),
+                "value": ev.get("value"),
+                "type": ev.get("type"),
+                "architecture": ev.get("candidate_components", {}),
+            })
+
+        data = {
+            "total_rounds": len(all_results),
+            "recent_rounds": rounds_summary,
+            "fitness_trend": [r["best_fitness"] for r in all_results[-20:]],
+            "total_emergence_events": sum(r.get("emergence_events", 0) for r in all_results),
+            "recent_emergence": emergence_summary,
+        }
+        data_str = json.dumps(data, indent=2, default=str, ensure_ascii=False)
+        prompt = (
+            "아래는 Post-LLM 아키텍처 자율 탐색 엔진의 누적 실행 데이터야. "
+            "전체 진행 상황을 비전문가도 이해할 수 있는 한국어 3-5문장으로 요약해줘. "
+            "다음을 포함해: (1) 전체 진행 추이 (개선되고 있는지), "
+            "(2) 가장 유망한 아키텍처 조합과 그 이유, "
+            "(3) 창발 패턴에서 발견된 흥미로운 점, "
+            "(4) 다음에 기대할 수 있는 것. "
+            "기술 용어는 괄호 안에 쉬운 설명을 붙여줘. "
+            "마크다운 서식 없이 평문으로만 써줘.\n\n"
+            f"{data_str}"
+        )
+        import subprocess
+        r = subprocess.run(
+            ["claude", "-p", prompt],
+            capture_output=True, text=True, timeout=90,
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return ""
+
+
 def make_sparkline(values: list[float], width: int = 20) -> str:
     """값 리스트를 텍스트 스파크라인으로 변환."""
     if not values:
@@ -139,6 +227,22 @@ def update_readme(all_results: list[dict], results_dir: str):
     lines.append("")
     lines.append(f"**마지막 업데이트:** {now}")
     lines.append("")
+
+    # Claude 종합 분석 (최상단)
+    overall_insight = generate_overall_insight(all_results, results_dir)
+    if overall_insight:
+        lines.append("## 현재 상황 요약")
+        lines.append("")
+        lines.append(f"> {overall_insight}")
+        lines.append("")
+
+    # 최신 라운드 분석
+    latest = all_results[-1] if all_results else None
+    if latest and latest.get("analysis"):
+        lines.append("## 최신 라운드 분석")
+        lines.append("")
+        lines.append(f"**Round {latest['round']}:** {latest['analysis']}")
+        lines.append("")
 
     # 전체 요약
     lines.append("## 전체 요약")
@@ -267,16 +371,20 @@ def update_readme(all_results: list[dict], results_dir: str):
     # 라운드별 기록 (최신이 위)
     lines.append("## 라운드 기록")
     lines.append("")
-    lines.append("| Round | Fitness | 세대 | Phase | 시간 | 창발 | 날짜 |")
-    lines.append("|-------|---------|------|-------|------|------|------|")
     for r in reversed(all_results):
         ts = r.get("timestamp", "")
         emergence = r.get("emergence_events", 0)
-        emergence_str = f"🔥 {emergence}" if emergence > 0 else "-"
-        lines.append(
-            f"| {r['round']} | {r['best_fitness']:.4f} | {r['generations']} | "
-            f"{r['phase']} | {r['elapsed_seconds']:.0f}s | {emergence_str} | {ts} |"
-        )
+        emergence_icon = "🔥" if emergence > 0 else "⚪"
+        lines.append(f"### {emergence_icon} Round {r['round']} — {ts}")
+        lines.append("")
+        lines.append(f"Fitness: **{r['best_fitness']:.4f}** | "
+                     f"세대: {r['generations']} | Phase: {r['phase']} | "
+                     f"시간: {r['elapsed_seconds']:.0f}s | 창발: {emergence}건")
+        if r.get("analysis"):
+            lines.append("")
+            lines.append(f"> {r['analysis']}")
+        lines.append("")
+    lines.append("---")
     lines.append("")
 
     # 사용법 링크
@@ -336,7 +444,12 @@ def run_round(round_num: int, config_path: str, results_dir: str) -> dict:
         "elapsed_seconds": round(elapsed, 1),
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "emergence_events": run_details.get("emergence_events", 0),
+        "best_components": run_details.get("best_components", {}),
+        "best_metrics": run_details.get("best_metrics", {}),
     }
+
+    # Claude Code로 자연어 분석 생성
+    result["analysis"] = generate_analysis(result, run_details)
 
     print(f"\n  Round {round_num} 완료:")
     print(f"    Best fitness: {orch._best_fitness:.4f}")
@@ -345,6 +458,8 @@ def run_round(round_num: int, config_path: str, results_dir: str) -> dict:
     print(f"    Emergence:    {result['emergence_events']}개 이벤트")
     print(f"    Time:         {elapsed:.1f}s")
     print(f"    Results:      {orch.logger.run_dir}")
+    if result["analysis"]:
+        print(f"    분석:         생성됨")
 
     return result
 
