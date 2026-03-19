@@ -1,0 +1,53 @@
+search:
+  population_size: 50
+  elite_ratio: 0.2
+  tournament_size: 3
+  mutation_rate: 0.3
+  crossover_rate: 0.7
+  diversity_threshold: 0.3
+  seed: 42
+
+scaling:
+  phase1_nodes: 100
+  phase2_nodes: 1000
+  phase5_nodes: 10000
+  phase1_max_gen: 30
+  phase2_max_gen: 50
+
+fitness:
+  w_emergence: 0.4
+  w_benchmark: 0.4
+  w_efficiency: 0.2
+
+emergence:
+  sigma_threshold: 2.0
+  r_threshold: 0.2
+  phi_critical: 1.0
+  window_size: 10
+  min_generations: 3
+
+termination:
+  target_hallucination: 0.01
+  target_emergence: 0.8
+  target_benchmark: 0.7
+  plateau_generations: 5
+  plateau_epsilon: 0.01
+  max_hours: 48
+  max_loops: 10
+  max_memory_pct: 80
+
+reporting:
+  claude_cli: true
+  report_on_phase: true
+  report_on_emergence: true
+
+causal:
+  p_value_threshold: 0.05
+  min_generations_for_significance: 20
+
+data:
+  cache_dir: data/
+  use_external: true
+  conceptnet_url: "https://api.conceptnet.io"
+  conceptnet_cache: data/conceptnet/
+  wordnet_auto_download: true

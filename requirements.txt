@@ -1,0 +1,15 @@
+gudhi>=3.9
+giotto-tda>=0.6
+numpy>=1.26
+scipy>=1.12
+networkx>=3.2
+hypernetx>=2.3
+GraphRicciCurvature>=0.5
+nltk>=3.8
+requests>=2.31
+pyyaml>=6.0
+jinja2>=3.1
+pytest>=8.0
+# Apple Silicon acceleration (optional)
+# jax[metal]
+# torch>=2.2
