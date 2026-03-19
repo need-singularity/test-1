@@ -1,0 +1,522 @@
+{
+  "model": "gpt2",
+  "text": "The Riemann hypothesis states that all nontrivial zeros of the zeta function have real part one half.",
+  "n_layers": 12,
+  "n_heads": 12,
+  "seq_len": 24,
+  "layers": {
+    "layer_0_t0.01": {
+      "layer": 0,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        253,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 276,
+      "persistence_pairs": [],
+      "clustering": 0.06994661622664504
+    },
+    "layer_1_t0.01": {
+      "layer": 1,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        250,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 273,
+      "persistence_pairs": [],
+      "clustering": 0.06871716290910447
+    },
+    "layer_2_t0.01": {
+      "layer": 2,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        188,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 211,
+      "persistence_pairs": [],
+      "clustering": 0.06814340266552031
+    },
+    "layer_3_t0.01": {
+      "layer": 3,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        137,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 160,
+      "persistence_pairs": [],
+      "clustering": 0.08766925600666231
+    },
+    "layer_4_t0.01": {
+      "layer": 4,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        140,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 163,
+      "persistence_pairs": [],
+      "clustering": 0.07840661981399843
+    },
+    "layer_5_t0.01": {
+      "layer": 5,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        120,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 143,
+      "persistence_pairs": [],
+      "clustering": 0.0801854728029555
+    },
+    "layer_6_t0.01": {
+      "layer": 6,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        139,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 162,
+      "persistence_pairs": [],
+      "clustering": 0.06895720097048949
+    },
+    "layer_7_t0.01": {
+      "layer": 7,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        103,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 126,
+      "persistence_pairs": [],
+      "clustering": 0.0867431740844356
+    },
+    "layer_8_t0.01": {
+      "layer": 8,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        140,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 163,
+      "persistence_pairs": [],
+      "clustering": 0.0765734284228871
+    },
+    "layer_9_t0.01": {
+      "layer": 9,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        107,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 130,
+      "persistence_pairs": [],
+      "clustering": 0.07657409781729588
+    },
+    "layer_10_t0.01": {
+      "layer": 10,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        128,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 151,
+      "persistence_pairs": [],
+      "clustering": 0.06784087288249487
+    },
+    "layer_11_t0.01": {
+      "layer": 11,
+      "threshold": 0.01,
+      "betti": [
+        1,
+        196,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 219,
+      "persistence_pairs": [],
+      "clustering": 0.06143737025231513
+    },
+    "layer_0_t0.05": {
+      "layer": 0,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        65,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 88,
+      "persistence_pairs": [],
+      "clustering": 0.10790624710728734
+    },
+    "layer_1_t0.05": {
+      "layer": 1,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        85,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 108,
+      "persistence_pairs": [],
+      "clustering": 0.12002827823215034
+    },
+    "layer_2_t0.05": {
+      "layer": 2,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        73,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 96,
+      "persistence_pairs": [],
+      "clustering": 0.14722795512596412
+    },
+    "layer_3_t0.05": {
+      "layer": 3,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        56,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 79,
+      "persistence_pairs": [],
+      "clustering": 0.1718526563912137
+    },
+    "layer_4_t0.05": {
+      "layer": 4,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        43,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 66,
+      "persistence_pairs": [],
+      "clustering": 0.1962781063503056
+    },
+    "layer_5_t0.05": {
+      "layer": 5,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        26,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 49,
+      "persistence_pairs": [],
+      "clustering": 0.22490551163333036
+    },
+    "layer_6_t0.05": {
+      "layer": 6,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        28,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 51,
+      "persistence_pairs": [],
+      "clustering": 0.21729095535981766
+    },
+    "layer_7_t0.05": {
+      "layer": 7,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        22,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 45,
+      "persistence_pairs": [],
+      "clustering": 0.20965195504164816
+    },
+    "layer_8_t0.05": {
+      "layer": 8,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        31,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 54,
+      "persistence_pairs": [],
+      "clustering": 0.18957964003045977
+    },
+    "layer_9_t0.05": {
+      "layer": 9,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        9,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 32,
+      "persistence_pairs": [],
+      "clustering": 0.12685043998722503
+    },
+    "layer_10_t0.05": {
+      "layer": 10,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        12,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 35,
+      "persistence_pairs": [],
+      "clustering": 0.10170957239218009
+    },
+    "layer_11_t0.05": {
+      "layer": 11,
+      "threshold": 0.05,
+      "betti": [
+        1,
+        27,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 50,
+      "persistence_pairs": [],
+      "clustering": 0.17344277880960365
+    },
+    "layer_0_t0.1": {
+      "layer": 0,
+      "threshold": 0.1,
+      "betti": [
+        8,
+        11,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 27,
+      "persistence_pairs": [],
+      "clustering": 0.14509442244270454
+    },
+    "layer_1_t0.1": {
+      "layer": 1,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        18,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 41,
+      "persistence_pairs": [],
+      "clustering": 0.20594831978455339
+    },
+    "layer_2_t0.1": {
+      "layer": 2,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        43,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 66,
+      "persistence_pairs": [],
+      "clustering": 0.20562807782049666
+    },
+    "layer_3_t0.1": {
+      "layer": 3,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        30,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 53,
+      "persistence_pairs": [],
+      "clustering": 0.23374090556209973
+    },
+    "layer_4_t0.1": {
+      "layer": 4,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        25,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 48,
+      "persistence_pairs": [],
+      "clustering": 0.2550715301454977
+    },
+    "layer_5_t0.1": {
+      "layer": 5,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        5,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 28,
+      "persistence_pairs": [],
+      "clustering": 0.12378844135398136
+    },
+    "layer_6_t0.1": {
+      "layer": 6,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        2,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 25,
+      "persistence_pairs": [],
+      "clustering": 0.07022828536088621
+    },
+    "layer_7_t0.1": {
+      "layer": 7,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        1,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 24,
+      "persistence_pairs": [],
+      "clustering": 0.03380834488073895
+    },
+    "layer_8_t0.1": {
+      "layer": 8,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        1,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 24,
+      "persistence_pairs": [],
+      "clustering": 0.027175604489261308
+    },
+    "layer_9_t0.1": {
+      "layer": 9,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        0,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 23,
+      "persistence_pairs": [],
+      "clustering": 0.0
+    },
+    "layer_10_t0.1": {
+      "layer": 10,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        0,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 23,
+      "persistence_pairs": [],
+      "clustering": 0.0
+    },
+    "layer_11_t0.1": {
+      "layer": 11,
+      "threshold": 0.1,
+      "betti": [
+        1,
+        4,
+        0
+      ],
+      "n_nodes": 24,
+      "n_edges": 27,
+      "persistence_pairs": [],
+      "clustering": 0.06906313992655917
+    }
+  },
+  "beta1_trajectory_t0.01": [
+    253,
+    250,
+    188,
+    137,
+    140,
+    120,
+    139,
+    103,
+    140,
+    107,
+    128,
+    196
+  ],
+  "beta1_trend_t0.01": "DECREASING (\u03b2\u2081 collapses with depth)",
+  "beta1_trajectory_t0.05": [
+    65,
+    85,
+    73,
+    56,
+    43,
+    26,
+    28,
+    22,
+    31,
+    9,
+    12,
+    27
+  ],
+  "beta1_trend_t0.05": "DECREASING (\u03b2\u2081 collapses with depth)",
+  "beta1_trajectory_t0.1": [
+    11,
+    18,
+    43,
+    30,
+    25,
+    5,
+    2,
+    1,
+    1,
+    0,
+    0,
+    4
+  ],
+  "beta1_trend_t0.1": "DECREASING (\u03b2\u2081 collapses with depth)"
+}
