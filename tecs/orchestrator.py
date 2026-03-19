@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
+import multiprocessing as mp
 import os
 import sys
 import random
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -24,6 +25,70 @@ from tecs.analysis.causal_tracer import CausalTracer
 from tecs.data.data_manager import DataManager
 from tecs.reporting.result_logger import ResultLogger
 from tecs.reporting.claude_reporter import ClaudeReporter
+
+
+def _worker_simulate(args: tuple) -> dict:
+    """Process pool worker: simulate one candidate. Runs in separate process."""
+    candidate_dict, n_nodes, cache_dir = args
+    try:
+        # Each worker builds its own registry/simulator (no pickling needed)
+        from tecs.components.registry import ComponentRegistry as CR
+        from tecs.engine.topology_simulator import TopologySimulator as TS
+        from tecs.engine.fitness_evaluator import FitnessEvaluator as FE
+        from tecs.engine.benchmark_runner import BenchmarkRunner as BR
+        from tecs.data.data_manager import DataManager as DM
+        import numpy as np
+
+        registry = _build_registry_static()
+        simulator = TS(registry)
+        evaluator = FE()
+        dm = DM(cache_dir, False)
+        benchmark = BR(dm)
+
+        candidate = Candidate(**candidate_dict)
+        points = dm.get_points(n=n_nodes, dim=3)
+        state = simulator.simulate(candidate, points)
+        benchmark_scores = benchmark.run_all(state)
+        emergence_metrics = {k: v for k, v in state.metrics.items()}
+        total_cost = sum(registry.get(layer, candidate.components[layer]).cost()
+                        for layer in candidate.components)
+        fitness = evaluator.compute(emergence_metrics, benchmark_scores, total_cost / 5.0)
+
+        return {
+            "id": candidate.id, "fitness": fitness,
+            "metrics": {**emergence_metrics, **benchmark_scores},
+        }
+    except Exception:
+        return {"id": candidate_dict["id"], "fitness": 0.0, "metrics": {}}
+
+
+def _build_registry_static() -> ComponentRegistry:
+    """Build component registry (standalone for worker processes)."""
+    from tecs.components.registry import ComponentRegistry as CR
+    from tecs.components.representation.simplicial_complex import SimplicialComplexComponent
+    from tecs.components.representation.riemannian_manifold import RiemannianManifoldComponent
+    from tecs.components.representation.dynamic_hypergraph import DynamicHypergraphComponent
+    from tecs.components.reasoning.ricci_flow import RicciFlowComponent
+    from tecs.components.reasoning.homotopy_deformation import HomotopyDeformationComponent
+    from tecs.components.reasoning.geodesic_bifurcation import GeodesicBifurcationComponent
+    from tecs.components.emergence.kuramoto_oscillator import KuramotoOscillatorComponent
+    from tecs.components.emergence.ising_phase_transition import IsingPhaseTransitionComponent
+    from tecs.components.emergence.lyapunov_bifurcation import LyapunovBifurcationComponent
+    from tecs.components.verification.persistent_homology_dual import PersistentHomologyDualComponent
+    from tecs.components.verification.shadow_manifold_audit import ShadowManifoldAuditComponent
+    from tecs.components.verification.stress_tensor_zero import StressTensorZeroComponent
+    from tecs.components.optimization.min_description_topology import MinDescriptionTopologyComponent
+    from tecs.components.optimization.fisher_distillation import FisherDistillationComponent
+    from tecs.components.optimization.free_energy_annealing import FreeEnergyAnnealingComponent
+
+    reg = CR()
+    for cls in [SimplicialComplexComponent, RiemannianManifoldComponent, DynamicHypergraphComponent,
+                RicciFlowComponent, HomotopyDeformationComponent, GeodesicBifurcationComponent,
+                KuramotoOscillatorComponent, IsingPhaseTransitionComponent, LyapunovBifurcationComponent,
+                PersistentHomologyDualComponent, ShadowManifoldAuditComponent, StressTensorZeroComponent,
+                MinDescriptionTopologyComponent, FisherDistillationComponent, FreeEnergyAnnealingComponent]:
+        reg.register(cls())
+    return reg
 
 
 class Orchestrator:
@@ -136,12 +201,43 @@ class Orchestrator:
         n_pop = len(self.population)
         done_count = 0
 
-        # Parallel evaluation
-        n_workers = min(os.cpu_count() or 1, n_pop)
-        with ThreadPoolExecutor(max_workers=n_workers) as executor:
-            futures = {executor.submit(self._simulate_candidate, c): c for c in self.population}
-            for future in as_completed(futures):
-                future.result()
+        # Parallel evaluation with ProcessPoolExecutor (true parallelism, bypasses GIL)
+        n_workers = min(os.cpu_count() or 1, n_pop, 8)
+        args_list = [
+            ({"id": c.id, "components": c.components, "parent_ids": c.parent_ids,
+              "generation": c.generation, "phase": c.phase, "fitness": c.fitness,
+              "mutation_layer": c.mutation_layer, "metrics": c.metrics},
+             self._scale.current_nodes, self._cfg.data.cache_dir)
+            for c in self.population
+        ]
+        candidate_map = {c.id: c for c in self.population}
+
+        try:
+            ctx = mp.get_context("fork")
+            import warnings
+            warnings.filterwarnings("ignore", ".*fork.*", DeprecationWarning)
+            with ProcessPoolExecutor(max_workers=n_workers, mp_context=ctx) as executor:
+                futures = {executor.submit(_worker_simulate, args): args[0]["id"] for args in args_list}
+                for future in as_completed(futures):
+                    result = future.result()
+                    cid = result["id"]
+                    if cid in candidate_map:
+                        candidate_map[cid].fitness = result["fitness"]
+                        candidate_map[cid].metrics = result["metrics"]
+                    done_count += 1
+                    elapsed = time.time() - gen_start
+                    bar_len = 20
+                    filled = int(bar_len * min(done_count, n_pop) / n_pop)
+                    bar = "█" * filled + "░" * (bar_len - filled)
+                    sys.stdout.write(
+                        f"\r    Gen {self.generation:3d} |{bar}| {min(done_count, n_pop)}/{n_pop} "
+                        f"({elapsed:.0f}s)"
+                    )
+                    sys.stdout.flush()
+        except Exception:
+            # Fallback to sequential if multiprocessing fails
+            for c in self.population:
+                self._simulate_candidate(c)
                 done_count += 1
                 elapsed = time.time() - gen_start
                 bar_len = 20
