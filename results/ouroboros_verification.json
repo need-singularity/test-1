@@ -1,0 +1,13 @@
+{
+  "group_invariance_violation": 0.135,
+  "triangle_inequality_violation": 0.02,
+  "antipodal_dependency_rate": 0.61,
+  "curvature_mean": -0.2128945350274773,
+  "curvature_variance": 0.5542885608000669,
+  "neck_pinch_count": 0,
+  "neck_pinch_edges": [],
+  "injectivity_radius_min": 0.08838647542445885,
+  "injectivity_radius_max": 4.127606636388318,
+  "injectivity_radius_mean": 1.321523853738068,
+  "PASS": true
+}
