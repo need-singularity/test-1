@@ -14,6 +14,10 @@ class IncompatibleComponentError(Exception):
 class TopologySimulator:
     def __init__(self, registry: ComponentRegistry):
         self._registry = registry
+        self._repr_cache: dict[str, TopologyState] = {}
+
+    def clear_cache(self):
+        self._repr_cache.clear()
 
     def _convert_state(self, state: TopologyState, target_type: str) -> TopologyState:
         """Convert state to a compatible type."""
@@ -185,17 +189,48 @@ class TopologySimulator:
     def simulate(self, candidate: Candidate, points: np.ndarray) -> TopologyState:
         """Run the full 5-layer pipeline for a candidate."""
         # 1. Get representation component, determine complex_type
-        repr_comp = self._registry.get("representation", candidate.components["representation"])
+        repr_name = candidate.components["representation"]
+        repr_comp = self._registry.get("representation", repr_name)
 
-        # Determine complex_type from representation component
-        complex_type = repr_comp.compatible_types[0]
-        state = TopologyState.empty(complex_type)
-        state.metadata["points"] = points
+        # Cache key: repr name + data shape + hash of first 256 bytes
+        cache_key = f"{repr_name}_{points.shape}_{hash(points.tobytes()[:256])}"
 
-        # 2. Execute representation
-        state = repr_comp.execute(state)
+        if cache_key in self._repr_cache:
+            # Deep copy cached state so mutations don't affect cache
+            cached = self._repr_cache[cache_key]
+            state = TopologyState(
+                complex=cached.complex,  # complex is read-only in subsequent layers
+                complex_type=cached.complex_type,
+                curvature=cached.curvature.copy() if len(cached.curvature) > 0 else cached.curvature,
+                metrics={},
+                history=list(cached.history),
+                metadata=dict(cached.metadata),
+            )
+        else:
+            # Determine complex_type from representation component
+            complex_type = repr_comp.compatible_types[0]
+            state = TopologyState.empty(complex_type)
+            state.metadata["points"] = points
 
-        # Collect metrics from representation component
+            # 2. Execute representation
+            state = repr_comp.execute(state)
+
+            # Enforce cache size limit (max 10 entries) before storing
+            if len(self._repr_cache) >= 10:
+                oldest_key = next(iter(self._repr_cache))
+                del self._repr_cache[oldest_key]
+
+            # Store a snapshot in the cache
+            self._repr_cache[cache_key] = TopologyState(
+                complex=state.complex,
+                complex_type=state.complex_type,
+                curvature=state.curvature.copy() if len(state.curvature) > 0 else state.curvature,
+                metrics={},
+                history=list(state.history),
+                metadata=dict(state.metadata),
+            )
+
+        # Collect metrics from representation component (always, even on cache hit)
         metrics = repr_comp.measure(state)
         state.metrics.update(metrics)
 
