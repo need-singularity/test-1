@@ -2,11 +2,11 @@
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
-**마지막 업데이트:** 2026-03-19 13:40:00
+**마지막 업데이트:** 2026-03-19 13:55:44
 
 ## 현재 상황 요약
 
-> 5라운드에 걸쳐 적합도(fitness, 후보 아키텍처가 얼마나 좋은지를 나타내는 점수)가 처음부터 계속 1.0 만점을 유지하고 있어, 시스템이 매우 초기에 최적 조합을 찾아낸 뒤 안정적으로 수렴한 상태입니다. 가장 유망한 조합은 리만 다양체(곡면 위에서 데이터를 표현하는 방식) 기반 표현 + 측지선 분기(최단 경로에서 갈래를 나누는 추론) + 리아푸노프 분기(시스템 안정성을 이용한 창발 감지) + 그림자 다양체 검증 + 자유 에너지 어닐링(서서히 최적점을 찾는 최적화)인데, 이 조합이 5라운드 연속 최고 적합도를 기록한 유일한 구성이기 때문입니다. 창발 이벤트(예상 밖의 새로운 패턴이 저절로 나타나는 현상)는 총 9건 발생했는데, 흥미롭게도 대부분 최적 조합이 아닌 동적 하이퍼그래프(노드들이 여러 개씩 묶이는 유연한 네트워크) 기반의 변형 조합에서 터졌고, 특히 하이퍼엣지 수가 87에서 100으로 급증하고 자화도(magnetization, 요소들이 한 방향으로 정렬되는 정도)가 0.94까지 치솟는 시그마 스파이크(통계적으로 극단적인 급등)가 관찰되었습니다. 다음 라운드에서는 적합도가 이미 포화 상태이므로, 이 동적 하이퍼그래프 변형이 더 큰 창발을 일으키며 기존 최적 조합을 넘어서는 돌파가 나타날 수 있는지가 핵심 관전 포인트입니다.
+> 5라운드에 걸쳐 적합도(fitness, 아키텍처가 얼마나 잘 작동하는지를 나타내는 점수)는 1.0으로 일정하게 유지되고 있어서, 시스템이 안정적이긴 하지만 아직 뚜렷한 개선 추세는 보이지 않는 정체 상태입니다. 가장 유망한 조합은 리만 다양체(곡면 위에서 정보를 표현하는 방식) 기반 표현에 측지선 분기(최단 경로를 따라 갈림길을 만드는 추론), 리아푸노프 분기(안정성이 깨지는 순간을 포착하는 창발), 그림자 다양체 검증, 자유에너지 담금질(천천히 최적점을 찾아가는 최적화)을 결합한 것으로, 5라운드 연속 최고 적합도를 유지한 검증된 조합입니다. 창발 이벤트(예상 밖의 새로운 패턴이 갑자기 나타나는 현상)는 총 9회 발생했는데, 흥미롭게도 대부분 동적 하이퍼그래프(여러 요소를 동시에 연결하는 유동적 네트워크) 표현에서 하이퍼엣지 수가 급증하는 형태로 나타났고, 이는 최적 조합과 다른 표현 방식에서 오히려 예측 불가능한 복잡한 구조가 폭발적으로 생성된다는 뜻입니다. 다음 라운드에서는 적합도가 1.0 천장에 머물러 있으므로, 돌연변이나 탐색 범위를 넓혀서 이 정체를 깨고 1.0을 넘는 새로운 조합이 발견되는지, 또는 동적 하이퍼그래프의 창발 잠재력이 적합도 향상으로 이어지는지를 기대해볼 수 있습니다.
 
 ## 최신 라운드 분석
 
@@ -21,7 +21,7 @@
 | 총 실행 시간 | 1736s (0.5h) |
 | 최고 fitness | 1.0000 (Round 1) |
 | 창발 이벤트 | 9개 |
-| Hall of Fame | 29개 |
+| Hall of Fame | 34개 |
 
 ## Fitness 추이
 
@@ -51,48 +51,46 @@ xychart-beta
 
 | 지표 | 횟수 | 최대 강도 | 비율 |
 |------|------|----------|------|
-| `hallucination_score` | 5 | 34.56 | ███ 17% |
-| `std_curvature` | 5 | 7.44 | ███ 17% |
-| `mean_curvature` | 4 | 7.75 | ██ 14% |
-| `magnetization` | 3 | inf | ██ 10% |
-| `concept` | 2 | 3.46 | █ 7% |
-| `branch_stability` | 2 | 2.29 | █ 7% |
-| `mean_ricci_curvature` | 2 | inf | █ 7% |
-| `max_hyperedge_size` | 2 | 2.77 | █ 7% |
-| `n_hyperedges` | 2 | 3.77 | █ 7% |
+| `hallucination_score` | 5 | 34.56 | ██ 15% |
+| `std_curvature` | 5 | 7.44 | ██ 15% |
+| `n_hyperedges` | 5 | 7.35 | ██ 15% |
+| `mean_curvature` | 4 | 7.75 | ██ 12% |
+| `magnetization` | 3 | inf | █ 9% |
+| `mean_ricci_curvature` | 3 | inf | █ 9% |
+| `concept` | 2 | 3.46 | █ 6% |
+| `branch_stability` | 2 | 2.29 | █ 6% |
+| `free_energy` | 2 | 8.75 | █ 6% |
+| `max_hyperedge_size` | 2 | 2.77 | █ 6% |
 | `n_bifurcation_points` | 1 | 2.10 | █ 3% |
-| `free_energy` | 1 | 8.75 | █ 3% |
 
 ### 창발이 잘 일어나는 조합
 
 | 표현 + 창발 조합 | 횟수 |
 |-----------------|------|
 | `riemannian_manifold + lyapunov_bifurcation` | 17 |
-| `dynamic_hypergraph + ising_phase_transition` | 12 |
+| `dynamic_hypergraph + ising_phase_transition` | 16 |
+| `dynamic_hypergraph + lyapunov_bifurcation` | 1 |
 
 ### 최근 창발 이벤트
 
 | 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |
 |------|------|----|------|------|---------|
+| 4 | `free_energy` | 26.3852 | sigma_spike | 2.02 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 3 | `n_hyperedges` | 98.0000 | sigma_spike | 7.35 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 4 | `n_hyperedges` | 92.0000 | sigma_spike | 2.71 | `dynamic_hypergraph, geodesic_bifurcation` |
+| 3 | `mean_ricci_curvature` | 0.4059 | sigma_spike | inf | `dynamic_hypergraph, ricci_flow` |
+| 3 | `n_hyperedges` | 96.0000 | sigma_spike | 3.54 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 24 | `max_hyperedge_size` | 17.0000 | sigma_spike | 2.77 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 22 | `n_hyperedges` | 100.0000 | sigma_spike | 2.40 | `dynamic_hypergraph, ricci_flow` |
 | 21 | `magnetization` | 0.9355 | sigma_spike | 2.81 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 20 | `branch_stability` | 0.9990 | sigma_spike | 2.26 | `dynamic_hypergraph, geodesic_bifurcation` |
 | 17 | `n_hyperedges` | 87.0000 | sigma_spike | 3.77 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 16 | `hallucination_score` | 0.6869 | sigma_spike | 2.31 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 15 | `magnetization` | 0.9565 | sigma_spike | 2.54 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 14 | `concept` | 0.9600 | sigma_spike | 3.46 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 10 | `max_hyperedge_size` | 15.0000 | sigma_spike | 2.31 | `dynamic_hypergraph, geodesic_bifurcation` |
-| 8 | `mean_ricci_curvature` | 0.4437 | sigma_spike | 2.90 | `dynamic_hypergraph, ricci_flow` |
 
 ### 창발 타임라인
 
 ```mermaid
 timeline
     title 창발 급등 이벤트 타임라인
-    Gen 4 : free_energy (sigma_spike)
-    Gen 3 : mean_curvature (sigma_spike)
-    Gen 6 : mean_ricci_curvature (sigma_spike)
     Gen 8 : mean_ricci_curvature (sigma_spike)
     Gen 10 : max_hyperedge_size (sigma_spike)
     Gen 14 : concept (sigma_spike)
@@ -103,6 +101,8 @@ timeline
     Gen 21 : magnetization (sigma_spike)
     Gen 22 : n_hyperedges (sigma_spike)
     Gen 24 : max_hyperedge_size (sigma_spike)
+    Gen 3 : n_hyperedges (sigma_spike)
+    Gen 4 : n_hyperedges (sigma_spike)
 ```
 
 ## 라운드 기록
