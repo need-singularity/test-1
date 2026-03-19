@@ -1,0 +1,169 @@
+<h2>설계 섹션 3: 진화 엔진 + 인과 추적 + 창발 감지</h2>
+<p class="subtitle">핵심 자율 루프의 세부 동역학</p>
+
+<div class="section">
+  <h3>3-1. 진화 엔진 (EvolutionEngine)</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:20px;font-family:monospace;font-size:12px;line-height:2;color:#c9d1d9;">
+    <div style="color:#58a6ff;font-weight:bold;">세대 루프 (1회)</div>
+    <br>
+    <div><span style="color:#f97583;">1. 선택</span> (Selection)</div>
+    <div style="padding-left:20px;color:#8b949e;">
+      토너먼트 선택 (tournament_size=3)<br>
+      상위 20% 엘리트 자동 보존<br>
+      fitness = w₁·emergence + w₂·benchmark + w₃·efficiency
+    </div>
+    <br>
+    <div><span style="color:#3fb950;">2. 인과 기반 표적 변이</span> (Causal Targeted Mutation)</div>
+    <div style="padding-left:20px;color:#8b949e;">
+      CausalTracer가 "어떤 계층이 약점인지" 분석<br>
+      → 약점 계층만 변이 (나머지 고정)<br>
+      예: "검증 계층이 환각률의 주 원인" → 검증만 교체<br>
+      <span style="color:#f0883e;">vs 기존 EA: 모든 계층 무작위 변이</span>
+    </div>
+    <br>
+    <div><span style="color:#d2a8ff;">3. 교차</span> (Crossover)</div>
+    <div style="padding-left:20px;color:#8b949e;">
+      두 부모 후보의 계층을 교차 조합<br>
+      uniform crossover (각 계층 50% 확률로 부모 선택)<br>
+      인과 분석 결과 반영: 강한 계층은 보존 확률 높임
+    </div>
+    <br>
+    <div><span style="color:#f0883e;">4. 다양성 보호</span> (Diversity Protection)</div>
+    <div style="padding-left:20px;color:#8b949e;">
+      해밍 거리 기반 중복 제거<br>
+      조합이 너무 수렴하면 무작위 이민자(immigrant) 주입<br>
+      전체 조합 공간 대비 탐색률 추적
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>3-2. 인과 추적 (CausalTracer)</h3>
+  <div style="background:#161b22;border-radius:12px;padding:20px;border:1px solid #f0883e;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <div>
+        <div style="color:#f0883e;font-weight:bold;margin-bottom:10px;">입력: 세대 히스토리</div>
+        <div style="background:#1f2937;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;color:#c9d1d9;">
+          세대 N: {repr:A, reason:B, ...} → fitness: 0.6<br>
+          세대 N+1: {repr:A, reason:<span style="color:#f97583;">C</span>, ...} → fitness: <span style="color:#3fb950;">0.8</span><br>
+          <br>
+          변경: reason B→C<br>
+          결과: fitness +0.2, emergence β₁ +2
+        </div>
+      </div>
+
+      <div>
+        <div style="color:#f0883e;font-weight:bold;margin-bottom:10px;">출력: 인과 어트리뷰션</div>
+        <div style="background:#1f2937;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;color:#c9d1d9;">
+          인과 그래프:<br>
+          reason 변경 ──→ β₁ 증가 (강도: 0.82)<br>
+          reason 변경 ──→ 환각률 감소 (강도: 0.65)<br>
+          reason 변경 ──✕─→ 효율 (강도: 0.03)<br>
+          <br>
+          결론: reason 계층이 핵심 레버
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:#1f2937;border-radius:8px;padding:14px;">
+      <div style="color:#f0883e;font-weight:bold;font-size:13px;">인과 분석 알고리즘</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:8px;line-height:1.8;">
+        <strong>방법:</strong> Ablation-based causal attribution<br>
+        • 세대 간 변경된 구성요소 식별<br>
+        • 각 변경이 각 지표에 미친 영향을 <strong>편미분 근사</strong>로 계산<br>
+        • Δmetric_i / Δcomponent_j → 인과 강도 행렬<br>
+        • 다수 세대 누적 → 통계적 유의성 검증 (p < 0.05)<br>
+        <strong>비용:</strong> 추가 시뮬레이션 0회 (이미 실행된 데이터만 분석)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>3-3. 창발 감지 (EmergenceDetector)</h3>
+  <div style="background:#161b22;border-radius:12px;padding:20px;border:1px solid #f97583;">
+
+    <div style="color:#f97583;font-weight:bold;margin-bottom:12px;">5개 지표 × 급등 판정 기준</div>
+
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <tr style="border-bottom:1px solid #30363d;">
+        <th style="text-align:left;padding:8px;color:#f97583;">지표</th>
+        <th style="text-align:left;padding:8px;color:#f97583;">계산 방법</th>
+        <th style="text-align:left;padding:8px;color:#f97583;">급등 판정</th>
+        <th style="text-align:left;padding:8px;color:#f97583;">의미</th>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:8px;color:#79c0ff;">β (베티수)</td>
+        <td style="padding:8px;color:#8b949e;">GUDHI persistent homology</td>
+        <td style="padding:8px;color:#8b949e;">|Δβ_n| > 2σ (이동 표준편차)</td>
+        <td style="padding:8px;color:#8b949e;">새 위상 구조 출현</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:8px;color:#79c0ff;">χ (오일러 특성)</td>
+        <td style="padding:8px;color:#8b949e;">Σ(-1)^n · β_n</td>
+        <td style="padding:8px;color:#8b949e;">|Δχ| > 2σ</td>
+        <td style="padding:8px;color:#8b949e;">전역 위상 복잡도 변화</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:8px;color:#79c0ff;">r (순서 매개변수)</td>
+        <td style="padding:8px;color:#8b949e;">쿠라모토 order parameter</td>
+        <td style="padding:8px;color:#8b949e;">dr/dt > threshold</td>
+        <td style="padding:8px;color:#8b949e;">동기화 상전이</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:8px;color:#79c0ff;">Φ (통합 정보)</td>
+        <td style="padding:8px;color:#8b949e;">pyphi 또는 근사 계산</td>
+        <td style="padding:8px;color:#8b949e;">Φ > Φ_critical</td>
+        <td style="padding:8px;color:#8b949e;">정보 통합도 임계 초과</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;color:#79c0ff;">λ (리아프노프)</td>
+        <td style="padding:8px;color:#8b949e;">궤적 발산률 수치 추정</td>
+        <td style="padding:8px;color:#8b949e;">λ: 음→양 전환</td>
+        <td style="padding:8px;color:#8b949e;">혼돈 진입 (분기점)</td>
+      </tr>
+    </table>
+
+    <div style="margin-top:16px;background:#1f2937;border-radius:8px;padding:14px;">
+      <div style="color:#f97583;font-weight:bold;font-size:13px;">급등 이벤트 발화 시 자동 동작</div>
+      <div style="color:#c9d1d9;font-size:12px;margin-top:8px;font-family:monospace;line-height:2;">
+        1. 해당 세대의 전체 상태 스냅샷 저장<br>
+        2. CausalTracer에 즉시 인과 분석 요청<br>
+        3. emergence_events.jsonl에 이벤트 기록<br>
+        4. <span style="color:#f0883e;">claude CLI 호출</span> → 급등 분석 리포트 자동 생성<br>
+        5. 해당 조합을 hall_of_fame에 등록
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>3-4. claude CLI 리포트 생성 시점</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-top:3px solid #58a6ff;">
+      <div style="color:#58a6ff;font-weight:bold;font-size:13px;">Phase 전환 시</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:8px;">
+        해당 Phase 결과 JSON →<br>
+        <code>claude -p "분석해"</code><br>
+        → phase_N_report.md
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-top:3px solid #f97583;">
+      <div style="color:#f97583;font-weight:bold;font-size:13px;">창발 급등 시</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:8px;">
+        급등 이벤트 JSON →<br>
+        <code>claude -p "이 급등 분석해"</code><br>
+        → emergence_event_N.md
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-top:3px solid #3fb950;">
+      <div style="color:#3fb950;font-weight:bold;font-size:13px;">최종 완료 시</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:8px;">
+        전체 실행 데이터 →<br>
+        <code>claude -p "종합 리포트 작성"</code><br>
+        → REPORT.md
+      </div>
+    </div>
+  </div>
+</div>

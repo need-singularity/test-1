@@ -1,0 +1,169 @@
+<h2>설계 섹션 1: 전체 아키텍처</h2>
+<p class="subtitle">TECS Meta-Research Engine — 시스템 구조 개요</p>
+
+<div class="section">
+  <div style="background:#0d1117;border-radius:16px;padding:32px;font-family:monospace;font-size:13px;line-height:1.8;color:#c9d1d9;">
+
+    <div style="text-align:center;color:#58a6ff;font-size:16px;font-weight:bold;margin-bottom:20px;">
+      ┌─────────────── TECS Meta-Research Engine ───────────────┐
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- Left: Main Pipeline -->
+      <div style="background:#161b22;border-radius:12px;padding:16px;border:1px solid #30363d;">
+        <div style="color:#58a6ff;font-weight:bold;text-align:center;margin-bottom:12px;">메인 파이프라인</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <span style="color:#f97583;">①</span> <span style="color:#79c0ff;">ArchitectureGenerator</span><br>
+          <span style="color:#8b949e;font-size:11px;">구성요소 풀 → 후보 아키텍처 조합</span>
+        </div>
+
+        <div style="text-align:center;color:#484f58;">↓</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <span style="color:#f97583;">②</span> <span style="color:#79c0ff;">TopologySimulator</span><br>
+          <span style="color:#8b949e;font-size:11px;">후보별 소규모 위상 연산 실행</span>
+        </div>
+
+        <div style="text-align:center;color:#484f58;">↓</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <span style="color:#f97583;">③</span> <span style="color:#79c0ff;">FitnessEvaluator</span><br>
+          <span style="color:#8b949e;font-size:11px;">5개 지표(β,χ,r,Φ,λ) + 벤치마크 점수</span>
+        </div>
+
+        <div style="text-align:center;color:#484f58;">↓</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <span style="color:#f97583;">④</span> <span style="color:#79c0ff;">EvolutionEngine</span><br>
+          <span style="color:#8b949e;font-size:11px;">선택 / 인과 기반 표적 변이 / 재조합</span>
+        </div>
+
+        <div style="text-align:center;color:#484f58;">↓</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <span style="color:#f97583;">⑤</span> <span style="color:#79c0ff;">BenchmarkRunner</span><br>
+          <span style="color:#8b949e;font-size:11px;">개념관계 + 모순탐지 + 유추추론</span>
+        </div>
+
+        <div style="text-align:center;color:#484f58;">↓</div>
+
+        <div style="background:#1f2937;border-radius:8px;padding:10px;">
+          <span style="color:#f97583;">⑥</span> <span style="color:#79c0ff;">ScaleController</span><br>
+          <span style="color:#8b949e;font-size:11px;">적응형 스케일업 (10²→10³→10⁴)</span>
+        </div>
+      </div>
+
+      <!-- Right: Cross-cutting -->
+      <div>
+        <div style="background:#161b22;border-radius:12px;padding:16px;border:1px solid #f97583;margin-bottom:16px;">
+          <div style="color:#f97583;font-weight:bold;text-align:center;margin-bottom:12px;">★ 창발 감지 (전 파이프라인 관통)</div>
+
+          <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+            <span style="color:#f0883e;">EmergenceDetector</span><br>
+            <span style="color:#8b949e;font-size:11px;">매 세대 5개 지표 추적<br>급등 시 이벤트 발화 + 상세 스냅샷</span>
+          </div>
+
+          <div style="background:#1f2937;border-radius:8px;padding:10px;">
+            <span style="color:#f0883e;">CausalTracer</span><br>
+            <span style="color:#8b949e;font-size:11px;">구성요소 변경 ↔ 지표 변화 인과 분석<br>창발 급등의 원인 자동 귀인</span>
+          </div>
+        </div>
+
+        <div style="background:#161b22;border-radius:12px;padding:16px;border:1px solid #3fb950;margin-bottom:16px;">
+          <div style="color:#3fb950;font-weight:bold;text-align:center;margin-bottom:12px;">데이터 & 기록</div>
+
+          <div style="background:#1f2937;border-radius:8px;padding:10px;margin-bottom:8px;">
+            <span style="color:#7ee787;">DataManager</span><br>
+            <span style="color:#8b949e;font-size:11px;">ConceptNet/WordNet 로드 + 자체 생성<br>심플리셜 복합체 변환 + 캐싱</span>
+          </div>
+
+          <div style="background:#1f2937;border-radius:8px;padding:10px;">
+            <span style="color:#7ee787;">ResultLogger</span><br>
+            <span style="color:#8b949e;font-size:11px;">JSONL 기록 + REPORT.md 생성<br>GitHub push 대비 구조</span>
+          </div>
+        </div>
+
+        <div style="background:#161b22;border-radius:12px;padding:16px;border:1px solid #d2a8ff;">
+          <div style="color:#d2a8ff;font-weight:bold;text-align:center;margin-bottom:12px;">제어</div>
+          <div style="background:#1f2937;border-radius:8px;padding:10px;">
+            <span style="color:#d2a8ff;">Orchestrator</span><br>
+            <span style="color:#8b949e;font-size:11px;">Phase 전환 / 종료 조건 판단<br>전체 루프 자율 제어</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;color:#58a6ff;font-size:16px;font-weight:bold;margin-top:20px;">
+      └───────────────────────────────────────────────────────────┘
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>10개 모듈 요약</h3>
+  <table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <tr style="border-bottom:1px solid #333;">
+      <th style="text-align:left;padding:8px;color:#58a6ff;">모듈</th>
+      <th style="text-align:left;padding:8px;color:#58a6ff;">책임</th>
+      <th style="text-align:left;padding:8px;color:#58a6ff;">입력 → 출력</th>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">Orchestrator</td>
+      <td style="padding:8px;">전체 루프 제어, Phase 전환, 종료 판단</td>
+      <td style="padding:8px;color:#8b949e;">config → 최종 리포트</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">ArchitectureGenerator</td>
+      <td style="padding:8px;">구성요소 조합, 변이, 재조합</td>
+      <td style="padding:8px;color:#8b949e;">구성요소 풀 → 후보 리스트</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">TopologySimulator</td>
+      <td style="padding:8px;">후보 아키텍처의 위상 연산 실행</td>
+      <td style="padding:8px;color:#8b949e;">후보 + 데이터 → 시뮬 결과</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">FitnessEvaluator</td>
+      <td style="padding:8px;">5개 창발 지표 + 벤치마크 통합 점수</td>
+      <td style="padding:8px;color:#8b949e;">시뮬 결과 → fitness 점수</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">EvolutionEngine</td>
+      <td style="padding:8px;">선택, 인과 기반 표적 변이, 교차</td>
+      <td style="padding:8px;color:#8b949e;">점수 + 인과 → 다음 세대</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">BenchmarkRunner</td>
+      <td style="padding:8px;">3종 벤치마크 자동 실행</td>
+      <td style="padding:8px;color:#8b949e;">후보 + 테스트셋 → 점수</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#79c0ff;">ScaleController</td>
+      <td style="padding:8px;">적응형 스케일업 판단</td>
+      <td style="padding:8px;color:#8b949e;">fitness 추이 → 스케일 결정</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#f0883e;">EmergenceDetector</td>
+      <td style="padding:8px;">5개 지표 실시간 추적, 급등 이벤트</td>
+      <td style="padding:8px;color:#8b949e;">세대별 지표 → 이벤트 로그</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#f0883e;">CausalTracer</td>
+      <td style="padding:8px;">구성요소↔지표 인과 분석</td>
+      <td style="padding:8px;color:#8b949e;">세대 히스토리 → 인과 그래프</td>
+    </tr>
+    <tr style="border-bottom:1px solid #222;">
+      <td style="padding:8px;color:#7ee787;">DataManager</td>
+      <td style="padding:8px;">외부 데이터 로드, 복합체 변환, 캐싱</td>
+      <td style="padding:8px;color:#8b949e;">원시 데이터 → 심플리셜 복합체</td>
+    </tr>
+    <tr>
+      <td style="padding:8px;color:#7ee787;">ResultLogger</td>
+      <td style="padding:8px;">JSONL/MD 기록, 실행 간 누적</td>
+      <td style="padding:8px;color:#8b949e;">전 모듈 데이터 → 파일</td>
+    </tr>
+  </table>
+</div>

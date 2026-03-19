@@ -1,0 +1,178 @@
+<h2>설계 섹션 4: Orchestrator + Phase 전환 + 종료 조건</h2>
+<p class="subtitle">완전 자율 실행의 두뇌 — 사람 개입 0</p>
+
+<div class="section">
+  <h3>4-1. Orchestrator 상태 머신</h3>
+  <div style="background:#0d1117;border-radius:16px;padding:28px;font-family:monospace;font-size:13px;color:#c9d1d9;">
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;">
+
+      <!-- Phase 1 -->
+      <div style="background:#1f2937;border:2px solid #58a6ff;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;">
+        <div style="color:#58a6ff;font-weight:bold;font-size:14px;">Phase 1</div>
+        <div style="color:#8b949e;font-size:11px;">조합 탐색</div>
+        <div style="color:#484f58;font-size:10px;margin-top:4px;">노드 10² / 세대 30</div>
+      </div>
+
+      <div style="color:#484f58;font-size:18px;">→</div>
+
+      <!-- Phase 2 -->
+      <div style="background:#1f2937;border:2px solid #3fb950;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;">
+        <div style="color:#3fb950;font-weight:bold;font-size:14px;">Phase 2</div>
+        <div style="color:#8b949e;font-size:11px;">중규모 검증</div>
+        <div style="color:#484f58;font-size:10px;margin-top:4px;">노드 10³ / 세대 50</div>
+      </div>
+
+      <div style="color:#484f58;font-size:18px;">→</div>
+
+      <!-- Phase 3 -->
+      <div style="background:#1f2937;border:2px solid #f0883e;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;">
+        <div style="color:#f0883e;font-weight:bold;font-size:14px;">Phase 3</div>
+        <div style="color:#8b949e;font-size:11px;">벤치마크</div>
+        <div style="color:#484f58;font-size:10px;margin-top:4px;">3종 태스크 실행</div>
+      </div>
+
+      <div style="color:#484f58;font-size:18px;">→</div>
+
+      <!-- Phase 4 -->
+      <div style="background:#1f2937;border:2px solid #f97583;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;">
+        <div style="color:#f97583;font-weight:bold;font-size:14px;">Phase 4</div>
+        <div style="color:#8b949e;font-size:11px;">약점 보완 + 변형</div>
+        <div style="color:#484f58;font-size:10px;margin-top:4px;">인과 기반 표적 변이</div>
+      </div>
+
+      <div style="color:#484f58;font-size:18px;">→</div>
+
+      <!-- Phase 5 -->
+      <div style="background:#1f2937;border:2px solid #d2a8ff;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;">
+        <div style="color:#d2a8ff;font-weight:bold;font-size:14px;">Phase 5</div>
+        <div style="color:#8b949e;font-size:11px;">대규모 확인</div>
+        <div style="color:#484f58;font-size:10px;margin-top:4px;">노드 10⁴ / 최종 검증</div>
+      </div>
+    </div>
+
+    <!-- Loop back arrow -->
+    <div style="text-align:center;margin-top:16px;color:#f97583;font-size:12px;">
+      ← ─ ─ ─ ─ Phase 4에서 개선 발견 시 Phase 2로 복귀 ─ ─ ─ ─ →
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>4-2. Phase 전환 규칙</h3>
+  <table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <tr style="border-bottom:1px solid #30363d;">
+      <th style="text-align:left;padding:10px;color:#58a6ff;">전환</th>
+      <th style="text-align:left;padding:10px;color:#58a6ff;">조건</th>
+      <th style="text-align:left;padding:10px;color:#58a6ff;">자동 동작</th>
+    </tr>
+    <tr style="border-bottom:1px solid #21262d;">
+      <td style="padding:10px;color:#79c0ff;">1→2</td>
+      <td style="padding:10px;color:#c9d1d9;">세대 수렴 또는 max_gen 도달<br>상위 5개 후보 선별됨</td>
+      <td style="padding:10px;color:#8b949e;">상위 5개 후보 추출<br>스케일 10²→10³<br>claude → phase1_report.md</td>
+    </tr>
+    <tr style="border-bottom:1px solid #21262d;">
+      <td style="padding:10px;color:#79c0ff;">2→3</td>
+      <td style="padding:10px;color:#c9d1d9;">중규모에서 재수렴<br>상위 2개 후보 선별됨</td>
+      <td style="padding:10px;color:#8b949e;">상위 2개 후보 추출<br>벤치마크 데이터 로드<br>claude → phase2_report.md</td>
+    </tr>
+    <tr style="border-bottom:1px solid #21262d;">
+      <td style="padding:10px;color:#79c0ff;">3→4</td>
+      <td style="padding:10px;color:#c9d1d9;">3종 벤치마크 완료</td>
+      <td style="padding:10px;color:#8b949e;">약점 지표 식별<br>인과 분석 실행<br>claude → phase3_report.md</td>
+    </tr>
+    <tr style="border-bottom:1px solid #21262d;">
+      <td style="padding:10px;color:#79c0ff;">4→2 (루프)</td>
+      <td style="padding:10px;color:#c9d1d9;">인과 기반 변이로 개선 후보 생성됨</td>
+      <td style="padding:10px;color:#8b949e;">변이 후보들로 Phase 2 재진입<br>claude → phase4_report.md</td>
+    </tr>
+    <tr style="border-bottom:1px solid #21262d;">
+      <td style="padding:10px;color:#79c0ff;">4→5 (탈출)</td>
+      <td style="padding:10px;color:#c9d1d9;">루프 N회 도달 또는<br>Phase 4에서 개선 없음</td>
+      <td style="padding:10px;color:#8b949e;">최적 후보로 대규모 검증<br>스케일 10³→10⁴</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;color:#79c0ff;">5→종료</td>
+      <td style="padding:10px;color:#c9d1d9;">대규모 검증 완료</td>
+      <td style="padding:10px;color:#8b949e;">전체 데이터 수집<br>claude → REPORT.md 최종<br>hall_of_fame 갱신</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>4-3. 종료 조건 (어느 Phase에서든 적용)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-left:4px solid #3fb950;">
+      <div style="color:#3fb950;font-weight:bold;font-size:13px;">성공 종료</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;line-height:1.8;">
+        • 환각률 < 0.01 (1%)<br>
+        • 창발률 > 0.8 (80%)<br>
+        • 3종 벤치마크 모두 > 0.7<br>
+        <span style="color:#3fb950;">→ 세 조건 동시 충족 시</span>
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-left:4px solid #f0883e;">
+      <div style="color:#f0883e;font-weight:bold;font-size:13px;">수렴 종료</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;line-height:1.8;">
+        • 5세대 연속 fitness 개선 < 0.01<br>
+        • 인과 분석에서 유의미한 레버 없음<br>
+        <span style="color:#f0883e;">→ 더 이상 개선 불가 판단</span>
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-left:4px solid #f97583;">
+      <div style="color:#f97583;font-weight:bold;font-size:13px;">자원 한계 종료</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;line-height:1.8;">
+        • 총 실행 시간 > max_hours (기본 48h)<br>
+        • 메모리 사용 > 80% 시스템 RAM<br>
+        <span style="color:#f97583;">→ 안전 장치</span>
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;border-left:4px solid #d2a8ff;">
+      <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">루프 한계 종료</div>
+      <div style="color:#8b949e;font-size:12px;margin-top:6px;line-height:1.8;">
+        • Phase 4→2 루프 > max_loops (기본 10)<br>
+        • 전체 탐색 조합 공간 > 90% 소진<br>
+        <span style="color:#d2a8ff;">→ 탐색 공간 고갈</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>4-4. config.yaml 구조</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:20px;font-family:monospace;font-size:12px;line-height:1.8;color:#c9d1d9;">
+<span style="color:#7ee787;">search:</span>
+  <span style="color:#79c0ff;">population_size:</span> 50
+  <span style="color:#79c0ff;">elite_ratio:</span> 0.2
+  <span style="color:#79c0ff;">tournament_size:</span> 3
+  <span style="color:#79c0ff;">mutation_rate:</span> 0.3
+  <span style="color:#79c0ff;">crossover_rate:</span> 0.7
+  <span style="color:#79c0ff;">diversity_threshold:</span> 0.3
+
+<span style="color:#7ee787;">scaling:</span>
+  <span style="color:#79c0ff;">phase1_nodes:</span> 100
+  <span style="color:#79c0ff;">phase2_nodes:</span> 1000
+  <span style="color:#79c0ff;">phase5_nodes:</span> 10000
+  <span style="color:#79c0ff;">phase1_max_gen:</span> 30
+  <span style="color:#79c0ff;">phase2_max_gen:</span> 50
+
+<span style="color:#7ee787;">emergence:</span>
+  <span style="color:#79c0ff;">sigma_threshold:</span> 2.0
+  <span style="color:#79c0ff;">phi_critical:</span> 1.0
+  <span style="color:#79c0ff;">window_size:</span> 10
+
+<span style="color:#7ee787;">termination:</span>
+  <span style="color:#79c0ff;">target_hallucination:</span> 0.01
+  <span style="color:#79c0ff;">target_emergence:</span> 0.8
+  <span style="color:#79c0ff;">target_benchmark:</span> 0.7
+  <span style="color:#79c0ff;">plateau_generations:</span> 5
+  <span style="color:#79c0ff;">max_hours:</span> 48
+  <span style="color:#79c0ff;">max_loops:</span> 10
+  <span style="color:#79c0ff;">max_memory_pct:</span> 80
+
+<span style="color:#7ee787;">reporting:</span>
+  <span style="color:#79c0ff;">claude_cli:</span> true
+  <span style="color:#79c0ff;">report_on_phase:</span> true
+  <span style="color:#79c0ff;">report_on_emergence:</span> true
+  </div>
+</div>

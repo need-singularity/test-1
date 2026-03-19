@@ -1,0 +1,140 @@
+<h2>설계 섹션 2: 구성요소 풀 + 시뮬레이션 동역학</h2>
+<p class="subtitle">각 계층의 수학적 빌딩 블록과 시뮬레이션 방법</p>
+
+<div class="section">
+  <h3>5개 계층 × 구성요소 풀</h3>
+  <p style="color:#8b949e;font-size:13px;">각 계층에서 1개씩 선택하여 후보 아키텍처를 조합합니다. 총 3×3×3×3×3 = 243 가지.</p>
+
+  <!-- 표현 계층 -->
+  <div style="background:#161b22;border-radius:12px;padding:16px;margin-bottom:12px;border-left:4px solid #58a6ff;">
+    <div style="color:#58a6ff;font-weight:bold;margin-bottom:8px;">Layer 1: 표현 (Representation)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#79c0ff;font-weight:bold;font-size:13px;">simplicial_complex</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">GUDHI SimplexTree<br>Vietoris-Rips 복합체<br>출처: TELOS</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#79c0ff;font-weight:bold;font-size:13px;">riemannian_manifold</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">이산 리만 다양체<br>계량 텐서 g_ij on graph<br>출처: TECS/ATDS</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#79c0ff;font-weight:bold;font-size:13px;">dynamic_hypergraph</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">HyperNetX 기반<br>다중 노드 동시 연결<br>출처: ATDS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 추론 계층 -->
+  <div style="background:#161b22;border-radius:12px;padding:16px;margin-bottom:12px;border-left:4px solid #3fb950;">
+    <div style="color:#3fb950;font-weight:bold;margin-bottom:8px;">Layer 2: 추론 (Reasoning)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#7ee787;font-weight:bold;font-size:13px;">ricci_flow</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">Ollivier-Ricci curvature<br>∂g/∂t = -2Ric + λT<br>GraphRicciCurvature 패키지</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#7ee787;font-weight:bold;font-size:13px;">homotopy_deformation</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">K_input → K_target 연속 변형<br>호모토피 동치 경로 탐색<br>GUDHI filtration</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#7ee787;font-weight:bold;font-size:13px;">geodesic_bifurcation</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">불안정 임계점에서<br>다중 측지선 분기<br>SciPy ODE solver</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 창발 계층 -->
+  <div style="background:#161b22;border-radius:12px;padding:16px;margin-bottom:12px;border-left:4px solid #f97583;">
+    <div style="color:#f97583;font-weight:bold;margin-bottom:8px;">Layer 3: 창발 (Emergence)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#ffa198;font-weight:bold;font-size:13px;">kuramoto_oscillator</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">3계층 결합 진동자<br>dθ/dt = ω + ΣK·sin(Δθ)<br>쿠라모토 순서 매개변수 r</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#ffa198;font-weight:bold;font-size:13px;">ising_phase_transition</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">정보 온도 T_i<br>결합 강도 J_ij 동적 조절<br>Monte Carlo 시뮬레이션</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#ffa198;font-weight:bold;font-size:13px;">lyapunov_bifurcation</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">리아프노프 지수 λ → 양수 강제<br>국소 혼돈 → 분기점 유도<br>비선형 미분 연산자 주입</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 검증 계층 -->
+  <div style="background:#161b22;border-radius:12px;padding:16px;margin-bottom:12px;border-left:4px solid #d2a8ff;">
+    <div style="color:#d2a8ff;font-weight:bold;margin-bottom:8px;">Layer 4: 검증 (Verification)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">persistent_homology_dual</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">K_out vs K_out* 듀얼<br>지속 다이어그램 비교<br>Defect(r) = Σ|Δβ_n|</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">shadow_manifold_audit</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">M + M* 이중 다양체<br>halluc = |Ric_M|·c/|Ric_M*|<br>fiber bundle 구조</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">stress_tensor_zero</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">인지적 응력 텐서<br>다양체 간 찢김/교차 탐지<br>응력→0 될 때까지 재배치</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 최적화 계층 -->
+  <div style="background:#161b22;border-radius:12px;padding:16px;border-left:4px solid #f0883e;">
+    <div style="color:#f0883e;font-weight:bold;margin-bottom:8px;">Layer 5: 최적화 (Optimization)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#f0883e;font-weight:bold;font-size:13px;">min_description_topology</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">MDT(D) = argmin[Σβ_n + λ·d_GH]<br>그로모프-하우스도르프 거리<br>출처: TELOS</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#f0883e;font-weight:bold;font-size:13px;">fisher_distillation</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">피셔 정보 행렬 I(θ)<br>g_ij += α·I_ij(θ)<br>압축률 10⁻³~10⁻⁵</div>
+      </div>
+      <div style="background:#1f2937;border-radius:8px;padding:12px;">
+        <div style="color:#f0883e;font-weight:bold;font-size:13px;">free_energy_annealing</div>
+        <div style="color:#8b949e;font-size:11px;margin-top:4px;">F_s = C(K) - T_s·H(K)<br>자유 에너지 최소화<br>시뮬레이티드 어닐링</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>시뮬레이션 파이프라인 (1개 후보 평가 과정)</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:20px;font-family:monospace;font-size:12px;line-height:2;color:#c9d1d9;">
+    <div style="color:#58a6ff;">// 예시: 후보 = {simplicial, ricci_flow, ising, persistent_homology, fisher}</div>
+    <br>
+    <div><span style="color:#f97583;">Step 1</span> <span style="color:#8b949e;">DataManager:</span> ConceptNet subset → simplicial complex K (노드 10²)</div>
+    <div><span style="color:#f97583;">Step 2</span> <span style="color:#8b949e;">TopologySimulator:</span> K에 ricci_flow 적용 → 곡률 진화 100 steps</div>
+    <div><span style="color:#f97583;">Step 3</span> <span style="color:#8b949e;">TopologySimulator:</span> ising 모듈로 임계 결합 유도 → 상전이 관찰</div>
+    <div><span style="color:#f97583;">Step 4</span> <span style="color:#8b949e;">TopologySimulator:</span> persistent_homology_dual로 출력 검증 → Defect(r)</div>
+    <div><span style="color:#f97583;">Step 5</span> <span style="color:#8b949e;">TopologySimulator:</span> fisher_distillation으로 구조 압축</div>
+    <div><span style="color:#f97583;">Step 6</span> <span style="color:#8b949e;">FitnessEvaluator:</span> β,χ,r,Φ,λ 측정 → 통합 fitness 계산</div>
+    <div><span style="color:#f97583;">Step 7</span> <span style="color:#8b949e;">EmergenceDetector:</span> 이전 세대 대비 급등 여부 판정</div>
+    <div><span style="color:#f97583;">Step 8</span> <span style="color:#8b949e;">BenchmarkRunner:</span> 3종 벤치마크 → 개별 + 통합 점수</div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>Apple Silicon 최적화 전략</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#58a6ff;font-weight:bold;font-size:13px;">Unified Memory 활용</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:4px;">CPU↔GPU 데이터 복사 없음<br>복합체를 한 번만 메모리에 올리고<br>CPU(TDA) + MPS(행렬 연산) 혼용</div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#3fb950;font-weight:bold;font-size:13px;">병렬 후보 평가</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:4px;">multiprocessing으로 후보 분산<br>각 프로세스가 독립 시뮬레이션<br>MPS는 행렬 연산 집중 모듈만</div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#f0883e;font-weight:bold;font-size:13px;">스케일별 메모리 예산</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:4px;">10² 노드: ~50MB / 후보<br>10³ 노드: ~500MB / 후보<br>10⁴ 노드: ~5GB / 후보</div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">JAX + Metal</div>
+      <div style="color:#8b949e;font-size:11px;margin-top:4px;">jax-metal 백엔드<br>자동 미분 + GPU 가속<br>리치 흐름/쿠라모토에 적용</div>
+    </div>
+  </div>
+</div>

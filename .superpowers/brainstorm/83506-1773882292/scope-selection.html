@@ -1,0 +1,45 @@
+<h2>자율 탐색 범위: 최대 자율 (C)</h2>
+<p class="subtitle">선택 확인 — 시스템이 스스로 아키텍처를 발견, 검증, 변형, 확장</p>
+
+<div class="section">
+  <h3>전체 자율 루프</h3>
+  <div style="background:#1a1a2e;border-radius:12px;padding:24px;font-family:monospace;font-size:14px;line-height:2;color:#e0e0e0;">
+    <div style="color:#4fc3f7;">Phase 1: 구성요소 조합 탐색 (243가지)</div>
+    <div style="padding-left:20px;">↓ 자동</div>
+    <div style="color:#81c784;">Phase 2: 소규모 시뮬레이션 + 평가</div>
+    <div style="padding-left:20px;">↓ 자동</div>
+    <div style="color:#ffb74d;">Phase 3: 진화 루프 (선택/변이/재조합)</div>
+    <div style="padding-left:20px;">↓ 자동</div>
+    <div style="color:#f06292;">Phase 4: 스케일 확대 검증</div>
+    <div style="padding-left:20px;">↓ 자동</div>
+    <div style="color:#ce93d8;">Phase 5: 실제 Q&A 벤치마크</div>
+    <div style="padding-left:20px;">↓ 자동</div>
+    <div style="color:#ff8a65;">Phase 6: 약점 기반 아키텍처 자동 변형/확장</div>
+    <div style="padding-left:20px;">↓ 자동 (Phase 2로 복귀)</div>
+    <div style="color:#e0e0e0;margin-top:12px;border-top:1px solid #333;padding-top:12px;">
+      <span style="color:#ef5350;">★ 창발 급등 구간 실시간 감지 + 기록 (전 Phase 관통)</span>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:24px;">
+  <h3>종료 조건 (자동 판단)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+      <div style="color:#4fc3f7;font-weight:bold;">수렴 종료</div>
+      <div style="color:#aaa;font-size:13px;">5세대 연속 fitness 개선 없음</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+      <div style="color:#81c784;font-weight:bold;">목표 달성 종료</div>
+      <div style="color:#aaa;font-size:13px;">환각률 &lt; 1%, 창발률 &gt; 80%</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+      <div style="color:#ffb74d;font-weight:bold;">시간 초과 종료</div>
+      <div style="color:#aaa;font-size:13px;">최대 실행 시간 도달</div>
+    </div>
+    <div style="background:#1a1a2e;border-radius:8px;padding:16px;">
+      <div style="color:#f06292;font-weight:bold;">최대 반복 종료</div>
+      <div style="color:#aaa;font-size:13px;">Phase 루프 N회 도달</div>
+    </div>
+  </div>
+</div>

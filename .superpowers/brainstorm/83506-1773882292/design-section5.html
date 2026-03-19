@@ -1,0 +1,201 @@
+<h2>설계 섹션 5: 파일 구조 + 실행 흐름 + 의존성</h2>
+<p class="subtitle">최종 섹션 — 프로젝트 전체 구조와 실행 방법</p>
+
+<div class="section">
+  <h3>5-1. 프로젝트 파일 구조</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:24px;font-family:monospace;font-size:12px;line-height:2;color:#c9d1d9;">
+<span style="color:#58a6ff;font-weight:bold;">tecs-engine/</span>
+├── <span style="color:#3fb950;">run.py</span>                          <span style="color:#484f58;"># 진입점 — python run.py</span>
+├── <span style="color:#3fb950;">config.yaml</span>                     <span style="color:#484f58;"># 전체 설정</span>
+├── <span style="color:#3fb950;">requirements.txt</span>                <span style="color:#484f58;"># 의존성</span>
+│
+├── <span style="color:#58a6ff;font-weight:bold;">tecs/</span>
+│   ├── __init__.py
+│   ├── <span style="color:#d2a8ff;">orchestrator.py</span>             <span style="color:#484f58;"># 전체 루프 제어, Phase 전환</span>
+│   │
+│   ├── <span style="color:#58a6ff;">components/</span>                 <span style="color:#484f58;"># 5계층 × 3 = 15개 구성요소</span>
+│   │   ├── __init__.py
+│   │   ├── <span style="color:#58a6ff;">representation/</span>
+│   │   │   ├── simplicial_complex.py
+│   │   │   ├── riemannian_manifold.py
+│   │   │   └── dynamic_hypergraph.py
+│   │   ├── <span style="color:#3fb950;">reasoning/</span>
+│   │   │   ├── ricci_flow.py
+│   │   │   ├── homotopy_deformation.py
+│   │   │   └── geodesic_bifurcation.py
+│   │   ├── <span style="color:#f97583;">emergence/</span>
+│   │   │   ├── kuramoto_oscillator.py
+│   │   │   ├── ising_phase_transition.py
+│   │   │   └── lyapunov_bifurcation.py
+│   │   ├── <span style="color:#d2a8ff;">verification/</span>
+│   │   │   ├── persistent_homology_dual.py
+│   │   │   ├── shadow_manifold_audit.py
+│   │   │   └── stress_tensor_zero.py
+│   │   └── <span style="color:#f0883e;">optimization/</span>
+│   │       ├── min_description_topology.py
+│   │       ├── fisher_distillation.py
+│   │       └── free_energy_annealing.py
+│   │
+│   ├── <span style="color:#58a6ff;">engine/</span>                     <span style="color:#484f58;"># 메인 파이프라인</span>
+│   │   ├── architecture_generator.py
+│   │   ├── topology_simulator.py
+│   │   ├── fitness_evaluator.py
+│   │   ├── evolution_engine.py
+│   │   ├── benchmark_runner.py
+│   │   └── scale_controller.py
+│   │
+│   ├── <span style="color:#58a6ff;">analysis/</span>                   <span style="color:#484f58;"># 횡단 관심사</span>
+│   │   ├── emergence_detector.py
+│   │   └── causal_tracer.py
+│   │
+│   ├── <span style="color:#58a6ff;">data/</span>                       <span style="color:#484f58;"># 데이터 관리</span>
+│   │   ├── data_manager.py
+│   │   ├── conceptnet_loader.py
+│   │   ├── wordnet_loader.py
+│   │   └── synthetic_generator.py
+│   │
+│   ├── <span style="color:#58a6ff;">reporting/</span>                  <span style="color:#484f58;"># 기록 + 리포트</span>
+│   │   ├── result_logger.py
+│   │   └── claude_reporter.py       <span style="color:#484f58;"># claude CLI 호출</span>
+│   │
+│   └── <span style="color:#58a6ff;">utils/</span>
+│       ├── config.py
+│       ├── metrics.py
+│       └── mps_utils.py             <span style="color:#484f58;"># Apple Silicon 최적화</span>
+│
+├── <span style="color:#58a6ff;font-weight:bold;">data/</span>                           <span style="color:#484f58;"># 외부 데이터셋 (git-lfs 또는 .gitignore)</span>
+│   ├── conceptnet/
+│   ├── wordnet/
+│   └── benchmarks/
+│       ├── concept_relation/
+│       ├── contradiction/
+│       └── analogy/
+│
+├── <span style="color:#58a6ff;font-weight:bold;">results/</span>                        <span style="color:#484f58;"># 실행 결과 (GitHub에 push)</span>
+│   ├── runs/
+│   │   └── run_YYYYMMDD_HHMMSS/
+│   │       ├── config.yaml
+│   │       ├── evolution.jsonl
+│   │       ├── emergence_events.jsonl
+│   │       ├── benchmarks.jsonl
+│   │       ├── phase_log.jsonl
+│   │       ├── causal_graph.json
+│   │       └── REPORT.md
+│   ├── hall_of_fame/
+│   │   └── best_candidates.jsonl
+│   └── README.md                    <span style="color:#484f58;"># 실험 색인 (자동 갱신)</span>
+│
+├── <span style="color:#58a6ff;font-weight:bold;">tests/</span>
+│   ├── test_components/
+│   ├── test_engine/
+│   └── test_integration/
+│
+└── <span style="color:#58a6ff;font-weight:bold;">docs/</span>
+    └── architecture.md              <span style="color:#484f58;"># 원본 문서 참조</span>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>5-2. 실행 흐름 (사용자 경험)</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:20px;font-family:monospace;font-size:13px;line-height:2.2;color:#c9d1d9;">
+<span style="color:#8b949e;"># 1. 설치</span>
+<span style="color:#79c0ff;">$</span> git clone https://github.com/need-singularity/test-1
+<span style="color:#79c0ff;">$</span> cd test-1
+<span style="color:#79c0ff;">$</span> pip install -r requirements.txt
+<span style="color:#79c0ff;">$</span> python -m tecs.data.data_manager --download  <span style="color:#484f58;"># ConceptNet/WordNet 다운로드</span>
+
+<span style="color:#8b949e;"># 2. (선택) 설정 조정</span>
+<span style="color:#79c0ff;">$</span> vi config.yaml
+
+<span style="color:#8b949e;"># 3. 실행 — 이것 하나면 끝</span>
+<span style="color:#79c0ff;">$</span> <span style="color:#3fb950;font-weight:bold;">python run.py</span>
+
+<span style="color:#8b949e;"># 4. 실행 중 (터미널에 실시간 출력)</span>
+<span style="color:#f0883e;">[Phase 1]</span> Gen 1/30 | pop=50 | best_fitness=0.23 | β₁=1 χ=2
+<span style="color:#f0883e;">[Phase 1]</span> Gen 2/30 | pop=50 | best_fitness=0.31 | β₁=1 χ=2
+<span style="color:#f97583;">[EMERGENCE]</span> Gen 12 | β₁: 1→4 (+3σ) | cause: ising+simplicial
+<span style="color:#d2a8ff;">[REPORT]</span> emergence_event_1.md generated
+<span style="color:#f0883e;">[Phase 1]</span> Converged at gen 28. Top 5 selected.
+<span style="color:#d2a8ff;">[REPORT]</span> phase1_report.md generated
+<span style="color:#3fb950;">[Phase 2]</span> Scaling to 10³ nodes...
+<span style="color:#8b949e;">...</span>
+<span style="color:#d2a8ff;">[FINAL]</span> REPORT.md generated. Results in results/runs/run_20260319_143022/
+
+<span style="color:#8b949e;"># 5. 결과 확인</span>
+<span style="color:#79c0ff;">$</span> cat results/runs/run_20260319_143022/REPORT.md
+<span style="color:#79c0ff;">$</span> git add results/ && git commit -m "Run 20260319" && git push
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>5-3. Python 의존성</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#58a6ff;font-weight:bold;font-size:13px;">핵심 (TDA + 수치)</div>
+      <div style="font-family:monospace;font-size:11px;color:#8b949e;margin-top:8px;line-height:2;">
+        gudhi >= 3.9<br>
+        giotto-tda >= 0.6<br>
+        numpy >= 1.26<br>
+        scipy >= 1.12<br>
+        networkx >= 3.2<br>
+        hypernetx >= 2.3
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#3fb950;font-weight:bold;font-size:13px;">가속 (Apple Silicon)</div>
+      <div style="font-family:monospace;font-size:11px;color:#8b949e;margin-top:8px;line-height:2;">
+        jax[metal] (jax-metal)<br>
+        torch >= 2.2 (MPS backend)<br>
+        GraphRicciCurvature >= 0.5
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#f0883e;font-weight:bold;font-size:13px;">데이터</div>
+      <div style="font-family:monospace;font-size:11px;color:#8b949e;margin-top:8px;line-height:2;">
+        nltk (WordNet)<br>
+        requests (ConceptNet API)<br>
+        pyyaml
+      </div>
+    </div>
+    <div style="background:#161b22;border-radius:8px;padding:14px;">
+      <div style="color:#d2a8ff;font-weight:bold;font-size:13px;">리포팅</div>
+      <div style="font-family:monospace;font-size:11px;color:#8b949e;margin-top:8px;line-height:2;">
+        (claude CLI — 이미 설치됨)<br>
+        jinja2 (REPORT.md 템플릿)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>5-4. 구성요소 인터페이스 (공통 프로토콜)</h3>
+  <div style="background:#0d1117;border-radius:12px;padding:20px;font-family:monospace;font-size:12px;line-height:1.8;color:#c9d1d9;">
+<span style="color:#f97583;">class</span> <span style="color:#79c0ff;">Component</span>(<span style="color:#79c0ff;">Protocol</span>):
+    <span style="color:#8b949e;">"""모든 15개 구성요소가 구현하는 공통 인터페이스"""</span>
+
+    <span style="color:#79c0ff;">name</span>: str              <span style="color:#484f58;"># 예: "ricci_flow"</span>
+    <span style="color:#79c0ff;">layer</span>: str             <span style="color:#484f58;"># 예: "reasoning"</span>
+
+    <span style="color:#f97583;">def</span> <span style="color:#d2a8ff;">execute</span>(self, state: <span style="color:#79c0ff;">TopologyState</span>) -> <span style="color:#79c0ff;">TopologyState</span>:
+        <span style="color:#8b949e;">"""입력 상태를 받아 변환된 상태를 반환"""</span>
+        ...
+
+    <span style="color:#f97583;">def</span> <span style="color:#d2a8ff;">measure</span>(self, state: <span style="color:#79c0ff;">TopologyState</span>) -> <span style="color:#79c0ff;">dict</span>[str, float]:
+        <span style="color:#8b949e;">"""현재 상태의 지표(β,χ,r,Φ,λ) 측정"""</span>
+        ...
+
+    <span style="color:#f97583;">def</span> <span style="color:#d2a8ff;">cost</span>(self) -> float:
+        <span style="color:#8b949e;">"""이 구성요소의 상대적 계산 비용"""</span>
+        ...
+
+
+<span style="color:#f97583;">@dataclass</span>
+<span style="color:#f97583;">class</span> <span style="color:#79c0ff;">TopologyState</span>:
+    <span style="color:#8b949e;">"""구성요소 간 전달되는 공통 상태"""</span>
+    <span style="color:#79c0ff;">complex</span>: Any           <span style="color:#484f58;"># SimplexTree | graph | hypergraph</span>
+    <span style="color:#79c0ff;">curvature</span>: np.ndarray  <span style="color:#484f58;"># 곡률 텐서 (이산 근사)</span>
+    <span style="color:#79c0ff;">metrics</span>: dict          <span style="color:#484f58;"># 현재 지표</span>
+    <span style="color:#79c0ff;">history</span>: list          <span style="color:#484f58;"># 변형 경로 기록</span>
+    <span style="color:#79c0ff;">metadata</span>: dict         <span style="color:#484f58;"># 추가 정보</span>
+  </div>
+</div>
