@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import random
-from concurrent.futures import ThreadPoolExecutor
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -130,18 +132,43 @@ class Orchestrator:
 
     def _run_generation(self):
         """Run one generation: evaluate all candidates in parallel, evolve."""
-        # Parallel evaluation using threads (safe with unpicklable objects;
-        # NumPy/SciPy release the GIL for C-level computation)
-        n_workers = min(os.cpu_count() or 1, len(self.population))
+        gen_start = time.time()
+        n_pop = len(self.population)
+        done_count = 0
+
+        # Parallel evaluation
+        n_workers = min(os.cpu_count() or 1, n_pop)
         with ThreadPoolExecutor(max_workers=n_workers) as executor:
             futures = {executor.submit(self._simulate_candidate, c): c for c in self.population}
-            for future in futures:
-                future.result()  # wait; fitness is set in-place on each candidate
+            for future in as_completed(futures):
+                future.result()
+                done_count += 1
+                elapsed = time.time() - gen_start
+                bar_len = 20
+                filled = int(bar_len * done_count / n_pop)
+                bar = "█" * filled + "░" * (bar_len - filled)
+                sys.stdout.write(
+                    f"\r    Gen {self.generation:3d} |{bar}| {done_count}/{n_pop} "
+                    f"({elapsed:.0f}s)"
+                )
+                sys.stdout.flush()
+
+        # Generation complete
+        gen_elapsed = time.time() - gen_start
 
         # Track best
         best = max(self.population, key=lambda c: c.fitness)
         self._best_fitness = best.fitness
         self._fitness_history.append(best.fitness)
+        mean_fit = sum(c.fitness for c in self.population) / n_pop
+        nonzero = sum(1 for c in self.population if c.fitness > 0)
+
+        # Print generation summary (overwrite progress bar)
+        sys.stdout.write(
+            f"\r    Gen {self.generation:3d} | best={best.fitness:.4f} "
+            f"mean={mean_fit:.4f} | alive={nonzero}/{n_pop} | {gen_elapsed:.1f}s\n"
+        )
+        sys.stdout.flush()
 
         # Log
         self._logger.log_generation({
@@ -254,6 +281,13 @@ class Orchestrator:
 
     def _on_emergence_spike(self, event: dict, candidate: Candidate):
         """Handle emergence spike event."""
+        metric = event.get("metric", "?")
+        value = event.get("value", 0)
+        etype = event.get("type", "?")
+        sigma = event.get("sigma", event.get("delta", ""))
+        sigma_str = f" ({sigma:.1f}σ)" if isinstance(sigma, (int, float)) else ""
+        print(f"    🔥 창발 감지! {metric}={value:.4f} [{etype}]{sigma_str}")
+
         event["candidate_id"] = candidate.id
         event["candidate_components"] = candidate.components
         self._logger.log_emergence_event(event)
@@ -284,6 +318,10 @@ class Orchestrator:
 
         if not self.population:
             self._init_population()
+
+        phase_names = {1: "조합 탐색", 2: "중규모 검증", 3: "벤치마크", 4: "약점 보완", 5: "대규모 확인"}
+        print(f"\n  ▶ Phase {phase}: {phase_names.get(phase, '')} "
+              f"(노드 {self._scale.current_nodes}, 최대 {max_gen}세대, 후보 {len(self.population)}개)")
 
         for _ in range(max_gen):
             self._run_generation()
