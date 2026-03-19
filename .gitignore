@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
+rust_core/target/
 data/conceptnet/
 data/wordnet/
 data/benchmarks/
