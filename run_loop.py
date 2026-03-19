@@ -577,20 +577,43 @@ def main():
             round_num += 1
 
     except KeyboardInterrupt:
-        print(f"\n\n중단됨. 이번 세션 {len(all_results) - (round_num - len(all_results) - 1)}회 완료.")
+        print(f"\n\n  ⏹ 중단 요청 감지. 안전하게 종료 중...")
 
-    # README 최종 갱신
-    if all_results:
-        update_readme(all_results, args.results_dir)
-        print(f"\n  README.md 최종 갱신됨")
+    # 안전한 종료 처리 (Ctrl+C 추가 입력 무시)
+    import signal
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-        best = max(all_results, key=lambda r: r["best_fitness"])
-        print(f"\n{'='*60}")
-        print(f"  전체 요약 — {len(all_results)}회 실행")
-        print(f"{'='*60}")
-        print(f"  최고 fitness: {best['best_fitness']:.4f} (Round {best['round']})")
-        print(f"  총 세대 수:   {sum(r['generations'] for r in all_results)}")
-        print(f"  총 실행 시간: {sum(r['elapsed_seconds'] for r in all_results):.1f}s")
+    try:
+        if all_results:
+            print(f"  히스토리 저장 중...")
+            # 히스토리 파일 최종 저장
+            with open(history_path, "w") as f:
+                for r in all_results:
+                    f.write(json.dumps(r, default=str) + "\n")
+
+            print(f"  README.md 갱신 중...")
+            update_readme(all_results, args.results_dir)
+
+            if args.git_push:
+                print(f"  Git push 중...")
+                sp.run(["git", "add", "results/", "README.md"], capture_output=True, timeout=10)
+                sp.run(["git", "commit", "-m", f"중단 시점 저장: {len(all_results)}회 완료"],
+                       capture_output=True, timeout=10)
+                sp.run(["git", "push", "origin", "main"], capture_output=True, timeout=30)
+
+            best = max(all_results, key=lambda r: r["best_fitness"])
+            print(f"\n{'='*60}")
+            print(f"  전체 요약 — {len(all_results)}회 실행")
+            print(f"{'='*60}")
+            print(f"  최고 fitness: {best['best_fitness']:.4f} (Round {best['round']})")
+            print(f"  총 세대 수:   {sum(r['generations'] for r in all_results)}")
+            print(f"  총 실행 시간: {sum(r['elapsed_seconds'] for r in all_results):.1f}s")
+            print(f"\n  ✅ 안전하게 종료됨.")
+        else:
+            print(f"  실행 결과 없음. 종료.")
+    except Exception as e:
+        print(f"  종료 중 오류 (무시됨): {e}")
+        print(f"  ✅ 종료됨.")
 
 
 if __name__ == "__main__":
