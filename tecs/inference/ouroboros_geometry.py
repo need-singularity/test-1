@@ -126,6 +126,24 @@ class FuchsianGroup:
         Ignored (kept for API compat); generator count is determined by dim.
     use_fuchsian : bool
         If False, fall back to legacy mode (orbit = [v, -v]).
+
+    Mostow Rigidity (dim >= 3)
+    --------------------------
+    By Mostow's rigidity theorem, for hyperbolic manifolds of dimension >= 3
+    the hyperbolic structure is uniquely determined by the fundamental group.
+    In other words, once the discrete isometry generators are fixed (and
+    produce a lattice in Isom(H^n)), there is no continuous deformation of
+    the metric — unlike dim = 2 where Teichmuller space is non-trivial.
+
+    Practically this means:
+    * For dim >= 3 there is **no moduli ambiguity**: the quotient geometry
+      is rigid and any two faithful discrete representations of the same
+      group are conjugate by a unique isometry.
+    * The generators returned by ``_make_general_generators`` therefore
+      define the quotient space up to isometric equivalence; no
+      Teichmuller-style parameter sweep is needed or meaningful.
+    * Volume, spectrum, and all metric invariants of the quotient are
+      topological invariants of the underlying manifold (Mostow-Prasad).
     """
 
     def __init__(
@@ -143,7 +161,9 @@ class FuchsianGroup:
             if dim == 2:
                 self._gens = _make_dim2_generators()
             else:
-                # For dim >= 3 (including Mostow-rigid cases): 2*d generators
+                # For dim >= 3 the hyperbolic structure is Mostow-rigid:
+                # the generators below uniquely determine the quotient
+                # geometry (see class docstring for details).
                 self._gens = _make_general_generators(dim)
         else:
             self._gens: List[Callable] = []

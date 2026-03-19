@@ -45,6 +45,15 @@ class TestMoebiusTransforms:
             d_mapped = poincare_distance(gen(u), gen(v))
             assert abs(d_mapped - d_orig) < 1e-6
 
+    def test_generators_are_isometries_dim3(self):
+        fg = FuchsianGroup(dim=3)
+        u = np.array([0.3, 0.2, 0.1])
+        v = np.array([0.5, -0.1, 0.4])
+        d_orig = poincare_distance(u, v)
+        for gen in fg.generators():
+            d_mapped = poincare_distance(gen(u), gen(v))
+            assert abs(d_mapped - d_orig) < 1e-6
+
     def test_dim3_generators_preserve_ball(self):
         fg = FuchsianGroup(dim=3)
         v = np.array([0.4, 0.3, 0.2])
