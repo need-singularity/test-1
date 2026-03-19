@@ -409,6 +409,26 @@ def update_readme(all_results: list[dict], results_dir: str):
     lines.append("```")
     lines.append("")
 
+    # 업데이트 이력
+    lines.append("## 업데이트 이력")
+    lines.append("")
+    changelog = [
+        ("2026-03-19 12:50", "v2: 타입 자동 변환 + 절대 fitness 평가", "243개 전 조합 실행 가능, fitness 1.0 고정 문제 해결"),
+        ("2026-03-19 12:41", "v1: claude 자연어 분석 추가", "매 라운드 + 종합 분석 README 자동 기록"),
+        ("2026-03-19 12:15", "v0: 초기 엔진 가동", "15개 구성요소, 진화+인과 분석, 28/243 호환 조합"),
+    ]
+    for date, version, desc in changelog:
+        lines.append(f"- **{date}** — `{version}`: {desc}")
+    lines.append("")
+
+    # 버전별 라운드 구분
+    v1_rounds = [r for r in all_results if r.get("version", "").startswith("v1")]
+    v2_rounds = [r for r in all_results if not r.get("version", "").startswith("v1")]
+    if v1_rounds and v2_rounds:
+        lines.append(f"> v1 라운드 (호환성 제한): {len(v1_rounds)}회 | "
+                     f"v2 라운드 (전 조합 가능): {len(v2_rounds)}회")
+        lines.append("")
+
     # 문서 링크
     lines.append("## 문서")
     lines.append("")
@@ -442,6 +462,7 @@ def run_round(round_num: int, config_path: str, results_dir: str) -> dict:
 
     result = {
         "round": round_num,
+        "version": "v2_full_compat",
         "run_dir": str(orch.logger.run_dir),
         "best_fitness": orch._best_fitness,
         "generations": orch.generation,

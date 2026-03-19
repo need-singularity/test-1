@@ -2,11 +2,11 @@
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
-**마지막 업데이트:** 2026-03-19 12:50:50
+**마지막 업데이트:** 2026-03-19 12:57:29
 
 ## 현재 상황 요약
 
-> 5라운드 동안 적합도(아키텍처가 얼마나 잘 작동하는지 나타내는 점수)가 1.0 만점을 계속 유지하고 있어서 성능 자체는 처음부터 최고 수준에 도달해 안정적이지만, 반대로 말하면 아직 뚜렷한 "개선 추이"보다는 정체 구간에 가깝습니다. 가장 유망한 조합은 리만 다양체(곡면 위에서 데이터를 표현하는 방식) 기반 표현 + 측지선 분기(최단 경로가 갈라지는 지점을 활용한 추론) + 리아푸노프 분기(시스템 안정성 경계에서 새로운 패턴이 나타나는 현상)로, 5라운드 연속 선택될 만큼 다른 조합을 압도하고 있습니다. 창발 패턴에서 흥미로운 점은 총 9건의 이상 신호(sigma spike) 중 가지 안정성, 곡률, 자유 에너지 등 다양한 지표에서 튀는 값이 감지되었다는 것인데, 특히 자유 에너지(시스템이 얼마나 효율적으로 작동하는지 나타내는 값)가 114.5로 크게 튄 것은 이 아키텍처가 탐색 공간에서 의미 있는 구조적 전환점에 도달했을 가능성을 시사합니다. 다음 라운드에서는 현재 조합이 계속 지배할지, 아니면 축적된 창발 신호가 돌연변이를 통해 새로운 경쟁 아키텍처를 만들어낼지가 관전 포인트이며, 적합도가 이미 최대치이므로 창발 이벤트 수의 증가 여부가 실질적인 진전 지표가 될 것입니다.
+> 총 5라운드 동안 적합도(아키텍처가 얼마나 잘 작동하는지를 나타내는 점수)가 매 라운드 1.0 만점을 기록하며 처음부터 최고 성능을 안정적으로 유지하고 있습니다. 가장 유망한 조합은 리만 다양체(곡면 위에서 정보를 표현하는 방식) 기반 표현에 측지선 분기(최단 경로가 갈라지는 지점을 활용한 추론), 리아푸노프 분기(시스템이 안정에서 불안정으로 넘어가는 순간을 포착하는 창발 감지), 그림자 다양체 검증, 자유 에너지 담금질(열을 서서히 식혀 최적해를 찾는 방식) 최적화를 결합한 것인데, 5라운드 연속 동일한 조합이 선택될 만큼 압도적으로 우세합니다. 창발 이벤트(시스템이 예상 밖의 새로운 행동을 보이는 현상)는 총 9회 감지되었고, 특히 평균 곡률과 자유 에너지에서 시그마 스파이크(통계적으로 비정상적인 급등)가 반복적으로 나타나는 점이 흥미로운데, 이는 이 아키텍처가 단순히 안정적일 뿐 아니라 스스로 새로운 구조를 만들어내는 능력이 있음을 시사합니다. 다만 5라운드 모두 동일한 아키텍처만 선택되고 있어 다양성이 부족한 상태이므로, 다음 단계에서는 돌연변이율을 높이거나 다른 조합을 강제 탐색시켜서 현재 조합이 진짜 최적인지 아니면 탐색이 너무 일찍 한 곳에 수렴한 것인지를 확인하는 것이 기대됩니다.
 
 ## 최신 라운드 분석
 
@@ -21,7 +21,7 @@
 | 총 실행 시간 | 1736s (0.5h) |
 | 최고 fitness | 1.0000 (Round 1) |
 | 창발 이벤트 | 9개 |
-| Hall of Fame | 15개 |
+| Hall of Fame | 17개 |
 
 ## Fitness 추이
 
@@ -51,24 +51,26 @@ xychart-beta
 
 | 지표 | 횟수 | 최대 강도 | 비율 |
 |------|------|----------|------|
-| `hallucination_score` | 4 | 34.56 | █████ 27% |
-| `std_curvature` | 4 | 7.44 | █████ 27% |
-| `mean_curvature` | 3 | 2.36 | ████ 20% |
-| `concept` | 1 | 3.06 | █ 7% |
-| `n_bifurcation_points` | 1 | 2.10 | █ 7% |
-| `branch_stability` | 1 | 2.29 | █ 7% |
-| `free_energy` | 1 | 8.75 | █ 7% |
+| `std_curvature` | 5 | 7.44 | █████ 29% |
+| `hallucination_score` | 4 | 34.56 | ████ 24% |
+| `mean_curvature` | 4 | 7.75 | ████ 24% |
+| `concept` | 1 | 3.06 | █ 6% |
+| `n_bifurcation_points` | 1 | 2.10 | █ 6% |
+| `branch_stability` | 1 | 2.29 | █ 6% |
+| `free_energy` | 1 | 8.75 | █ 6% |
 
 ### 창발이 잘 일어나는 조합
 
 | 표현 + 창발 조합 | 횟수 |
 |-----------------|------|
-| `riemannian_manifold + lyapunov_bifurcation` | 15 |
+| `riemannian_manifold + lyapunov_bifurcation` | 17 |
 
 ### 최근 창발 이벤트
 
 | 세대 | 지표 | 값 | 유형 | 강도 | 아키텍처 |
 |------|------|----|------|------|---------|
+| 4 | `std_curvature` | 0.1300 | sigma_spike | 4.40 | `riemannian_manifold, geodesic_bifurcation` |
+| 3 | `mean_curvature` | 0.3540 | sigma_spike | 7.75 | `riemannian_manifold, geodesic_bifurcation` |
 | 4 | `free_energy` | 114.4982 | sigma_spike | 8.75 | `riemannian_manifold, geodesic_bifurcation` |
 | 3 | `mean_curvature` | 0.3240 | sigma_spike | 2.14 | `riemannian_manifold, geodesic_bifurcation` |
 | 4 | `mean_curvature` | 0.3380 | sigma_spike | 2.36 | `riemannian_manifold, geodesic_bifurcation` |
@@ -77,15 +79,13 @@ xychart-beta
 | 3 | `hallucination_score` | 0.7692 | sigma_spike | 2.53 | `riemannian_manifold, geodesic_bifurcation` |
 | 4 | `n_bifurcation_points` | 14.0000 | sigma_spike | 2.10 | `riemannian_manifold, geodesic_bifurcation` |
 | 3 | `std_curvature` | 0.1496 | sigma_spike | 2.19 | `riemannian_manifold, geodesic_bifurcation` |
-| 4 | `hallucination_score` | 0.7518 | sigma_spike | 2.39 | `riemannian_manifold, geodesic_bifurcation` |
-| 3 | `hallucination_score` | 0.7553 | sigma_spike | 34.56 | `riemannian_manifold, geodesic_bifurcation` |
 
 ### 창발 타임라인
 
 ```mermaid
 timeline
     title 창발 급등 이벤트 타임라인
-    Gen 3 : hallucination_score (sigma_spike)
+    Gen 3 : std_curvature (sigma_spike)
     Gen 4 : mean_curvature (sigma_spike)
 ```
 
