@@ -91,3 +91,32 @@ def test_compare_returns_similarity():
     results = engine.find_cross_domain_pattern("gravity", "price")
     if results:
         assert 0.0 <= results[0].similarity <= 1.0
+
+
+def test_homology_signature_has_betti():
+    engine = _make_engine()
+    idx = engine._entity_index.get("gravity")
+    if idx is not None:
+        sig = engine._get_structural_signature(idx)
+        assert sig is not None
+        assert "betti" in sig
+        assert len(sig["betti"]) == 3
+        assert "persistence_pairs" in sig
+
+
+def test_compare_identical_is_high():
+    engine = _make_engine()
+    idx = engine._entity_index.get("gravity")
+    if idx is not None:
+        sig = engine._get_structural_signature(idx)
+        if sig:
+            sim = engine._compare_signatures(sig, sig)
+            assert sim > 0.9  # identical should be very similar
+
+
+def test_analogy_uses_homology():
+    engine = _make_engine()
+    results = engine.find_analogy("gravity", "economics")
+    if results:
+        # Explanation should mention Betti numbers
+        assert "β" in results[0].reasoning
