@@ -353,9 +353,10 @@ def main():
     parser = argparse.ArgumentParser(description="TECS Meta-Research Engine — 반복 실행")
     parser.add_argument("--config", default="config.yaml", help="설정 파일")
     parser.add_argument("--results-dir", default="results", help="결과 디렉토리")
-    parser.add_argument("--rounds", type=int, default=0, help="반복 횟수 (0=무한)")
+    parser.add_argument("--rounds", type=int, default=0, help="반복 횟수 (0=무한, 기본)")
     parser.add_argument("--interval", type=int, default=5, help="라운드 간 대기 초")
-    parser.add_argument("--git-push", action="store_true", help="라운드마다 git commit+push")
+    parser.add_argument("--git-push", action="store_true", default=True, help="라운드마다 git commit+push (기본 ON)")
+    parser.add_argument("--no-git-push", action="store_false", dest="git_push", help="git push 비활성화")
     args = parser.parse_args()
 
     print("TECS Meta-Research Engine — 반복 실행 모드")
