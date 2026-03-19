@@ -21,17 +21,28 @@ from pathlib import Path
 from datetime import datetime
 
 
-def claude_generate(prompt: str, timeout: int = 120) -> str:
-    """Call claude CLI and return response."""
-    try:
-        result = subprocess.run(
-            ["claude", "-p", prompt],
-            capture_output=True, text=True, timeout=timeout,
-        )
-        output = result.stdout.strip() if result.returncode == 0 else ""
-        return "".join(c for c in output if c.isprintable() or c in "\n ")
-    except Exception as e:
-        return f"ERROR: {e}"
+def claude_generate(prompt: str, timeout: int = 120, retries: int = 2) -> str:
+    """Call claude CLI and return response, with retries on empty output."""
+    for attempt in range(retries + 1):
+        try:
+            result = subprocess.run(
+                ["claude", "-p", prompt],
+                capture_output=True, text=True, timeout=timeout,
+            )
+            output = result.stdout.strip() if result.returncode == 0 else ""
+            cleaned = "".join(c for c in output if c.isprintable() or c in "\n ")
+            if cleaned or attempt == retries:
+                return cleaned
+            print(f"    (Empty response, retrying {attempt+1}/{retries}...)")
+            time.sleep(2)
+        except subprocess.TimeoutExpired:
+            if attempt < retries:
+                print(f"    (Timeout, retrying {attempt+1}/{retries}...)")
+                continue
+            return "ERROR: timeout"
+        except Exception as e:
+            return f"ERROR: {e}"
+    return ""
 
 
 def extract_python_code(text: str) -> str:
@@ -122,7 +133,9 @@ def run_cycle(cycle_num: int, target: str, previous_results: list[dict]) -> dict
     }
 
     if not code:
-        print(f"    Code extraction failed")
+        print(f"    Code extraction failed (response length: {len(response)})")
+        if response:
+            print(f"    Response preview: {response[:150]}...")
         cycle_result["phases"]["generate"]["error"] = "no code extracted"
         cycle_result["status"] = "FAILED_GENERATION"
         return cycle_result

@@ -1,0 +1,220 @@
+{
+  "N_values": [
+    12,
+    14,
+    16,
+    18
+  ],
+  "results": {
+    "12": [
+      {
+        "alpha": 2.0,
+        "mean_beta1": 1472.3,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 2.5,
+        "mean_beta1": 559.6,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.0,
+        "mean_beta1": 97.6,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.5,
+        "mean_beta1": 26.0,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 4.0,
+        "mean_beta1": 17.0,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 0.3,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.6,
+        "sat_rate": 0.3
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.1,
+        "sat_rate": 0.3
+      },
+      {
+        "alpha": 6.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      }
+    ],
+    "14": [
+      {
+        "alpha": 2.0,
+        "mean_beta1": 5780.8,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 2.5,
+        "mean_beta1": 804.8,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 3.0,
+        "mean_beta1": 348.2,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.5,
+        "mean_beta1": 66.9,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 4.0,
+        "mean_beta1": 9.5,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 8.8,
+        "sat_rate": 0.6
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.1,
+        "sat_rate": 0.2
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 1.1,
+        "sat_rate": 0.5
+      },
+      {
+        "alpha": 6.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.3
+      }
+    ],
+    "16": [
+      {
+        "alpha": 2.0,
+        "mean_beta1": 12304.1,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 2.5,
+        "mean_beta1": 1457.4,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.0,
+        "mean_beta1": 555.7,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.5,
+        "mean_beta1": 139.0,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 4.0,
+        "mean_beta1": 23.6,
+        "sat_rate": 0.7
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 1.9,
+        "sat_rate": 0.7
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 1.9,
+        "sat_rate": 0.5
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.0
+      },
+      {
+        "alpha": 6.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.1
+      }
+    ],
+    "18": [
+      {
+        "alpha": 2.0,
+        "mean_beta1": 39191.8,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 2.5,
+        "mean_beta1": 4728.9,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.0,
+        "mean_beta1": 1389.6,
+        "sat_rate": 1.0
+      },
+      {
+        "alpha": 3.5,
+        "mean_beta1": 82.9,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 4.0,
+        "mean_beta1": 133.8,
+        "sat_rate": 0.9
+      },
+      {
+        "alpha": 4.5,
+        "mean_beta1": 32.6,
+        "sat_rate": 0.5
+      },
+      {
+        "alpha": 5.0,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.3
+      },
+      {
+        "alpha": 5.5,
+        "mean_beta1": 0.0,
+        "sat_rate": 0.1
+      },
+      {
+        "alpha": 6.0,
+        "mean_beta1": 0.3,
+        "sat_rate": 0.2
+      }
+    ]
+  },
+  "transition_points": {
+    "12": {
+      "alpha_beta1_zero": 6.0,
+      "alpha_sat": 4.75,
+      "max_beta1": 1472.3
+    },
+    "14": {
+      "alpha_beta1_zero": 6.0,
+      "alpha_sat": 4.75,
+      "max_beta1": 5780.8
+    },
+    "16": {
+      "alpha_beta1_zero": 5.5,
+      "alpha_sat": 4.75,
+      "max_beta1": 12304.1
+    },
+    "18": {
+      "alpha_beta1_zero": 5.0,
+      "alpha_sat": 4.25,
+      "max_beta1": 39191.8
+    }
+  }
+}
