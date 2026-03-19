@@ -167,7 +167,7 @@ config.yaml에서 조정 가능
 3. **교차**: uniform crossover, 인과 분석 기반 강한 계층 보존 확률 상향
 4. **다양성 보호**: 해밍 거리 중복 제거, 수렴 시 무작위 이민자 주입
 
-### 6.2 인과 추적 (CausalTracer)
+### 6.3 인과 추적 (CausalTracer)
 
 - **방법**: Observational causal analysis (관찰적 인과 분석)
 - 세대 간 자연 변이(변이/교차로 생긴 구성요소 변경)를 관찰 데이터로 활용
