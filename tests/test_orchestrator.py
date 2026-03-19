@@ -135,6 +135,7 @@ def test_full_run_tiny():
     """Tiny run: 3 candidates, 1 gen per phase, terminates quickly."""
     cfg = load_config("config.yaml", overrides={
         "search.population_size": 3, "scaling.phase1_nodes": 10,
+        "scaling.phase2_nodes": 10, "scaling.phase5_nodes": 10,
         "scaling.phase1_max_gen": 1, "scaling.phase2_max_gen": 1,
         "termination.max_loops": 1, "termination.max_hours": 0.001,
         "reporting.claude_cli": False,

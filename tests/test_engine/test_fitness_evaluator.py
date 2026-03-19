@@ -7,7 +7,7 @@ from tecs.engine.fitness_evaluator import FitnessEvaluator
 def test_weighted_fitness():
     ev = FitnessEvaluator(w_e=0.4, w_b=0.4, w_f=0.2)
     fitness = ev.compute(
-        emergence={"betti_change": 0.5, "order_r": 0.6},
+        emergence={"betti_0": 0.5, "order_parameter_r": 0.6},
         benchmark={"concept": 0.8, "contradiction": 0.7, "analogy": 0.6},
         cost=0.3,
     )
@@ -33,8 +33,8 @@ def test_normalize_metric():
 def test_fitness_clipped_to_unit_range():
     ev = FitnessEvaluator(w_e=0.4, w_b=0.4, w_f=0.2)
     fitness = ev.compute(
-        emergence={"a": 1.0, "b": 1.0},
-        benchmark={"c": 1.0},
+        emergence={"betti_0": 1.0, "betti_1": 1.0},
+        benchmark={"concept": 1.0},
         cost=0.0,
     )
     assert fitness <= 1.0
@@ -43,8 +43,8 @@ def test_fitness_clipped_to_unit_range():
 
 def test_high_cost_lowers_fitness():
     ev = FitnessEvaluator(w_e=0.4, w_b=0.4, w_f=0.2)
-    low_cost = ev.compute(emergence={"a": 0.5}, benchmark={"b": 0.5}, cost=0.0)
-    high_cost = ev.compute(emergence={"a": 0.5}, benchmark={"b": 0.5}, cost=1.0)
+    low_cost = ev.compute(emergence={"betti_0": 0.5}, benchmark={"concept": 0.5}, cost=0.0)
+    high_cost = ev.compute(emergence={"betti_0": 0.5}, benchmark={"concept": 0.5}, cost=1.0)
     assert low_cost > high_cost
 
 

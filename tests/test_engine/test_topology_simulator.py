@@ -45,7 +45,8 @@ def test_runs_compatible_combo():
     assert len(result.history) > 0
 
 
-def test_rejects_incompatible_combo():
+def test_converts_incompatible_combo():
+    """Previously incompatible combos now succeed via automatic type conversion."""
     reg = _make_registry()
     # riemannian_manifold produces "graph", but persistent_homology_dual needs "simplicial"
     from tecs.components.verification.persistent_homology_dual import PersistentHomologyDualComponent
@@ -64,8 +65,13 @@ def test_rejects_incompatible_combo():
         generation=0,
         phase=1,
     )
-    with pytest.raises(IncompatibleComponentError):
-        sim.simulate(candidate, np.random.rand(20, 3))
+    # Should succeed now via graph->simplicial conversion
+    result = sim.simulate(candidate, np.random.rand(20, 3))
+    assert isinstance(result, TopologyState)
+    assert len(result.metrics) > 0
+    # Verify conversion happened
+    convert_actions = [h for h in result.history if "convert" in h.get("action", "")]
+    assert len(convert_actions) > 0
 
 
 def test_state_has_metrics_after_simulation():
