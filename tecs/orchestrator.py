@@ -589,6 +589,13 @@ class Orchestrator:
                 self._run_benchmarks()
                 self._on_phase_complete(3)
             else:
+                if next_phase == 4:
+                    # Expand population to 20 for diversity in weakness-fix phase
+                    best = max(self.population, key=lambda c: c.fitness)
+                    while len(self.population) < 20:
+                        mutant = self._evolution._generator.mutate(best)
+                        mutant.phase = best.phase
+                        self.population.append(mutant)
                 self.run_phase(next_phase)
                 if next_phase == 2:
                     self._select_top_candidates(2)
@@ -598,9 +605,25 @@ class Orchestrator:
         self._on_run_complete()
 
     def _select_top_candidates(self, n: int):
-        """Keep only top n candidates by fitness."""
+        """Keep top n candidates by fitness, enforcing genotype diversity."""
         self.population.sort(key=lambda c: c.fitness, reverse=True)
-        self.population = self.population[:n]
+        selected = []
+        seen_genotypes = []
+        for c in self.population:
+            if c.components not in seen_genotypes:
+                seen_genotypes.append(c.components)
+                selected.append(c)
+            if len(selected) >= n:
+                break
+        # Fill remaining slots with mutations of best
+        while len(selected) < n and selected:
+            mutant = self._evolution._generator.mutate(selected[0])
+            mutant.phase = selected[0].phase
+            mutant.generation = selected[0].generation
+            if mutant.components not in seen_genotypes:
+                seen_genotypes.append(mutant.components)
+                selected.append(mutant)
+        self.population = selected
 
     def _run_benchmarks(self):
         """Run full benchmarks on current population."""
