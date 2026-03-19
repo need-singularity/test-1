@@ -111,12 +111,15 @@ def generate_analysis(result: dict, run_details: dict) -> str:
         import subprocess
         r = subprocess.run(
             ["claude", "-p", prompt],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True, text=True, timeout=120,
         )
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout.strip()
-    except Exception:
-        pass
+        output = r.stdout.strip() if r.returncode == 0 else ""
+        # 제어 문자 제거
+        output = "".join(c for c in output if c.isprintable() or c in "\n ")
+        if output:
+            return output
+    except Exception as e:
+        print(f"    [분석 생성 실패: {e}]")
     return ""
 
 
@@ -164,12 +167,14 @@ def generate_overall_insight(all_results: list[dict], results_dir: str) -> str:
         import subprocess
         r = subprocess.run(
             ["claude", "-p", prompt],
-            capture_output=True, text=True, timeout=90,
+            capture_output=True, text=True, timeout=120,
         )
-        if r.returncode == 0 and r.stdout.strip():
-            return r.stdout.strip()
-    except Exception:
-        pass
+        output = r.stdout.strip() if r.returncode == 0 else ""
+        output = "".join(c for c in output if c.isprintable() or c in "\n ")
+        if output:
+            return output
+    except Exception as e:
+        print(f"    [종합 분석 생성 실패: {e}]")
     return ""
 
 
@@ -459,7 +464,9 @@ def run_round(round_num: int, config_path: str, results_dir: str) -> dict:
     print(f"    Time:         {elapsed:.1f}s")
     print(f"    Results:      {orch.logger.run_dir}")
     if result["analysis"]:
-        print(f"    분석:         생성됨")
+        print(f"    분석:         생성됨 ({len(result['analysis'])}자)")
+    else:
+        print(f"    분석:         생성 실패 (claude CLI)")
 
     return result
 
@@ -492,6 +499,26 @@ def main():
                 except json.JSONDecodeError:
                     pass
         print(f"  이전 기록: {len(all_results)}회 로드됨")
+
+        # 이전 기록에 분석이 없으면 소급 생성
+        backfill_needed = [r for r in all_results if not r.get("analysis")]
+        if backfill_needed:
+            print(f"  분석 소급 생성: {len(backfill_needed)}건...")
+            for r in backfill_needed:
+                run_dir = Path(r["run_dir"])
+                if run_dir.exists():
+                    details = load_run_results(run_dir)
+                    r["best_components"] = r.get("best_components") or details.get("best_components", {})
+                    r["best_metrics"] = r.get("best_metrics") or details.get("best_metrics", {})
+                    r["emergence_details"] = details.get("emergence_details", [])
+                    analysis = generate_analysis(r, details)
+                    if analysis:
+                        r["analysis"] = analysis
+                        print(f"    Round {r['round']}: 생성됨 ({len(analysis)}자)")
+            # 히스토리 파일 다시 저장
+            with open(history_path, "w") as f:
+                for r in all_results:
+                    f.write(json.dumps(r, default=str) + "\n")
 
     round_num = len(all_results) + 1
 
