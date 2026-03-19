@@ -24,6 +24,19 @@ def poincare_distance(u: np.ndarray, v: np.ndarray, eps: float = 1e-7) -> float:
 OUROBOROS_THETA = 0.85   # boundary norm threshold for wormhole activation
 OUROBOROS_SIGMA = 0.15   # distance compression ratio through wormhole
 
+# Module-level config: set to False to revert to legacy -v behavior
+USE_FUCHSIAN = True
+
+_default_group = None
+
+
+def _get_default_group(dim: int = 2):
+    from tecs.inference.ouroboros_geometry import FuchsianGroup
+    global _default_group
+    if _default_group is None or _default_group._dim != dim:
+        _default_group = FuchsianGroup(dim=dim, use_fuchsian=USE_FUCHSIAN)
+    return _default_group
+
 
 def ouroboros_distance(
     u: np.ndarray, v: np.ndarray,
@@ -48,11 +61,39 @@ def ouroboros_distance(
         norm_v = float(np.linalg.norm(v))
         if norm_u > theta and norm_v > theta:
             # Both at the periphery → Fuchsian boundary identification
-            antipodal_raw = poincare_distance(u, -v, eps)
-            wormhole_dist = min(raw, antipodal_raw) * sigma
+            dim = len(u)
+            group = _get_default_group(dim)
+            quotient_raw = group.quotient_distance(u, v)
+            wormhole_dist = quotient_raw * sigma
             return wormhole_dist, True
 
     return raw, False
+
+
+def adaptive_sigma(
+    embeddings: dict[int, np.ndarray], theta: float = OUROBOROS_THETA,
+) -> float:
+    """Compute a data-driven wormhole compression ratio.
+
+    Finds all boundary nodes (||emb|| > theta), computes pairwise
+    Poincare distances among them, and returns sigma = 1/median_dist
+    clamped to [0.05, 0.30].  Falls back to OUROBOROS_SIGMA when fewer
+    than 2 boundary nodes exist.
+    """
+    boundary = [emb for emb in embeddings.values() if np.linalg.norm(emb) > theta]
+    if len(boundary) < 2:
+        return OUROBOROS_SIGMA
+    dists = []
+    for i in range(len(boundary)):
+        for j in range(i + 1, len(boundary)):
+            dists.append(poincare_distance(boundary[i], boundary[j]))
+    if not dists:
+        return OUROBOROS_SIGMA
+    median_dist = float(np.median(dists))
+    if median_dist < 1e-6:
+        return 0.30
+    sigma = 1.0 / median_dist
+    return float(np.clip(sigma, 0.05, 0.30))
 
 
 def generate_poincare_embeddings(
