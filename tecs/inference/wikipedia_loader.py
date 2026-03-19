@@ -113,15 +113,23 @@ class WikipediaLoader:
             return True
         # Filter if entity is just a single generic word (adjective, person name, etc.)
         if len(words) == 1:
-            # Allow known scientific terms
+            # Allow known scientific/technical terms
             science_terms = {"brownian", "gaussian", "markov", "wiener", "hamiltonian",
                            "lagrangian", "newtonian", "euclidean", "riemannian", "boltzmann",
                            "diffusion", "entropy", "quantum", "stochastic", "probability",
-                           "thermodynamics", "relativity", "electromagnetism"}
+                           "thermodynamics", "relativity", "electromagnetism",
+                           "neuron", "synapse", "axon", "dendrite", "cortex",
+                           "internet", "ethernet", "protocol", "bandwidth",
+                           "galaxy", "cosmos", "filament", "quasar", "pulsar",
+                           "topology", "manifold", "eigenvalue", "matrix",
+                           "algorithm", "encryption", "compiler", "processor",
+                           "chromosome", "mitochondria", "ribosome", "cytoplasm",
+                           "gravitation", "magnetism", "radiation", "wavelength",
+                           "supernova", "nebula", "asteroid", "exoplanet"}
             if text_lower in science_terms:
                 return False
-            # Filter single words that are likely names or generic adjectives
-            if len(text_lower) < 12:
+            # Filter single words shorter than 5 chars (likely fragments)
+            if len(text_lower) < 5:
                 return True
         # Filter partial sentence fragments (contains verbs/articles mid-phrase)
         fragment_indicators = {" the ", " is ", " are ", " was ", " a ", " an ",
