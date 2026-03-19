@@ -1,6 +1,89 @@
 # TECS Meta-Research Engine — 사용법
 
-Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진.
+---
+
+## 실행 모드 3가지
+
+### 1. 아키텍처 탐색 (run_loop)
+
+243가지 수학적 구성요소 조합을 진화 알고리즘으로 탐색. 4단계 검증 파이프라인 포함.
+
+```bash
+./run.sh
+```
+
+또는:
+```bash
+.venv/bin/python run_loop.py                    # 무한 반복 + git push
+.venv/bin/python run_loop.py --rounds 10        # 10회
+.venv/bin/python run_loop.py --no-git-push      # push 없이
+```
+
+### 2. 자동 연구 (auto_research)
+
+가설 생성 → 코드 작성 → 실행 → 검증 → 수정을 자동 반복.
+
+```bash
+.venv/bin/python auto_research.py --cycles 5
+
+# 커스텀 목표
+.venv/bin/python auto_research.py \
+  --target "트랜스포머 어텐션에서 β₁ 감소율과 모델 성능의 관계" \
+  --cycles 10
+```
+
+### 3. 추론 엔진 (infer)
+
+위키피디아/arXiv 지식 로드 → 위상 추론 + 검증.
+
+```bash
+# 유추 추론
+.venv/bin/python3 infer.py --topics "Gravity" "Economics" --analogy gravity economics
+
+# 구조 비교
+.venv/bin/python3 infer.py --topics "Schrodinger equation" "Black-Scholes model" \
+  --compare "schrodinger equation" "blackscholes model"
+
+# 대화형
+.venv/bin/python3 infer.py --topics "Riemann hypothesis" "Quantum chaos" --interactive
+
+# arXiv 논문 포함
+.venv/bin/python3 infer.py --arxiv "quantum chaos random matrix" --interactive
+```
+
+### 동시 실행
+
+```bash
+# 터미널 1: 아키텍처 탐색
+./run.sh
+
+# 터미널 2: 자동 연구
+.venv/bin/python auto_research.py --cycles 10
+```
+
+---
+
+## 수학 실험
+
+### 트랜스포머 어텐션 위상 분석
+
+```bash
+.venv/bin/python3 tecs/math/attention_topology.py \
+  --text "your text here" \
+  --model gpt2
+```
+
+### 3-SAT 해 공간 호몰로지
+
+```bash
+.venv/bin/python3 tecs/math/riemann_pslq.py --zeros 10000 --order 8
+```
+
+### Deep Solve (수식 반복 검증)
+
+```bash
+.venv/bin/python deep_solve.py --problem problems/pdl1_bft.json --max-iter 10
+```
 
 ---
 
@@ -11,95 +94,31 @@ git clone https://github.com/need-singularity/test-1
 cd test-1
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-```
 
----
+# Rust 가속 (선택)
+cd rust_core && PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1 maturin develop --release && cd ..
 
-## 실행
+# PyTorch (GPU 가속, 선택)
+.venv/bin/pip install torch
 
-### 1회 실행
-
-```bash
-.venv/bin/python run.py
-```
-
-설정 파일 지정:
-```bash
-.venv/bin/python run.py --config config.yaml
-```
-
-결과 디렉토리 지정:
-```bash
-.venv/bin/python run.py --results-dir my_results
-```
-
-### 체크포인트에서 복구
-
-중간에 중단된 실행을 이어서:
-```bash
-.venv/bin/python run.py --resume results/runs/run_20260319_115818
-```
-
----
-
-## 반복 실행
-
-### 기본 (무한 반복, Ctrl+C로 중단)
-
-```bash
-.venv/bin/python run_loop.py
-```
-
-### 횟수 지정
-
-```bash
-.venv/bin/python run_loop.py --rounds 5
-```
-
-### 라운드 간 대기 시간 (초)
-
-```bash
-.venv/bin/python run_loop.py --rounds 10 --interval 60
-```
-
-### 매 라운드마다 GitHub push
-
-```bash
-.venv/bin/python run_loop.py --rounds 10 --git-push
-```
-
-### 전체 옵션 조합
-
-```bash
-.venv/bin/python run_loop.py \
-  --config config.yaml \
-  --results-dir results \
-  --rounds 10 \
-  --interval 30 \
-  --git-push
+# Transformers (어텐션 분석, 선택)
+.venv/bin/pip install transformers
 ```
 
 ---
 
 ## 설정 (config.yaml)
 
-| 섹션 | 주요 파라미터 | 기본값 | 설명 |
-|------|-------------|--------|------|
-| `search` | `population_size` | 50 | 세대당 후보 수 |
-| | `seed` | 42 | 재현성을 위한 시드 |
-| `scaling` | `phase1_nodes` | 100 | Phase 1 노드 수 |
-| | `phase2_nodes` | 1000 | Phase 2 노드 수 |
-| | `phase5_nodes` | 10000 | Phase 5 노드 수 |
-| | `phase1_max_gen` | 30 | Phase 1 최대 세대 |
-| `fitness` | `w_emergence` | 0.4 | 창발 지표 가중치 |
-| | `w_benchmark` | 0.4 | 벤치마크 가중치 |
-| | `w_efficiency` | 0.2 | 효율 가중치 |
-| `emergence` | `sigma_threshold` | 2.0 | 급등 판정 시그마 |
-| | `window_size` | 10 | 슬라이딩 윈도우 크기 |
-| `termination` | `max_hours` | 48 | 최대 실행 시간 |
-| | `max_loops` | 10 | Phase 4→2 최대 루프 |
-| | `plateau_generations` | 5 | 수렴 판정 세대 수 |
-| `reporting` | `claude_cli` | true | claude CLI 리포트 생성 |
+| 섹션 | 파라미터 | 기본값 | 설명 |
+|------|---------|--------|------|
+| search | population_size | 50 | 세대당 후보 수 |
+| search | seed | 42 | 재현성 시드 |
+| scaling | phase1_nodes | 100 | Phase 1 노드 수 |
+| scaling | phase1_max_gen | 30 | Phase 1 최대 세대 |
+| fitness | w_emergence | 0.4 | 창발 가중치 |
+| fitness | w_benchmark | 0.4 | 벤치마크 가중치 |
+| termination | max_hours | 48 | 최대 실행 시간 |
+| reporting | claude_cli | true | Claude 리포트 생성 |
 
 ---
 
@@ -107,80 +126,52 @@ python3 -m venv .venv
 
 ```
 results/
-├── runs/
-│   └── run_YYYYMMDD_HHMMSS/
-│       ├── evolution.jsonl          # 매 세대 지표
-│       ├── emergence_events.jsonl   # 창발 급등 이벤트
-│       ├── benchmarks.jsonl         # 벤치마크 점수
-│       ├── phase_log.jsonl          # Phase 전환 기록
-│       ├── causal_graph.json        # 인과 분석 결과
-│       ├── checkpoint.json          # 체크포인트 (복구용)
-│       └── REPORT.md               # 최종 리포트
-│
-└── hall_of_fame/
-    └── best_candidates.jsonl       # 역대 최고 후보 누적
+├── runs/run_YYYYMMDD_HHMMSS/
+│   ├── evolution.jsonl         # 세대별 지표
+│   ├── emergence_events.jsonl  # 창발 이벤트
+│   ├── checkpoint.json         # 복구용
+│   └── REPORT.md              # 리포트
+├── hall_of_fame/               # 역대 최고 후보
+├── attention_topology.json     # GPT-2 어텐션 β₁ 데이터
+├── 3sat_homology.json          # 3-SAT 위상 전이 데이터
+├── auto_research.json          # 자동 연구 결과
+└── run_history.jsonl           # 라운드 이력
 ```
 
 ---
 
-## 실행 흐름
+## 검증 파이프라인 (v4)
 
-```
-python run.py 실행
-    │
-    ▼
-Phase 1: 조합 탐색 (243가지, 노드 10²)
-    │  진화 알고리즘 + 인과 분석
-    │  → 상위 5개 후보 선별
-    ▼
-Phase 2: 중규모 검증 (노드 10³)
-    │  → 상위 2개 후보 선별
-    ▼
-Phase 3: 벤치마크 (개념관계 + 모순탐지 + 유추추론)
-    │
-    ▼
-Phase 4: 약점 보완 + 인과 기반 변이
-    │  개선 있으면 → Phase 2로 복귀
-    │  없으면 ↓
-    ▼
-Phase 5: 대규모 확인 (노드 10⁴)
-    │
-    ▼
-REPORT.md 생성 + 종료
-```
+모든 후보는 4단계 검증을 거침:
 
-**종료 조건 (어느 시점에서든):**
-- 환각률 < 1% + 창발률 > 80% + 벤치마크 > 0.7 → 성공 종료
-- 5세대 연속 개선 없음 → 수렴 종료
-- 48시간 초과 → 시간 한계
-- Phase 4→2 루프 10회 초과 → 루프 한계
+| 단계 | 검증 | 실패 시 |
+|------|------|--------|
+| A. 형식 | NaN/Inf, 의심스러운 완벽 점수, 모순 지표 | 즉시 탈락 |
+| B. 반례 | 노이즈 입력에 높은 점수 = 비신뢰 | 즉시 탈락 |
+| C. 재현 | 3개 시드 분산 > 0.1 = 불안정 | 점수 감점 |
+| D. 예측 | 실제 태스크 성능 | 점수 반영 |
+
+실패율 > 30% → **fitness = 0 (즉시 탈락)**
 
 ---
 
-## 창발 지표 (5개)
+## 실증적 결과 (2026-03-19)
 
-| 지표 | 의미 | 급등 판정 |
-|------|------|----------|
-| β (베티수) | 새 위상 구조 출현 | Δβ > 2σ |
-| χ (오일러 특성) | 전역 위상 복잡도 변화 | Δχ > 2σ |
-| r (순서 매개변수) | 동기화 상전이 | Δr > 0.2/세대 |
-| Φ (통합 정보) | 정보 통합도 | Φ > 1.0 |
-| λ (리아프노프) | 혼돈 진입 | λ: 음→양 전환 |
-
----
-
-## 테스트
-
-```bash
-.venv/bin/python -m pytest -v
-```
+| 실험 | 결과 | 파일 |
+|------|------|------|
+| GPT-2 어텐션 β₁ | Layer 0→10: β₁ = 43→0 (붕괴) | attention_topology.json |
+| 3-SAT 위상 전이 | α=4.75에서 β₁=0 | 3sat_homology.json |
+| 27개 매핑 자체 검증 | Tier 1: 2개, Tier 3 폐기: 5개 | MAPPING_DATABASE.md |
 
 ---
 
 ## 문서
 
-- `docs/superpowers/specs/` — 설계 명세서
-- `docs/superpowers/plans/` — 구현 계획
-- `2026-03-19_TECS_Architecture.md` — TECS 원본 아키텍처
-- `2026-03-19_ATDS_Architecture.md` — ATDS 원본 아키텍처
-- `TECS_Post-LLM_Architecture_v0.1.md` — Post-LLM v0.1 원본
+| 문서 | 내용 |
+|------|------|
+| [설계 명세서](docs/superpowers/specs/2026-03-19-tecs-meta-research-engine-design.md) | v4 아키텍처 |
+| [구현 계획](docs/superpowers/plans/2026-03-19-tecs-meta-research-engine.md) | 18 태스크 |
+| [성능 가이드](docs/PERFORMANCE.md) | Python/Rust/GPU 벤치마크 |
+| [추론 로드맵](docs/INFERENCE_ROADMAP.md) | Stage 0→3 |
+| [매핑 DB](docs/MAPPING_DATABASE.md) | 27건 티어 분류 |
+| [자체 검증](docs/papers/self_audit_report.md) | 4단계 검증 결과 |
