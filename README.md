@@ -1,4 +1,16 @@
-# TECS Meta-Research Engine
+# ❌ PROJECT FAILED — TECS Meta-Research Engine
+
+> **이 프로젝트는 실패했습니다.**
+
+## 실패 원인
+
+1. **`stress_tensor_zero` 검증 모듈 무용지물**: dynamic_hypergraph의 엣지 가중치가 기본값(1.0)이라 stress가 항상 0. 30세대 전부 fitness에 신호 없음.
+2. **`multihop_accuracy` 0.40 고정**: inference_engine.py가 진화 대상이 아닌 고정 BFS 3홉 탐색이라 다단계 추론이 전혀 개선되지 않음. 57세대 동안 변화 없음.
+3. **`shadow_manifold_audit`가 fitness를 단독 지배**: 유일하게 비영(non-zero) 기울기를 제공하는 모듈이라 진화가 이 모듈에만 의존. 실질적 다양성 없는 단일 경로 수렴.
+4. **환각 점수(hallucination_score) 0.69로 높음**: 최고 fitness 0.741 아키텍처도 신뢰성 미달.
+5. **쌍곡 기하학 모듈 적용 불가**: 수학적으로 타당하나 inference 엔진이 이산 BFS 기반이라 연속 벡터 공간과 연결 지점 없음. 적용하려면 전체 재설계 필요.
+
+---
 
 > Post-LLM 아키텍처를 자율 탐색하는 연구 가속 엔진
 
